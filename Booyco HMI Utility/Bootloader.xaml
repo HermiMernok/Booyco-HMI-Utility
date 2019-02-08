@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="Booyco_HMI_Utility.Bootloader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Booyco_HMI_Utility"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="Background" Value="#FF0D84D6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF0586A2"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="SlateGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+
+    <Grid OpacityMask="#FFC54C4C" Background="#FF135A8B">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <Label Content="Bootloader" Foreground="LightGray" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        </Viewbox>
+
+        <Label Content="Device Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
+        <Label Content="Name:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="LightGray"/>
+        <Label Content="Firmware revision:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Foreground="LightGray"/>
+        <Label Content="Selected firmware:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="LightGray"/>
+        <Label Content="VID:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="LightGray"/>
+        <Label Content="Licensed:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" Foreground="LightGray"/>
+
+        <Grid Grid.Column="1" Grid.Row="8"  Grid.ColumnSpan="2" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BtnDiffFile" Content="Select different file" Grid.Column="1" Margin="5" Click="FileSelect_Click"/>
+            <Button x:Name="btnBootload" Content="Bootload" Grid.Column="2" Margin="5" Click="Bootload_Click"/>
+            <Button x:Name="btnBack" Content="Back" Grid.Column="3" Margin="5" Click="BtnBack_Click"/>
+
+
+        </Grid>
+        <Grid Grid.Column="1" Grid.Row="9"  Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ProgressBar x:Name="FlashEraseProgress" Background="#FF3E5B5D" Foreground="#FF9EF3E8"/>
+            <Label Content="Flash erase progress..." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+            <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="#FF0586A2" Foreground="#FF04345D" Maximum="1000" />
+            <Label Content="Bootfile progress..." Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+
+        </Grid>
+        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="3" Content="{Binding DeviceName}"/>
+        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="4" Content="{Binding FirmwareRev}"/>
+        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="5" Content="{Binding SelectedFirm}"/>
+        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="6" Content="{Binding DeviceVID}"/>
+        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="7" Content="{Binding LicenseBool}"/>
+
+
+    </Grid>
+
+
+</UserControl>
