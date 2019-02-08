@@ -227,14 +227,19 @@ namespace Booyco_HMI_Utility
 
             bootfile = openFileDialog.FileName;
 
-            if(bootfile.Contains("M-PFW-"))
+            int fileNameStart = bootfile.LastIndexOf("\\") + 1;
+            string fileSub = bootfile.Substring(fileNameStart, bootfile.Length - fileNameStart);
+
+            File.WriteAllBytes(fileSub, bootfilebytes);
+
+            if (bootfile.Contains("M-PFW-"))
             {
                 int start = bootfile.IndexOf("M-PFW");
                 string firm = bootfile.Substring(start+6, 3);
                 SelectedFirm = Int16.Parse(firm);
             }
 
-            File.WriteAllBytes("Foo.hex", bootfilebytes);
+            
 
             //bootfilebytes = File.ReadAllBytes("D:\\Users\\NeilPretorius\\Desktop\\V14 2\\TITAN VISION - V14\\ME-VISION-L4-PFW\\Debug\\ME-VISION-L4-PFW.binary");
 
