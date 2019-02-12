@@ -20,9 +20,20 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class FileView : UserControl
     {
+   
+
         public FileView()
         {
             InitializeComponent();
+        }
+
+        private void ButtonDataViewer_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+        }
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
         }
     }
 }
