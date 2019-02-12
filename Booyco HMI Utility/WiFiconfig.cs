@@ -205,21 +205,23 @@ namespace Booyco_HMI_Utility
             GlobalSharedData.ServerStatus = "Maximum amount of clients reached!";
 
         }
-
+        
         private void RecieveBytes(EndPoint clientnumr)
         {
+            int messagecount = 0;
             try
             {
                 List<Socket> clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
                 byte[] data2 = new byte[522];
                 int i;
-                while (!clientR[0].Poll(50, SelectMode.SelectRead))
+                while (!clientR[0].Poll(10, SelectMode.SelectRead))
                 {
 
                     if ((i = clientR[0].Receive(data2, data2.Length, SocketFlags.None)) != 0)
                     {
                         string recmeg = Encoding.UTF8.GetString(data2, 0, i);
-                        Console.WriteLine("Received:" + recmeg + " from: " + clientR[0].RemoteEndPoint);
+                        Console.WriteLine("Received:" + recmeg + " from: " + clientR[0].RemoteEndPoint + " count:==== "+ messagecount.ToString());
+                        messagecount++;
                         GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
 
                         if (data2[2] == 'h' /*&& message.Length == 522*/)
@@ -231,7 +233,7 @@ namespace Booyco_HMI_Utility
                                 TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(data2, 4);
                                 TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = data2[23];
                                 TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = data2[24];
-                                Thread.Sleep(10);
+                                //Thread.Sleep(50);
                                 clientR[0].Send(HeartbeatMessage, HeartbeatMessage.Length, SocketFlags.None); //Send the data to the client
                             }
                             
@@ -249,9 +251,10 @@ namespace Booyco_HMI_Utility
                 Console.WriteLine("-------------- {0} closed recieve", clientnumr);
                 TCPclients.RemoveAt(clients.IndexOf(clientR[0]));
             }
-            catch
+            catch (Exception e)
             {
                 Console.WriteLine("-------------- {0} closed recieve", clientnumr);
+                Console.WriteLine(e.ToString());
             }
 
         }

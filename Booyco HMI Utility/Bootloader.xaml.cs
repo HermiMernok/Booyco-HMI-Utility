@@ -139,14 +139,14 @@ namespace Booyco_HMI_Utility
 
                     if (BootSentIndex == 0 && BootAckIndex == -1)
                     {
-                        Thread.Sleep(10);
+                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
 
                     if (BootSentIndex < BootFileList.Count && BootAckIndex == BootSentIndex - 1)
                     {
-                        Thread.Sleep(10);
+                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
@@ -200,7 +200,7 @@ namespace Booyco_HMI_Utility
                     if (message[3] == 'f' && message[7] == ']')
                     {
                         BootFlashPersentage = message[4];
-                        BootReady = true;
+                        //BootReady = true;
                         BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
                     }
 
@@ -230,7 +230,7 @@ namespace Booyco_HMI_Utility
             int fileNameStart = bootfile.LastIndexOf("\\") + 1;
             string fileSub = bootfile.Substring(fileNameStart, bootfile.Length - fileNameStart);
 
-            File.WriteAllBytes(fileSub, bootfilebytes);
+ //           File.WriteAllBytes(fileSub, bootfilebytes);
 
             if (bootfile.Contains("M-PFW-"))
             {
