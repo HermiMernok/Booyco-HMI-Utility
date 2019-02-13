@@ -179,7 +179,9 @@
     <Resource Include="Images\ButtonImages\USB.png" />
     <Resource Include="Images\ButtonImages\USBGray.png" />
     <Resource Include="Images\ButtonImages\WIFI gray.png" />
-    <Resource Include="Images\ButtonImages\WIFI.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ButtonImages\WIFI.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
