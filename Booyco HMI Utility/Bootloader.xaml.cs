@@ -123,7 +123,8 @@ namespace Booyco_HMI_Utility
 
             Thread BootloaderThread = new Thread(BootloaderDo)
             {
-                IsBackground = true
+                IsBackground = true,
+                Name = "BootloaderThread"
             };
             BootloaderThread.Start();
             BootStatus = "Asking device to boot...";

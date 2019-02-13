@@ -68,8 +68,11 @@ namespace Booyco_HMI_Utility
 
         public void IpWatcherStart()
         {
-            Thread newThread = new Thread(new ThreadStart(IPWatch));
-            newThread.IsBackground = true;
+            Thread newThread = new Thread(new ThreadStart(IPWatch))
+            {
+                IsBackground = true,
+                Name = "IpWatcherThread"
+            };
             newThread.Start();
         }
 
@@ -116,8 +119,11 @@ namespace Booyco_HMI_Utility
             HeartbeatMessage[11] = (byte)'t';
             HeartbeatMessage[521] = (byte)']';
 
-            Thread newThread = new Thread(new ThreadStart(StartServer));
-            newThread.IsBackground = true;
+            Thread newThread = new Thread(new ThreadStart(StartServer))
+            {
+                IsBackground = true,
+                Name = "ServerThread"
+            };
             newThread.Start();
         }
 
@@ -143,7 +149,8 @@ namespace Booyco_HMI_Utility
 
                 Thread ClientsThread = new Thread(new ThreadStart(GetClients))
                 {
-                    IsBackground = true
+                    IsBackground = true,
+                    Name = "ClientsThread"
                 };
                 ClientsThread.Start();
 
@@ -181,13 +188,15 @@ namespace Booyco_HMI_Utility
 
                     Thread readThread = new Thread(() => RecieveBytes(client.RemoteEndPoint))
                     {
-                        IsBackground = true
+                        IsBackground = true,
+                        Name = "ServerRecieve:" + clientnum.ToString()
                     };
                     readThread.Start();
                     clientslot = clientnum;
                     Thread sendThread = new Thread(() => SendBytes(client.RemoteEndPoint, clientslot))
                     {
-                        IsBackground = true
+                        IsBackground = true,
+                        Name = "ServerSend:" + clientnum.ToString()
                     };
                     sendThread.Start();
 
