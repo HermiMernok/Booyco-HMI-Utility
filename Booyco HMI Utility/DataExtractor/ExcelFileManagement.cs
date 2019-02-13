@@ -14,30 +14,75 @@ namespace Booyco_HMI_Utility
     class ExcelFileManagement
     {
         public List<LPDEntry> LPDInfoList = new List<LPDEntry>();
+        public List<LPDDataLookupEntry> LPDLookupList = new List<LPDDataLookupEntry>();
+
         private System.Data.DataSet ds;
         string _LPDPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/LPD.xlsx";
 
         public void StoreLogProtocolInfo()
         {
             DataRowCollection _data = ReadExcelFile(_LPDPath, 0);
-            DataRowCollection _lookup = ReadExcelFile(_LPDPath, 0);
-         
-            foreach (DataRow _row in _data)
+            DataRowCollection _lookup = ReadExcelFile(_LPDPath, 1);
+
+            foreach (DataRow _row in _lookup)
             {
-                string _tempData = "";
-
-                for(int i = 2; i < 10; i++)
+                try
                 {
-                    string _tempByteName = Convert.ToString(_row.ItemArray[i]);
+                 
+                 
+                        LPDLookupList.Add(new LPDDataLookupEntry
+                        {
+                            DataLink = Convert.ToString(_row.ItemArray[1]),
+                            DataName = Convert.ToString(_row.ItemArray[2]),
+                            NumberBytes = Convert.ToInt32(_row.ItemArray[3]),
+                            Scale = Convert.ToInt32(_row.ItemArray[4]),
+                            IsInt = Convert.ToBoolean(_row.ItemArray[5]),
+                            Appendix = Convert.ToString(_row.ItemArray[6])
 
-                    if (_tempByteName == "0xFF" || _tempByteName == "Reserved")
-                    {
-                        i = 10;
-                    }
-                    else
-                    {
-                                           }
+                        });
+                    
+                    
                 }
+                catch
+                {
+
+                }
+                
+            }
+
+                foreach (DataRow _row in _data)
+            {
+                List<LPDDataLookupEntry> _tempData = new List<LPDDataLookupEntry>();
+
+                if (_row.ItemArray.Count() == 10)
+                {
+                    for (int i = 2; i < 10; i++)
+                    {
+                        string _tempByteName = Convert.ToString(_row.ItemArray[i]);
+
+
+                        if (LPDLookupList.Any(p => p.DataLink == _tempByteName))
+                        {
+                            _tempData.Add(LPDLookupList.FirstOrDefault(p => p.DataLink == _tempByteName));
+
+                            //Buffer.BlockCopy(_logChuncks, 0, _logTimeStamp, 0, 6);     
+
+                        }
+                        else
+                        {
+
+                            if (_tempByteName == "0xFF" || _tempByteName == "Reserved" || _tempByteName == "")
+                            {
+                               i = 10;
+                                _tempData.Add(new LPDDataLookupEntry
+                                {
+                                    DataLink = "Empty"
+                                });
+                            }
+                        }
+
+                    }
+         
                 
 
 
@@ -46,9 +91,11 @@ namespace Booyco_HMI_Utility
                 {
                     EventID = Convert.ToUInt16(_row.ItemArray[0]),
                     EventName = Convert.ToString(_row.ItemArray[1]),
-                    Data1 = _tempData                  
+                    Data = _tempData
 
                 });
+
+                }
 
 
 
