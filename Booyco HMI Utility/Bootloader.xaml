@@ -6,36 +6,12 @@
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
-    <UserControl.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Foreground" Value="LightGray"/>
-            <Setter Property="Background" Value="#FF0D84D6"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF0586A2"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="SlateGray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-    </UserControl.Resources>
 
 
-    <Grid OpacityMask="#FFC54C4C" Background="#FF135A8B">
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1.5*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -43,7 +19,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="1.5*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -53,16 +29,16 @@
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
 
-        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
-            <Label Content="Bootloader" Foreground="LightGray" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+            <Label Content="Bootloader" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Viewbox>
 
         <Label Content="Device Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
-        <Label Content="Name:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="LightGray"/>
-        <Label Content="Firmware revision:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Foreground="LightGray"/>
-        <Label Content="Selected firmware:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="LightGray"/>
-        <Label Content="VID:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="LightGray"/>
-        <Label Content="Licensed:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" Foreground="LightGray"/>
+        <Label Content="Name:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
+        <Label Content="Firmware revision:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Foreground="Gray"/>
+        <Label Content="Selected firmware:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
+        <Label Content="VID:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="Gray"/>
+        <Label Content="Licensed:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" Foreground="Gray"/>
 
         <Grid Grid.Column="1" Grid.Row="8"  Grid.ColumnSpan="2" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
@@ -78,22 +54,22 @@
 
 
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="9"  Grid.ColumnSpan="2">
+        <Grid Grid.Column="1" Grid.Row="9"  Grid.ColumnSpan="2" Background="DarkGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar x:Name="FlashEraseProgress" Background="#FF3E5B5D" Foreground="#FF9EF3E8"/>
+            <ProgressBar x:Name="FlashEraseProgress" Background="Black" Foreground="#8c0909" Margin="5"/>
             <Label Content="Flash erase progress..." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
-            <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="#FF0586A2" Foreground="#FF04345D" Maximum="1000" />
+            <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
             <Label Content="Bootfile progress..." Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
 
         </Grid>
-        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="3" Content="{Binding DeviceName}"/>
-        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="4" Content="{Binding FirmwareRev}"/>
-        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="5" Content="{Binding SelectedFirm}"/>
-        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="6" Content="{Binding DeviceVID}"/>
-        <Label Grid.Column="2" Foreground="LightGray" Grid.Row="7" Content="{Binding LicenseBool}"/>
+        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="3" Content="{Binding DeviceName}"/>
+        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="4" Content="{Binding FirmwareRev}"/>
+        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="5" Content="{Binding SelectedFirm}"/>
+        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="6" Content="{Binding DeviceVID}"/>
+        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="7" Content="{Binding LicenseBool}"/>
 
 
     </Grid>

@@ -7,40 +7,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
 
-    <UserControl.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Black"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="DarkSlateGray"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="SlateGray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-    </UserControl.Resources>
-    <Grid Background="#FF39989C">
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
+            <RowDefinition Height="0.8*"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -49,12 +25,12 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
-        <Viewbox Grid.Row="1" Grid.Column="1">
-            <Label Content="WiFi Interface" Foreground="WhiteSmoke" VerticalAlignment="Top"/>
+        <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
+            <Label Content="WiFi Interface" Foreground="Black"/>
         </Viewbox>
 
 
-        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="25" AutoGenerateColumns="True"/>
+        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="20" AutoGenerateColumns="True" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B" RowBackground="#FFB68181"/>
         <Button x:Name="BtnBootload" Content="Bootload" Grid.Column="2" Margin="15" Grid.Row="3" Click="BtnBootload_Click" IsEnabled="{Binding btnEnabler}" />
         <Button x:Name="BtnConfig" Content="Configure" Grid.Column="2" Margin="15" Grid.Row="4" Click="BtnConfig_Click"  IsEnabled="{Binding btnEnabler}"/>
         <Button x:Name="BtnDatView" Content="Data View" Grid.Column="2" Margin="15" Grid.Row="5" Click="BtnDatView_Click" IsEnabled="{Binding btnEnabler}" />

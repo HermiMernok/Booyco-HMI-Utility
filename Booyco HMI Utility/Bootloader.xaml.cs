@@ -98,8 +98,11 @@ namespace Booyco_HMI_Utility
                 btnBootload.IsEnabled = false;
             }
 
-            if (bootchunks > 0 && BootSentIndex > 1 && !BootDone)
+            if (bootchunks > 0 && BootSentIndex > 1 && !BootDone && BootReady)
+            {
                 BootloadingProgress.Value = BootSentIndex / (double)bootchunks * 1000;
+                BootFlashPersentage = 100;
+            }                
             else
                 BootloadingProgress.Value = 0;
 
@@ -140,14 +143,14 @@ namespace Booyco_HMI_Utility
 
                     if (BootSentIndex == 0 && BootAckIndex == -1)
                     {
-                        //Thread.Sleep(10);
+                        Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
 
                     if (BootSentIndex < BootFileList.Count && BootAckIndex == BootSentIndex - 1)
                     {
-                        //Thread.Sleep(10);
+                        Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }

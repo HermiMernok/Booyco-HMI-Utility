@@ -7,8 +7,26 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1280" Background="White">
     <Grid>
-        <Button Content="Back" HorizontalAlignment="Left" Margin="1034,39,0,0" VerticalAlignment="Top" Width="236" Click="ButtonBack_Click" Height="72"/>
-        <Button Content="Open File" HorizontalAlignment="Left" Margin="1034,133,0,0" VerticalAlignment="Top" Width="236" Height="88" Click="ButtonOpenFile_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+        <Button Content="Back" Click="ButtonBack_Click" Grid.Column="4" Grid.Row="3" Margin="10"/>
+        <Button Content="Open File" Click="ButtonOpenFile_Click" Grid.Column="4" Grid.Row="2" Margin="10"/>
 
     </Grid>
 </UserControl>

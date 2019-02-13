@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Booyco HMI Utility")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Booyco Elctronics")]
 [assembly: AssemblyProduct("Booyco HMI Utility")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
