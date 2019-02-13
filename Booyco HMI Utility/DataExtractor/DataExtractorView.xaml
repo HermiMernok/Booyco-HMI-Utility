@@ -9,6 +9,7 @@
     <Grid>
         <Button Content="Back" HorizontalAlignment="Left" Margin="1034,39,0,0" VerticalAlignment="Top" Width="236" Click="ButtonBack_Click" Height="72"/>
         <Button Content="Open File" HorizontalAlignment="Left" Margin="1034,133,0,0" VerticalAlignment="Top" Width="236" Height="88" Click="ButtonOpenFile_Click"/>
+        <DataGrid x:Name="Datagrid_Logs" HorizontalAlignment="Left" Height="591" Margin="50,39,0,0" VerticalAlignment="Top" Width="950"/>
 
     </Grid>
 </UserControl>
