@@ -27,7 +27,8 @@ namespace Booyco_HMI_Utility
         private string logFilename = "";
         private static BackgroundWorker backgroundWorkerReadFile = new BackgroundWorker();
         private DataLogManagement dataLogManager = new DataLogManagement();
-    
+ 
+
 
         public DataExtractorView()
         {
@@ -49,6 +50,7 @@ namespace Booyco_HMI_Utility
         }
         private void ProcessLogFile(object sender, DoWorkEventArgs e)
         {
+            
             dataLogManager.ReadFile(logFilename);
         }
 

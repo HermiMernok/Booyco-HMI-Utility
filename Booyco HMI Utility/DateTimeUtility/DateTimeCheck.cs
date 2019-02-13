@@ -36,19 +36,28 @@ namespace Booyco_HMI_Utility
                     return (uint)Status.Error_3;
                 else if (!timestamp.Zip(EmptyEntry, (a, b) => (a == b)).Any(p => !p))
                     return (uint)Status.Error_4;
+                // FIXME: Gerotek - Time Update
+                //string DateTimeString = "20" + timestamp[0].ToString("X") + "/" +   // Year
+                //                               timestamp[1].ToString("X") + "/" +   // Month
+                //                               timestamp[2].ToString("X") + " " +   // Day
+                //                               timestamp[3].ToString("X") + ":" +   // Hour
+                //                               timestamp[4].ToString("X") + ":" +   //min
+                //                               timestamp[5].ToString("X");          //sec
 
-                string DateTimeString = "20" + timestamp[0].ToString("X") + "/" +   // Year
-                                               timestamp[1].ToString("X") + "/" +   // Month
-                                               timestamp[2].ToString("X") + " " +   // Day
-                                               timestamp[3].ToString("X") + ":" +   // Hour
-                                               timestamp[4].ToString("X") + ":" +   //min
-                                               timestamp[5].ToString("X");          //sec
+                string DateTimeString = "2018/" +   // Year
+                                        timestamp[1].ToString("X") + "/" +   // Month
+                                        timestamp[2].ToString("X") + " " +   // Day
+                                        timestamp[3].ToString("X") + ":" +   // Hour
+                                        timestamp[4].ToString("X") + ":" +   //min
+                                        timestamp[5].ToString("X") + "." +     //sec
+                                        timestamp[0].ToString();
+
 
                 if (DateTime.TryParse(DateTimeString, out _DateTimeStamp))
                 {
                     DateTimeStamp = _DateTimeStamp;
 
-                    if (_DateTimeStamp < Convert.ToDateTime("16/01/01 00:00:00"))
+                    if (_DateTimeStamp < Convert.ToDateTime("16/01/01 00:00:00.000"))
                     {
                         return (uint)Status.Error_2;
                     }
@@ -63,4 +72,5 @@ namespace Booyco_HMI_Utility
             catch (Exception ex) { return (uint)Status.Error_1; }
         }
     }
+    
 }
