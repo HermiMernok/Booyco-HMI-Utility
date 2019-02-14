@@ -15,10 +15,7 @@ namespace Booyco_HMI_Utility
     {
         public List<LPDEntry> LPDInfoList = new List<LPDEntry>();
         public List<LPDDataLookupEntry> LPDLookupList = new List<LPDDataLookupEntry>();
-
-        private System.Data.DataSet ds;
         string _LPDPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/LPD.xlsx";
-
         public void StoreLogProtocolInfo()
         {
             DataRowCollection _data = ReadExcelFile(_LPDPath, 0);
@@ -27,8 +24,9 @@ namespace Booyco_HMI_Utility
             foreach (DataRow _row in _lookup)
             {
                 try
-                {                
-                 
+
+                {
+
                     LPDLookupList.Add(new LPDDataLookupEntry
                     {
                         DataLink = Convert.ToString(_row.ItemArray[1]),
@@ -39,17 +37,18 @@ namespace Booyco_HMI_Utility
                         Appendix = Convert.ToString(_row.ItemArray[6])
 
                     });
-                    
-                    
+
                 }
                 catch
                 {
                     Console.WriteLine("====== Lookup Excel Read Fail ======");
                 }
-                
+
             }
 
+
                 foreach (DataRow _row in _data)
+
                 {
 
               
@@ -71,6 +70,7 @@ namespace Booyco_HMI_Utility
                             {
 
                                 if (_tempByteName == "0xFF" || _tempByteName == "Reserved" || _tempByteName == "")
+
                                 {
                                     i = 10;
                                     _tempData.Add(new LPDDataLookupEntry
@@ -80,6 +80,7 @@ namespace Booyco_HMI_Utility
                                 }
                             }
                         }
+
 
                     try
                     {
@@ -100,11 +101,66 @@ namespace Booyco_HMI_Utility
 
                 }
             }
-        
+
         }
+
+
+        
+        public List<Parameters> ParametersfromFile(string fileName)
+        {
+            List<Parameters> parameters = new List<Parameters>();
+            List<ParameterEnum> enums = new List<ParameterEnum>();
+            DataRowCollection _data = ReadExcelFile(fileName, 0);
+
+            foreach (DataRow _row in _data)
+            {
+                try
+                {
+
+
+                    parameters.Add(new Parameters
+                    {
+                        Name = Convert.ToString(_row.ItemArray[1]),
+                        CurrentValue = Convert.ToInt32(_row.ItemArray[2]),
+                        MaximumValue = Convert.ToInt32(_row.ItemArray[3]),
+                        MinimumValue = Convert.ToInt32(_row.ItemArray[4]),
+                        DefaultValue = Convert.ToInt32(_row.ItemArray[5]),
+                        type = Convert.ToInt16(_row.ItemArray[6]),
+                        enumVal = Convert.ToInt16(_row.ItemArray[7]),
+                    });
+
+                    if(_row.ItemArray[12] != null)
+                    {
+                        enums.Add(new ParameterEnum
+                        {
+                            enumVal = Convert.ToInt16(_row.ItemArray[12]),
+                            enumName = Convert.ToString(_row.ItemArray[13])
+                        });
+                    }
+                    
+
+                }
+                catch
+                {
+
+                }
+
+            }
+
+            foreach (var item in parameters)
+            {
+                item.parameterEnums = enums.Where(t => t.enumVal == item.enumVal).ToList();
+            }
+
+            return parameters;
+        }
+
+
+        public 
 
         DataRowCollection ReadExcelFile(string _fileName, int TableNumber)
         {
+            System.Data.DataSet ds;
             var extension = System.IO.Path.GetExtension(_fileName).ToLower();
             using (var stream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
