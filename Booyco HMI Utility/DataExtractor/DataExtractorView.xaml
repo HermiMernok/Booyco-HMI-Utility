@@ -5,11 +5,63 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1280" Background="White">
-    <Grid>
-        <Button Content="Back" HorizontalAlignment="Left" Margin="1034,39,0,0" VerticalAlignment="Top" Width="236" Click="ButtonBack_Click" Height="72"/>
-        <Button Content="Open File" HorizontalAlignment="Left" Margin="1034,133,0,0" VerticalAlignment="Top" Width="236" Height="88" Click="ButtonOpenFile_Click"/>
-        <DataGrid x:Name="Datagrid_Logs" HorizontalAlignment="Left" Height="591" Margin="50,39,0,0" VerticalAlignment="Top" Width="950"/>
+             d:DesignHeight="710" d:DesignWidth="1280" Background="White">
+    <Grid Margin="0,10,0,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+        <Button Content="Back" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="302" Click="ButtonBack_Click" Height="98" Grid.Column="4" Grid.Row="5"/>
+        <Button Content="Open File" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="297" Height="98" Click="ButtonOpenFile_Click" Grid.Column="4" Grid.Row="2"/>
+        <DataGrid x:Name="DataGridLogs" HorizontalAlignment="Left" Height="591" Margin="50,39,0,0" VerticalAlignment="Top" Width="950" SelectionChanged="Datagrid_Logs_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="1*" Header="No." Binding="{Binding Number}" MinWidth="60" MaxWidth="60"/>
+                <DataGridTextColumn Width="4*" Header="Date" Binding="{Binding DateTime, StringFormat='{}{0:dd/MM/yyyy}'}" MinWidth="80" MaxWidth="80" />
+                <DataGridTextColumn Width="4*" Header="Time" Binding="{Binding DateTime, StringFormat='{}{0:HH:mm:ss:fff}'}" MinWidth="80" MaxWidth="80" />
+                <DataGridTextColumn Width="2*" Header="Event ID" Binding="{Binding EventID}" MinWidth="60" MaxWidth="60"/>
+                <DataGridTextColumn Width="8*" Binding="{Binding RawData}" Header="Raw Data">
 
+                </DataGridTextColumn>
+                <!--<DataGridTextColumn Width="2*" Header="UID" Binding="{Binding UID}"/>
+                        <DataGridTextColumn Width="2*" Header="VID" Binding="{Binding VID}"/>-->
+                <DataGridTextColumn Width="10*" Binding="{Binding EventInfo}" Header="Event Information" >
+
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+        <ProgressBar x:Name="ProgressbarDataLogs" Background="Black" Foreground="#8c0909" Margin="7,13,19,11"  Minimum="0" Maximum="100" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="6" RenderTransformOrigin="0.5,0.5">
+            <ProgressBar.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ProgressBar.RenderTransform>
+        </ProgressBar>
+        <TextBlock x:Name="TextBlockProgressStatus" TextAlignment="Center" HorizontalAlignment="Center" Text="test" Foreground="White" Margin="0,11,0,12" Grid.ColumnSpan="4" Grid.Row="6" RenderTransformOrigin="0.5,0.5" Width="1270" Grid.Column="1">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1" ScaleX="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-180"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TextBlock.RenderTransform></TextBlock>
     </Grid>
 </UserControl>

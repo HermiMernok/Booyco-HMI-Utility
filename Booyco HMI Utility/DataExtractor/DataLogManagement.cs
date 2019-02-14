@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Booyco_HMI_Utility.CustomObservableCollection;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,9 +11,18 @@ namespace Booyco_HMI_Utility
 {
     class DataLogManagement    
     {
+        public Action<int> ReportProgressDelegate { get; set; }
+
+        private void ReportProgress(int percent)
+        {
+            if (ReportProgressDelegate != null)
+            {
+                ReportProgressDelegate(percent);
+            }
+        }
 
         #region Variables
-        public List<LogEntry> TempList = new List<LogEntry>();
+        public RangeObservableCollection<LogEntry> TempList = new RangeObservableCollection<LogEntry>();
         public UInt32 TotalLogEntries = 0;
         private const byte TOTAL_ENTRY_BYTES = 16;
         public UInt32 LogErrorDateTimeCounter = 0;
@@ -19,6 +30,7 @@ namespace Booyco_HMI_Utility
         #endregion
 
         public void ReadFile(string Log_Filename)
+
         {
             ExcelFilemanager.StoreLogProtocolInfo();
             byte[] _logBytes = { 0 };
@@ -33,7 +45,7 @@ namespace Booyco_HMI_Utility
 
             _logBytes = _breader.ReadBytes(_fileLength);
 
-            int Percentage_Complete = 0;
+            int PercentageComplete = 0;
             UInt32 UID = 0;
             UInt16 VID = 0;
             string Event_Information = " ";
@@ -164,6 +176,12 @@ namespace Booyco_HMI_Utility
                 else if (_dateTimeStatus == (uint)DateTimeCheck.Status.Error_4)
                 {
                     LogErrorDateTimeCounter++;
+                }
+
+                if ((i % (TotalLogEntries / 100)) == 0)
+                {
+                    PercentageComplete++;
+                    ReportProgress(PercentageComplete);
                 }
             }
 

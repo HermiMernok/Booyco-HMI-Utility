@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace Booyco_HMI_Utility
     public partial class MainWindow : Window
     {
         private DispatcherTimer dispatcherTimer;
-
+      
         public MainWindow()
         {
             InitializeComponent();

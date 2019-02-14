@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Booyco_HMI_Utility.CustomObservableCollection;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -23,18 +24,23 @@ namespace Booyco_HMI_Utility
     /// 
     public partial class DataExtractorView : UserControl
     {
-        private ObservableCollection<LogEntry> DataLogs;
+        private RangeObservableCollection<LogEntry> DataLogs;
         private string logFilename = "";
         private static BackgroundWorker backgroundWorkerReadFile = new BackgroundWorker();
         private DataLogManagement dataLogManager = new DataLogManagement();
- 
+
+
+        
 
 
         public DataExtractorView()
         {
             InitializeComponent();
-            ObservableCollection<LogEntry> DataLogs = new ObservableCollection<LogEntry>();
-
+            DataLogs = new RangeObservableCollection<LogEntry>();
+            DataGridLogs.AutoGenerateColumns = false;
+            DataGridLogs.ItemsSource = DataLogs;
+            DataGridLogs.IsReadOnly = true;
+            dataLogManager.ReportProgressDelegate += backgroundWorkerReadFile.ReportProgress;
             backgroundWorkerReadFile.WorkerReportsProgress = true;
             backgroundWorkerReadFile.DoWork += new DoWorkEventHandler(ProcessLogFile);
             backgroundWorkerReadFile.ProgressChanged += new ProgressChangedEventHandler(backgroundWorkerProgressChanged);
@@ -49,15 +55,23 @@ namespace Booyco_HMI_Utility
 
         }
         private void ProcessLogFile(object sender, DoWorkEventArgs e)
-        {
-            
+        {            
             dataLogManager.ReadFile(logFilename);
+            
         }
 
 
         public void backgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            ProgressbarDataLogs.Value = e.ProgressPercentage;
+            TextBlockProgressStatus.Text = "Upload (" + e.ProgressPercentage.ToString().PadLeft(3, '0') + "%"; 
+            if (e.ProgressPercentage > 100)
+            {
+                DataLogs.Clear();
+                DataLogs.AddRange(dataLogManager.TempList);
+                dataLogManager.TempList.Clear();
 
+            }
         }
 
             private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
@@ -85,6 +99,9 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.File;
         }
 
-      
+        private void Datagrid_Logs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

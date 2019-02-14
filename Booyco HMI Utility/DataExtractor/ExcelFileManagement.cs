@@ -27,78 +27,78 @@ namespace Booyco_HMI_Utility
             foreach (DataRow _row in _lookup)
             {
                 try
-                {
+                {                
                  
-                 
-                        LPDLookupList.Add(new LPDDataLookupEntry
-                        {
-                            DataLink = Convert.ToString(_row.ItemArray[1]),
-                            DataName = Convert.ToString(_row.ItemArray[2]),
-                            NumberBytes = Convert.ToInt32(_row.ItemArray[3]),
-                            Scale = Convert.ToInt32(_row.ItemArray[4]),
-                            IsInt = Convert.ToBoolean(_row.ItemArray[5]),
-                            Appendix = Convert.ToString(_row.ItemArray[6])
+                    LPDLookupList.Add(new LPDDataLookupEntry
+                    {
+                        DataLink = Convert.ToString(_row.ItemArray[1]),
+                        DataName = Convert.ToString(_row.ItemArray[2]),
+                        NumberBytes = Convert.ToInt32(_row.ItemArray[3]),
+                        Scale = Convert.ToInt32(_row.ItemArray[4]),
+                        IsInt = Convert.ToBoolean(_row.ItemArray[5]),
+                        Appendix = Convert.ToString(_row.ItemArray[6])
 
-                        });
+                    });
                     
                     
                 }
                 catch
                 {
-
+                    Console.WriteLine("====== Lookup Excel Read Fail ======");
                 }
                 
             }
 
                 foreach (DataRow _row in _data)
-            {
+                {
+
+              
                 List<LPDDataLookupEntry> _tempData = new List<LPDDataLookupEntry>();
 
-                if (_row.ItemArray.Count() == 10)
-                {
-                    for (int i = 2; i < 10; i++)
+                    if (_row.ItemArray.Count() == 10)
                     {
-                        string _tempByteName = Convert.ToString(_row.ItemArray[i]);
-
-
-                        if (LPDLookupList.Any(p => p.DataLink == _tempByteName))
+                        for (int i = 2; i < 10; i++)
                         {
-                            _tempData.Add(LPDLookupList.FirstOrDefault(p => p.DataLink == _tempByteName));
+                            string _tempByteName = Convert.ToString(_row.ItemArray[i]);
 
-                            //Buffer.BlockCopy(_logChuncks, 0, _logTimeStamp, 0, 6);     
 
-                        }
-                        else
-                        {
-
-                            if (_tempByteName == "0xFF" || _tempByteName == "Reserved" || _tempByteName == "")
+                            if (LPDLookupList.Any(p => p.DataLink == _tempByteName))
                             {
-                               i = 10;
-                                _tempData.Add(new LPDDataLookupEntry
+                                _tempData.Add(LPDLookupList.FirstOrDefault(p => p.DataLink == _tempByteName));
+                                //Buffer.BlockCopy(_logChuncks, 0, _logTimeStamp, 0, 6);    
+                            }
+                            else
+                            {
+
+                                if (_tempByteName == "0xFF" || _tempByteName == "Reserved" || _tempByteName == "")
                                 {
-                                    DataLink = "Empty"
-                                });
+                                    i = 10;
+                                    _tempData.Add(new LPDDataLookupEntry
+                                    {
+                                        DataLink = "Empty"
+                                    });
+                                }
                             }
                         }
 
+                    try
+                    {
+                        LPDInfoList.Add(new LPDEntry
+
+                        {
+                            EventID = Convert.ToUInt16(_row.ItemArray[0]),
+                            EventName = Convert.ToString(_row.ItemArray[1]),
+                            Data = _tempData
+
+                        });
                     }
-         
-                
-
-
-                LPDInfoList.Add(new LPDEntry
-
-                {
-                    EventID = Convert.ToUInt16(_row.ItemArray[0]),
-                    EventName = Convert.ToString(_row.ItemArray[1]),
-                    Data = _tempData
-
-                });
+                    catch
+                    {
+                        Console.WriteLine("====== Log Excel Read Fail ======");
+                    }
+                    
 
                 }
-
-
-
             }
         
         }

@@ -89,6 +89,7 @@
     <Compile Include="ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
       <DependentUpon>DataExtractorView.xaml</DependentUpon>
     </Compile>
