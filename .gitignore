@@ -194,3 +194,5 @@ _Pvt_Extensions/
 ModelManifest.xml
 .vs/Mernok RFID Licence Studio/v15/Server/sqlite3/storage.ide-shm
 .vs/Booyco HMI Utility/v15/Server/sqlite3/storage.ide-wal
+*.ide-shm
+*.ide-wal
