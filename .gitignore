@@ -196,3 +196,6 @@ ModelManifest.xml
 .vs/Booyco HMI Utility/v15/Server/sqlite3/storage.ide-wal
 *.ide-shm
 *.ide-wal
+.vs/Booyco HMI Utility/v15/Server/sqlite3/storage.ide
+.vs/Booyco HMI Utility/v15/Server/sqlite3/storage.ide-shm
+.vs/Booyco HMI Utility/v15/Server/sqlite3/storage.ide-wal

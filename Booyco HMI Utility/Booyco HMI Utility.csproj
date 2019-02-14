@@ -104,6 +104,7 @@
       <DependentUpon>GPRSView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataExtractor\LPDEntry.cs" />
+    <Compile Include="Parameters.cs" />
     <Compile Include="ProgrammingDone.xaml.cs">
       <DependentUpon>ProgrammingDone.xaml</DependentUpon>
     </Compile>
@@ -192,6 +193,9 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\Documents\CommanderParametersFile.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Documents\LPD.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
