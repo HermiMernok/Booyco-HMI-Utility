@@ -104,53 +104,59 @@ namespace Booyco_HMI_Utility
 
         }
 
-
-        
         public List<Parameters> ParametersfromFile(string fileName)
         {
             List<Parameters> parameters = new List<Parameters>();
+            
             List<ParameterEnum> enums = new List<ParameterEnum>();
+
+            List<string> AssetType = new List<string>();
+            MernokAssetFile mernokAssetFile = new MernokAssetFile();
+            mernokAssetFile = MernokAssetManager.ReadMernokAssetFile();
+
+            AssetType = mernokAssetFile.mernokAssetList.Select(t => t.TypeName).ToList();
+
             DataRowCollection _data = ReadExcelFile(fileName, 0);
 
             foreach (DataRow _row in _data)
             {
                 try
                 {
-
-
                     parameters.Add(new Parameters
                     {
-                        Name = Convert.ToString(_row.ItemArray[1]),
-                        CurrentValue = Convert.ToInt32(_row.ItemArray[2]),
-                        MaximumValue = Convert.ToInt32(_row.ItemArray[3]),
-                        MinimumValue = Convert.ToInt32(_row.ItemArray[4]),
-                        DefaultValue = Convert.ToInt32(_row.ItemArray[5]),
-                        type = Convert.ToInt16(_row.ItemArray[6]),
-                        enumVal = Convert.ToInt16(_row.ItemArray[7]),
+                        Name = Convert.ToString(_row.ItemArray[0]),
+                        CurrentValue = Convert.ToInt32(_row.ItemArray[1]),
+                        MaximumValue = Convert.ToInt32(_row.ItemArray[2]),
+                        MinimumValue = Convert.ToInt32(_row.ItemArray[3]),
+                        DefaultValue = Convert.ToInt32(_row.ItemArray[4]),
+                        Ptype = Convert.ToInt16(_row.ItemArray[5]),
+                        enumVal = Convert.ToInt16(_row.ItemArray[6]),
                     });
 
-                    if(_row.ItemArray[12] != null)
+                    if(_row.ItemArray[12].ToString() != "")
                     {
                         enums.Add(new ParameterEnum
                         {
                             enumVal = Convert.ToInt16(_row.ItemArray[12]),
                             enumName = Convert.ToString(_row.ItemArray[13])
                         });
-                    }
-                    
+                    }                   
 
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    Console.WriteLine("Parametr from excel error: " + e.ToString());
                 }
 
             }
 
             foreach (var item in parameters)
             {
-                item.parameterEnums = enums.Where(t => t.enumVal == item.enumVal).ToList();
-            }
+                if (item.enumVal != 3)
+                    item.parameterEnums = enums.Where(t => t.enumVal == item.enumVal).Select(t => t.enumName).ToList();
+                else
+                    item.parameterEnums = AssetType;
+            }           
 
             return parameters;
         }

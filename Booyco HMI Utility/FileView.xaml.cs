@@ -35,5 +35,10 @@ namespace Booyco_HMI_Utility
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
         }
+
+        private void ButtonConfigViewer_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Confiure;
+        }
     }
 }

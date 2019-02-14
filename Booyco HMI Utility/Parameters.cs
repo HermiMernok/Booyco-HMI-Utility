@@ -13,10 +13,18 @@ namespace Booyco_HMI_Utility
         public int MaximumValue;
         public int MinimumValue;
         public int DefaultValue;
-        public int type;
+        public int Ptype;
         public int enumVal;
-        public List<ParameterEnum> parameterEnums;
-    }    
+        public List<string> parameterEnums;
+
+    }
+    
+    public class ParametersDisplay
+    {
+        public int OriginIndx { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
+    }
 
     public class ParameterEnum
     {

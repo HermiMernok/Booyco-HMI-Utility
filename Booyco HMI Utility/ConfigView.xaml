@@ -29,10 +29,35 @@
         </Viewbox>
 
         <!--<DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="20" AutoGenerateColumns="True" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B" RowBackground="#FFB68181"/>-->
-        
+
         <Button Content="Refresh" Grid.Column="2" Grid.Row="3" Margin="10"/>
         <Button Content="Open File" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="4" Margin="10"/>
         <Button Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
+        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="1*" Header="Parameter" Binding="{Binding Name}" />
+                <DataGridTemplateColumn Header="Value" Width="1.*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="5*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button  Grid.Row="3" Grid.Column="0" Content="&lt;" Click="min_Button_Click"></Button>
+                                <TextBox Grid.Row="3" Grid.Column="1"  Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  MaxLength="3" PreviewTextInput="TextBox_PreviewTextInput" />
+                                <Button  Grid.Row="3" Grid.Column="2"  Content="&gt;" Click="max_Button_Click" ></Button>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
