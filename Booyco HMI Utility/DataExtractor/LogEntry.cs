@@ -51,8 +51,21 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private string _rawData;
-        public string RawData
+        private string _eventName;
+        public string EventName
+        {
+            get
+            {
+                return _eventName;
+            }
+            set
+            {
+                _eventName = value;
+                OnPropertyChanged("EventName");
+            }
+        }
+        private byte[] _rawData;
+        public byte[] RawData
         {
             get
             {
@@ -88,7 +101,7 @@ namespace Booyco_HMI_Utility
             }
             set
             {
-                _rawData = value;
+                _eventInfo = value;
                 OnPropertyChanged("EventInfo");
             }
         }
