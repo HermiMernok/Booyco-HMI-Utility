@@ -143,14 +143,14 @@ namespace Booyco_HMI_Utility
 
                     if (BootSentIndex == 0 && BootAckIndex == -1)
                     {
-                        Thread.Sleep(10);
+                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
 
                     if (BootSentIndex < BootFileList.Count && BootAckIndex == BootSentIndex - 1)
                     {
-                        Thread.Sleep(10);
+                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }

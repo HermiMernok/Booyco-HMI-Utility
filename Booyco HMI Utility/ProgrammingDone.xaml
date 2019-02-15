@@ -33,7 +33,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Bootload Compleate!" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="50"/>
+            <Label Content="Bootload Complete!" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="50"/>
             <Button x:Name="btnProgramDone" Content="OK" Grid.Column="1" Grid.Row="2" Click="BtnProgramDone_Click" />
         </Grid>
     </Grid>
