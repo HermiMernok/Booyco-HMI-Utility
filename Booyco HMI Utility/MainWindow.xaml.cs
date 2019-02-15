@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+
 namespace Booyco_HMI_Utility
 {
     /// <summary>
@@ -88,8 +89,15 @@ namespace Booyco_HMI_Utility
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Dataview)
             {
+                DataExtractorView.DisplayWindowMap();
                 BootView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
+                MapView.Visibility = Visibility.Collapsed;
                 DataExtractorView.Visibility = Visibility.Visible;
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Mapview)
+            {
+                MapView.Visibility = Visibility.Visible;
+                
             }
             else
             {
@@ -100,7 +108,8 @@ namespace Booyco_HMI_Utility
             {
                 ProgrammingDone.Visibility = Visibility.Visible;
                 Bootloader.BootDone = false;
-            }                
+            }
+         
             //else
             //    ProgrammingDone.Visibility = Visibility.Collapsed;
 

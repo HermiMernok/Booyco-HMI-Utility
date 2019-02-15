@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace Booyco_HMI_Utility
 {
     /// <summary>
@@ -30,7 +31,7 @@ namespace Booyco_HMI_Utility
         private DataLogManagement dataLogManager = new DataLogManagement();
 
 
-        
+
 
 
         public DataExtractorView()
@@ -46,7 +47,7 @@ namespace Booyco_HMI_Utility
             backgroundWorkerReadFile.ProgressChanged += new ProgressChangedEventHandler(backgroundWorkerProgressChanged);
         }
 
-       /// <summary>
+        /// <summary>
         /// 
         /// </summary>
         void OpenFile()
@@ -55,16 +56,16 @@ namespace Booyco_HMI_Utility
 
         }
         private void ProcessLogFile(object sender, DoWorkEventArgs e)
-        {            
+        {
             dataLogManager.ReadFile(logFilename);
-            
+
         }
 
 
         public void backgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            ProgressbarDataLogs.Value = e.ProgressPercentage;
-            TextBlockProgressStatus.Text = "Upload (" + e.ProgressPercentage.ToString().PadLeft(3, '0') + "%"; 
+
+
             if (e.ProgressPercentage > 100)
             {
                 DataLogs.Clear();
@@ -72,25 +73,30 @@ namespace Booyco_HMI_Utility
                 dataLogManager.TempList.Clear();
 
             }
+            else
+            {
+                ProgressbarDataLogs.Value = e.ProgressPercentage;
+                TextBlockProgressStatus.Text = "Upload (" + e.ProgressPercentage.ToString().PadLeft(3, '0') + "%)";
+            }
         }
 
-            private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
+        private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
 
             openFileDialog.DefaultExt = "All files(*.*)";
             openFileDialog.Filter = "Log Fils (*.Mer) | *.Mer | Text Files (*.txt) | *.txt | All files(*.*) | *.*";
-          
+
             if (openFileDialog.ShowDialog() == true)
             {
                 logFilename = openFileDialog.FileName;
 
                 // Start the background worker           
-                
+
                 if (!backgroundWorkerReadFile.IsBusy)
                 {
                     backgroundWorkerReadFile.RunWorkerAsync();
-                }                      
+                }
             }
         }
 
@@ -103,5 +109,46 @@ namespace Booyco_HMI_Utility
         {
 
         }
+        private void ButtonMap_Click(object sender, RoutedEventArgs e)
+        {
+            //MapWindow MapWindow = new MapWindow();
+            //MapWindow.Show();
+
+            //Window window = new Window
+            //{
+            //    Title = "Booyco HMI Utility: Map",
+            //    Content = new MapView(),
+            //    Height = 800,
+            //    Width = 1280
+            //};
+
+
+
+            //window.Show();
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Mapview;
+
+        }
+
+        public void DisplayWindowMap()
+        {
+            if (GlobalSharedData.ViewMode == true)
+            {
+                 Window window = new Window
+                {
+                    Title = "Booyco HMI Utility: Map",
+                    Content = new MapView(),
+                    Height = 800,
+                    Width = 1280
+                };
+
+                window.Show();
+                GlobalSharedData.ViewMode = false;
+
+
+            }
+
+        }
+
+            
     }
 }

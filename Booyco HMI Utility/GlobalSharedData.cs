@@ -16,8 +16,10 @@ namespace Booyco_HMI_Utility
         GPRS,
         Bootload,
         Confiure,
-        Dataview
+        Dataview,
+        Mapview
     }
+
 
     public static class ProgramFlow
     {
@@ -33,6 +35,7 @@ namespace Booyco_HMI_Utility
         public static List<NetworkDevice> NetworkDevices = new List<NetworkDevice>();
         public static int SelectedDevice { get; set; }
         public static string WiFiApStatus;
+        public static bool  ViewMode = false;
 
     }
 }

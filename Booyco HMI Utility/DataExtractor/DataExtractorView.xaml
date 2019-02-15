@@ -27,7 +27,7 @@
         </Grid.ColumnDefinitions>
         <Button Content="Back" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="302" Click="ButtonBack_Click" Height="98" Grid.Column="4" Grid.Row="5"/>
         <Button Content="Open File" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="297" Height="98" Click="ButtonOpenFile_Click" Grid.Column="4" Grid.Row="2"/>
-        <DataGrid x:Name="DataGridLogs" HorizontalAlignment="Left" Height="591" Margin="50,39,0,0" VerticalAlignment="Top" Width="950" SelectionChanged="Datagrid_Logs_SelectionChanged">
+        <DataGrid x:Name="DataGridLogs" FontSize="16" HorizontalAlignment="Left" Height="452" Margin="10,10,0,0" VerticalAlignment="Top" Width="933" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="3" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Header="No." Binding="{Binding Number}" MinWidth="60" MaxWidth="60"/>
                 <DataGridTextColumn Width="4*" Header="Date" Binding="{Binding DateTime, StringFormat='{}{0:dd/MM/yyyy}'}" MinWidth="80" MaxWidth="80" />
@@ -54,7 +54,7 @@
                 </TransformGroup>
             </ProgressBar.RenderTransform>
         </ProgressBar>
-        <TextBlock x:Name="TextBlockProgressStatus" TextAlignment="Center" HorizontalAlignment="Center" Text="test" Foreground="White" Margin="0,11,0,12" Grid.ColumnSpan="4" Grid.Row="6" RenderTransformOrigin="0.5,0.5" Width="1270" Grid.Column="1">
+        <TextBlock x:Name="TextBlockProgressStatus" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="test" Foreground="White" Margin="0,11,0,12" Grid.ColumnSpan="4" Grid.Row="6" RenderTransformOrigin="0.5,0.5" Width="1270" Grid.Column="1">
             <TextBlock.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="-1" ScaleX="-1"/>
@@ -63,5 +63,6 @@
                     <TranslateTransform/>
                 </TransformGroup>
             </TextBlock.RenderTransform></TextBlock>
+        <Button Content="Map" HorizontalAlignment="Left" Margin="10.5,10,0,0" VerticalAlignment="Top" Width="296" Height="98" Click="ButtonMap_Click" Grid.Column="4" Grid.Row="3"/>
     </Grid>
 </UserControl>
