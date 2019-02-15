@@ -34,9 +34,9 @@
         <Button Content="Open File" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="4" Margin="10"/>
         <Button Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
-        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" >
             <DataGrid.Columns>
-                <DataGridTextColumn Width="1*" Header="Parameter" Binding="{Binding Name}" />
+                <DataGridTextColumn Width="1*" Header="Parameter" Binding="{Binding Name}" IsReadOnly="True"/>
                 <DataGridTemplateColumn Header="Value" Width="1.*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -49,9 +49,11 @@
                                     <ColumnDefinition Width="5*"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button  Grid.Row="3" Grid.Column="0" Content="&lt;" Click="min_Button_Click"></Button>
-                                <TextBox Grid.Row="3" Grid.Column="1"  Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  MaxLength="3" PreviewTextInput="TextBox_PreviewTextInput" />
-                                <Button  Grid.Row="3" Grid.Column="2"  Content="&gt;" Click="max_Button_Click" ></Button>
+                                <Button x:Name="BtnMinDatagrid"  Grid.Row="3" Grid.Column="0" Content="&lt;" Click="min_Button_Click" Visibility="{Binding BtnVisibility}">
+                                </Button>
+                                <TextBox Grid.Row="3" Grid.Column="1"  Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="{Binding LablEdit}"  TextChanged="TextBox_TextChanged" />
+                                <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding parameterEnums}" Visibility="{Binding dropDownVisibility}" SelectedIndex="{Binding EnumIndx}" SelectionChanged="ComboBox_SelectionChanged" />
+                                <Button  Grid.Row="3" Grid.Column="2"  Content="&gt;" Click="max_Button_Click" Visibility="{Binding BtnVisibility}"></Button>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

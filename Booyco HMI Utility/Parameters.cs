@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Booyco_HMI_Utility
 {
@@ -24,6 +25,12 @@ namespace Booyco_HMI_Utility
         public int OriginIndx { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
+        public Visibility BtnVisibility { get; set; }
+        public Visibility textBoxVisibility { get; set; }
+        public Visibility dropDownVisibility { get; set; }
+        public bool LablEdit { get; set; }
+        public List<string> parameterEnums { get; set; }
+        public int EnumIndx { get; set; }
     }
 
     public class ParameterEnum

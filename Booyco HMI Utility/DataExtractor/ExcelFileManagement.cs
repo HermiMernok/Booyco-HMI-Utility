@@ -155,7 +155,11 @@ namespace Booyco_HMI_Utility
                 if (item.enumVal != 3)
                     item.parameterEnums = enums.Where(t => t.enumVal == item.enumVal).Select(t => t.enumName).ToList();
                 else
+                {
                     item.parameterEnums = AssetType;
+                    item.MaximumValue = AssetType.Count - 1;
+                }
+                    
             }           
 
             return parameters;

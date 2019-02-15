@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Windows.Threading;
 
 namespace Booyco_HMI_Utility
 {
@@ -33,13 +34,14 @@ namespace Booyco_HMI_Utility
         }
         /////////////////////////////////////////////////////////////
         #endregion
-           
         public ConfigView()
         {
             DataContext = this;
+            generalFunctions = new GeneralFunctions();
             InitializeComponent();
-        }
 
+        }
+        GeneralFunctions generalFunctions;
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
@@ -60,24 +62,44 @@ namespace Booyco_HMI_Utility
             List<ParametersDisplay> parametersDisplays = new List<ParametersDisplay>();
             string VehicleName = "";
             string valueString = "";
+            Visibility btnvisibility = Visibility.Collapsed;
+            Visibility drpDwnVisibility = Visibility.Collapsed;
+            bool EditLbl = true;
+            int enumIndx = -1;
 
             for (int i = 0; i < parameters.Count; i++)
             {
                 if (parameters[i].Ptype == 0)
                 {
                     valueString = parameters[i].CurrentValue.ToString();
+                    enumIndx = -1;
+                    btnvisibility = Visibility.Visible;
+                    drpDwnVisibility = Visibility.Collapsed;
+                    EditLbl = false;
                 }
                 else if (parameters[i].Ptype == 1)
                 {
                     valueString = (parameters[i].CurrentValue == 1) ? "true" : "false";
+                    enumIndx = -1;
+                    btnvisibility = Visibility.Visible;
+                    drpDwnVisibility = Visibility.Collapsed;
+                    EditLbl = true;
                 }
                 else if (parameters[i].Ptype == 2)
                 {
                     valueString = parameters[i].parameterEnums[parameters[i].CurrentValue];
+                    enumIndx = parameters[i].CurrentValue;
+                    btnvisibility = Visibility.Visible;
+                    drpDwnVisibility = Visibility.Visible;
+                    EditLbl = true;
                 }
                 else if (parameters[i].Ptype == 4)
                 {
                     VehicleName += Convert.ToChar(parameters[i].CurrentValue);
+                    enumIndx = -1;
+                    btnvisibility = Visibility.Collapsed;
+                    drpDwnVisibility = Visibility.Collapsed;
+                    EditLbl = false;
                 }
 
                 if (!parameters[i].Name.Contains("Name") && !parameters[i].Name.Contains("Reserved"))
@@ -86,7 +108,12 @@ namespace Booyco_HMI_Utility
                     {
                         OriginIndx = i,
                         Name = parameters[i].Name,
-                        Value = valueString
+                        Value = valueString,
+                        BtnVisibility = btnvisibility,
+                        dropDownVisibility = drpDwnVisibility,
+                        LablEdit = EditLbl,
+                        parameterEnums = parameters[i].parameterEnums,
+                        EnumIndx = enumIndx
                     });
                 }
                 else if (parameters[i].Name.Contains("Name 20"))
@@ -95,7 +122,10 @@ namespace Booyco_HMI_Utility
                     {
                         OriginIndx = i,
                         Name = "Name",
-                        Value = VehicleName
+                        Value = VehicleName,
+                        BtnVisibility = btnvisibility,
+                        dropDownVisibility = drpDwnVisibility,
+                        LablEdit = EditLbl
                     });
                 }
 
@@ -120,21 +150,70 @@ namespace Booyco_HMI_Utility
             get { return disp_parameters; }
             set { disp_parameters = value; OnPropertyChanged("Disp_Parameters"); }
         }
-        #endregion
-
-        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-
-        }
+        #endregion     
 
         private void min_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            if (DGparameters.SelectedIndex != -1)
+            {
+                int temp = DGparameters.SelectedIndex;
+                if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue > parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
+                {
+                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue--;
+                }
+                else if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue == parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
+                {
+                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue;
+                }
+                Disp_Parameters = ParametersToDisplay(parameters);
+                DGparameters.SelectedIndex = temp;
+            }
         }
 
         private void max_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (DGparameters.SelectedIndex != -1)
+            {
+                int temp = DGparameters.SelectedIndex;
+                if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue < parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue)
+                {
+                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue++;
+                }
+                else if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue == parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue)
+                {
+                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue;
+                }
+                Disp_Parameters = ParametersToDisplay(parameters);
+                DGparameters.SelectedIndex = temp;
+            }
+        }
 
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 4)
+            {
+                TextBox textBox = (TextBox)sender;
+                textBox.Text = generalFunctions.StringConditioner(textBox.Text);
+                textBox.SelectionStart = textBox.Text.Length;
+            }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            if (DGparameters.SelectedIndex != -1 && comboBox.SelectedIndex != -1)
+            {                
+                int temp = DGparameters.SelectedIndex;
+                if(comboBox.SelectedIndex < parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue && comboBox.SelectedIndex > parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
+                {
+                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;
+                    Disp_Parameters[DGparameters.SelectedIndex].EnumIndx = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue;
+                }
+                    
+
+                //Disp_Parameters = ParametersToDisplay(parameters);
+                DGparameters.SelectedIndex = temp;
+            }
         }
     }
 }
