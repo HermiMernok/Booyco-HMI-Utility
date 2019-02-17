@@ -165,7 +165,8 @@ namespace Booyco_HMI_Utility
                 {
                     parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue;
                 }
-                Disp_Parameters = ParametersToDisplay(parameters);
+
+                Disp_Parameters = ParametersToDisplay(parameters);               
                 DGparameters.SelectedIndex = temp;
             }
         }
@@ -183,7 +184,8 @@ namespace Booyco_HMI_Utility
                 {
                     parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue;
                 }
-                Disp_Parameters = ParametersToDisplay(parameters);
+
+                Disp_Parameters = ParametersToDisplay(parameters);               
                 DGparameters.SelectedIndex = temp;
             }
         }
@@ -201,19 +203,44 @@ namespace Booyco_HMI_Utility
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            if (DGparameters.SelectedIndex != -1 && comboBox.SelectedIndex != -1)
+            if (DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 2)
             {                
-                int temp = DGparameters.SelectedIndex;
-                if(comboBox.SelectedIndex < parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue && comboBox.SelectedIndex > parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
-                {
-                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;
-                    Disp_Parameters[DGparameters.SelectedIndex].EnumIndx = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue;
-                }
+                //int temp = DGparameters.SelectedIndex;
+                //if(comboBox.SelectedIndex < parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue && comboBox.SelectedIndex > parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
+                //{
+                //    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;
+                //    Disp_Parameters[DGparameters.SelectedIndex].EnumIndx = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue;
+                //}
                     
 
                 //Disp_Parameters = ParametersToDisplay(parameters);
-                DGparameters.SelectedIndex = temp;
+                //DGparameters.SelectedIndex = temp;
             }
+        }
+
+        private void ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;           
+            Disp_Parameters = ParametersToDisplay(parameters);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Save_ParaMetersToFile();
+        }
+
+        public void Save_ParaMetersToFile()
+        {
+            byte[] paraMeterBytes = new byte[parameters.Count*4];
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue),0,paraMeterBytes,i*4,4);
+            }
+
+            string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
+            File.WriteAllText("Parameters.mer", hex);
         }
     }
 }

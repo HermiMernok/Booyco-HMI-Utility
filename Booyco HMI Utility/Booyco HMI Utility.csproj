@@ -282,13 +282,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-  
     <WCFMetadata Include="Connected Services\" />
-    <Resource Include="Resources\Documents\MernokAssetList.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Documents\MernokClientList.xml" />
-    <Resource Include="Resources\Documents\MernokProductList.xml" />
+    <Content Include="Resources\Documents\MernokAssetList.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Documents\MernokClientList.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Documents\MernokProductList.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon2.ico" />

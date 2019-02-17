@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Booyco_HMI_Utility.Properties
-{
-
-
+namespace Booyco_HMI_Utility.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -19,52 +19,132 @@ namespace Booyco_HMI_Utility.Properties
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources
-    {
-
+    internal class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
-        {
+        internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if ((resourceMan == null))
-                {
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Booyco_HMI_Utility.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] CommanderParametersFile {
+            get {
+                object obj = ResourceManager.GetObject("CommanderParametersFile", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] LPD {
+            get {
+                object obj = ResourceManager.GetObject("LPD", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;MernokAssetFile xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///  &lt;mernokAssetList&gt;
+        ///    &lt;MernokAsset&gt;
+        ///      &lt;Type&gt;1&lt;/Type&gt;
+        ///      &lt;Group&gt;9&lt;/Group&gt;
+        ///      &lt;GroupName&gt;System Specific&lt;/GroupName&gt;
+        ///      &lt;TypeName&gt;Low speed zone&lt;/TypeName&gt;
+        ///      &lt;IsLicensable&gt;false&lt;/IsLicensable&gt;
+        ///    &lt;/MernokAsset&gt;
+        ///    &lt;MernokAsset&gt;
+        ///      &lt;Type&gt;2&lt;/Type&gt;
+        ///      &lt;Group&gt;9&lt;/Group&gt;
+        ///      &lt;GroupName&gt;System Specific&lt;/GroupName&gt;
+        ///       [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MernokAssetList {
+            get {
+                return ResourceManager.GetString("MernokAssetList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;MernokClientFile xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///  &lt;mernokClientList&gt;
+        ///    &lt;MernokClient&gt;
+        ///      &lt;Client&gt;0&lt;/Client&gt;
+        ///      &lt;Group&gt;0&lt;/Group&gt;
+        ///      &lt;ClientSiteName&gt;None&lt;/ClientSiteName&gt;
+        ///      &lt;ClientGroupName&gt;None&lt;/ClientGroupName&gt;
+        ///    &lt;/MernokClient&gt;
+        ///    &lt;MernokClient&gt;
+        ///      &lt;Client&gt;1&lt;/Client&gt;
+        ///      &lt;Group&gt;1&lt;/Group&gt;
+        ///      &lt;ClientSiteName&gt;Mponeng&lt;/ClientSiteName&gt;
+        ///      &lt;ClientGroupName&gt;Anglogo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MernokClientList {
+            get {
+                return ResourceManager.GetString("MernokClientList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;MernokProductFile xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///  &lt;mernokProductList&gt;
+        ///    &lt;MernokProduct&gt;
+        ///      &lt;Product&gt;0&lt;/Product&gt;
+        ///      &lt;ProductName&gt;None&lt;/ProductName&gt;
+        ///    &lt;/MernokProduct&gt;
+        ///    &lt;MernokProduct&gt;
+        ///      &lt;Product&gt;1&lt;/Product&gt;
+        ///      &lt;ProductName&gt;VMS&lt;/ProductName&gt;
+        ///    &lt;/MernokProduct&gt;
+        ///    &lt;MernokProduct&gt;
+        ///      &lt;Product&gt;2&lt;/Product&gt;
+        ///      &lt;ProductName&gt;MAXUS&lt;/ProductName&gt;
+        ///    &lt;/MernokProduct&gt;        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MernokProductList {
+            get {
+                return ResourceManager.GetString("MernokProductList", resourceCulture);
             }
         }
     }

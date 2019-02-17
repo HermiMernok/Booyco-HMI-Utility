@@ -56,7 +56,8 @@ namespace Booyco_HMI_Utility
             //todo: add exception handling
             //Try Read the XML file
             XmlSerializer deserializer = new XmlSerializer(typeof(MernokAssetFile));
-            //string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+            string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+            //TextReader reader = new StreamReader(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/MernokAssetList.xml");
             TextReader reader = new StreamReader(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/MernokAssetList.xml");
             MernokAssetContent = reader.ReadToEnd();
             reader = new StringReader((string)MernokAssetContent.Clone());
