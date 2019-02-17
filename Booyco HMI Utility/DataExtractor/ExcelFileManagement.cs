@@ -131,6 +131,8 @@ namespace Booyco_HMI_Utility
                         DefaultValue = Convert.ToInt32(_row.ItemArray[4]),
                         Ptype = Convert.ToInt16(_row.ItemArray[5]),
                         enumVal = Convert.ToInt16(_row.ItemArray[6]),
+                        Group = Convert.ToString(_row.ItemArray[7]),
+                        SubGroup = Convert.ToString(_row.ItemArray[8])
                     });
 
                     if(_row.ItemArray[12].ToString() != "")
@@ -166,9 +168,7 @@ namespace Booyco_HMI_Utility
         }
 
 
-        public 
-
-        DataRowCollection ReadExcelFile(string _fileName, int TableNumber)
+        public DataRowCollection ReadExcelFile(string _fileName, int TableNumber)
         {
             System.Data.DataSet ds;
             var extension = System.IO.Path.GetExtension(_fileName).ToLower();

@@ -14,6 +14,8 @@ namespace Booyco_HMI_Utility
         public int MaximumValue;
         public int MinimumValue;
         public int DefaultValue;
+        public string Group;
+        public string SubGroup;
         public int Ptype;
         public int enumVal;
         public List<string> parameterEnums;
@@ -23,6 +25,8 @@ namespace Booyco_HMI_Utility
     public class ParametersDisplay
     {
         public int OriginIndx { get; set; }
+        public string Group { get; set; }
+        public string SubGroup { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
         public Visibility BtnVisibility { get; set; }

@@ -24,7 +24,9 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class ConfigView : UserControl, INotifyPropertyChanged
     {
-
+        PropertyGroupDescription groupDescription = new PropertyGroupDescription("Group");
+        PropertyGroupDescription SubgroupDescription = new PropertyGroupDescription("SubGroup");
+        CollectionView parametrsGroup;
         #region OnProperty Changed
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
@@ -39,6 +41,7 @@ namespace Booyco_HMI_Utility
             DataContext = this;
             generalFunctions = new GeneralFunctions();
             InitializeComponent();
+            
 
         }
         GeneralFunctions generalFunctions;
@@ -54,7 +57,9 @@ namespace Booyco_HMI_Utility
             string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/CommanderParametersFile.xlsx";
             Parameters = excelFileManagement.ParametersfromFile(_parameterPath);
             Disp_Parameters = ParametersToDisplay(parameters);
-
+            parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+            parametrsGroup.GroupDescriptions.Add(groupDescription);
+            parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
         }
 
         public List<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
@@ -113,7 +118,9 @@ namespace Booyco_HMI_Utility
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
                         parameterEnums = parameters[i].parameterEnums,
-                        EnumIndx = enumIndx
+                        EnumIndx = enumIndx,
+                        Group = Parameters[i].Group,
+                        SubGroup = parameters[i].SubGroup
                     });
                 }
                 else if (parameters[i].Name.Contains("Name 20"))
@@ -125,9 +132,11 @@ namespace Booyco_HMI_Utility
                         Value = VehicleName,
                         BtnVisibility = btnvisibility,
                         dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl
+                        LablEdit = EditLbl,
+                        Group = Parameters[i].Group,
+                        SubGroup = parameters[i].SubGroup
                     });
-                }
+                }              
 
             }
 
@@ -166,7 +175,10 @@ namespace Booyco_HMI_Utility
                     parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue;
                 }
 
-                Disp_Parameters = ParametersToDisplay(parameters);               
+                Disp_Parameters = ParametersToDisplay(parameters);
+                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+                parametrsGroup.GroupDescriptions.Add(groupDescription);
+                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
                 DGparameters.SelectedIndex = temp;
             }
         }
@@ -185,7 +197,7 @@ namespace Booyco_HMI_Utility
                     parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue;
                 }
 
-                Disp_Parameters = ParametersToDisplay(parameters);               
+                Disp_Parameters = ParametersToDisplay(parameters);
                 DGparameters.SelectedIndex = temp;
             }
         }

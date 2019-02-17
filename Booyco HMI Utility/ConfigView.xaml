@@ -28,8 +28,6 @@
             <Label Content="Configure" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Viewbox>
 
-        <!--<DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="20" AutoGenerateColumns="True" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B" RowBackground="#FFB68181"/>-->
-
         <Button Content="Refresh" Grid.Column="2" Grid.Row="3" Margin="10"/>
         <Button Content="Open File" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="4" Margin="10"/>
         <Button Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10" Click="Button_Click"/>
@@ -40,9 +38,57 @@
                    Color="#8c0909"/>
 
             </DataGrid.Resources>
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#8c0909" FontSize="30"  Margin="5"/>
+                                                    <!--<TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />-->
+                                                    <!--<TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />-->
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="18" Margin="5"/>
+                                                    <!--<TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />-->
+                                                    <!--<TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />-->
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+
+            </DataGrid.GroupStyle>
+               
             <DataGrid.Columns>
-                <DataGridTextColumn Width="1*" Header="Parameter" Binding="{Binding Name}" IsReadOnly="True"/>
-                <DataGridTemplateColumn Header="Value" Width="1.*">
+                <DataGridTextColumn Width="0.8*" Header="Parameter" Binding="{Binding Name}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="Value" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -66,5 +112,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
     </Grid>
 </UserControl>
