@@ -11,7 +11,7 @@
     </MernokProduct>
     <MernokProduct>
       <Product>2</Product>
-      <ProductName>MAXUS</ProductName>
+      <ProductName>Maxus</ProductName>
     </MernokProduct>
     <MernokProduct>
       <Product>3</Product>
@@ -25,8 +25,12 @@
       <Product>5</Product>
       <ProductName>MAXUSX</ProductName>
     </MernokProduct>
+    <MernokProduct>
+      <Product>6</Product>
+      <ProductName>Booyco HMI</ProductName>
+    </MernokProduct>
   </mernokProductList>
   <version>1</version>
-  <dateCreated>2018-11-19T08:08:18.0270342+02:00</dateCreated>
+  <dateCreated>2019-01-29T00:26:46.293181+02:00</dateCreated>
   <createdBy>Neil P</createdBy>
 </MernokProductFile>
