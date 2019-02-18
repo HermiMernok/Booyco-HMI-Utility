@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GMap.NET;
+
 using GMap.NET.WindowsPresentation;
 
 namespace Booyco_HMI_Utility
@@ -22,10 +23,22 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class MapView : UserControl
     {
+        private bool isWindow = false;
+        public bool CloseRequest = false;
         public MapView()
         {
             InitializeComponent();
         }
+
+        public void AddMapMarker(GMapMarker _gpsMarker)
+        {
+         
+            MainMap.Markers.Add(_gpsMarker);
+            
+
+
+        }
+
         private void mapView_Loaded(object sender, RoutedEventArgs e)
         {
 
@@ -58,14 +71,14 @@ namespace Booyco_HMI_Utility
 
 
             MainMap.ShowCenter = false;
-
-           
-
-
+      
         }
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+            
+             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+            CloseRequest = true;
+
         }
         private void ButtonNewWindow_Click(object sender, RoutedEventArgs e)
         {
@@ -73,6 +86,8 @@ namespace Booyco_HMI_Utility
             GlobalSharedData.ViewMode = true;
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
         }
+
+
 
     }
 
