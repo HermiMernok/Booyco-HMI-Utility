@@ -26,7 +26,8 @@ namespace Booyco_HMI_Utility
         public UInt32 TotalLogEntries = 0;
         private const byte TOTAL_ENTRY_BYTES = 16;
         public UInt32 LogErrorDateTimeCounter = 0;
-        private ExcelFileManagement ExcelFilemanager = new ExcelFileManagement();
+        public ExcelFileManagement ExcelFilemanager = new ExcelFileManagement();
+     
         #endregion
 
         public void ReadFile(string Log_Filename)
@@ -34,9 +35,9 @@ namespace Booyco_HMI_Utility
         {
             ExcelFilemanager.StoreLogProtocolInfo();
             byte[] _logBytes = { 0 };
-            byte[] _logChuncks = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+      
             byte[] _logTimeStamp = { 0, 0, 0, 0, 0, 0 };
-            byte[] _logData = { 0, 0, 0, 0, 0, 0, 0, 0 };
+          
             UInt16 _logID = 0;
             string _logGroup = "";
             string _logInfoRaw = System.IO.File.ReadAllText(Log_Filename, Encoding.Default);
@@ -51,8 +52,10 @@ namespace Booyco_HMI_Utility
             string Event_Information = " ";
 
             TotalLogEntries = (UInt32)((float)_fileLength / (float)TOTAL_ENTRY_BYTES);
-            for (int i = 0; i < (int)TotalLogEntries - 1; i++)
+            for (uint i = 0; i < (int)TotalLogEntries - 1; i++)
             {
+                byte[] _logChuncks = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                byte[] _logData = { 0, 0, 0, 0, 0, 0, 0, 0 };
                 for (int j = 0; j < TOTAL_ENTRY_BYTES; j++)
                 {
                     _logChuncks[j] = _logBytes[i * TOTAL_ENTRY_BYTES + j];
@@ -65,6 +68,7 @@ namespace Booyco_HMI_Utility
 
                 DateTime _eventDateTime;
                 uint _dateTimeStatus = DateTimeCheck.CheckDateTimeStamp(_logTimeStamp, out _eventDateTime);
+            
 
                 if (_dateTimeStatus == (uint)DateTimeCheck.Status.Ok)
                 {
@@ -157,7 +161,8 @@ namespace Booyco_HMI_Utility
                             RawEntry = _logChuncks,
                             RawData = _logData,
                             EventInfo = _tempEventInfo,
-                            DateTime = _eventDateTime
+                            DateTime = _eventDateTime,
+                         
                         });
                     }
                     catch

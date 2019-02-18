@@ -37,6 +37,7 @@ namespace Booyco_HMI_Utility
         public static int SelectedDevice { get; set; }
         public static string WiFiApStatus;
         public static bool  ViewMode = false;
+        public static string FilePath = "";
 
     }
 

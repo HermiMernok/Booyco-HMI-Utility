@@ -39,10 +39,16 @@ namespace Booyco_HMI_Utility
                     });
 
                 }
+
+               
                 catch
                 {
                     Console.WriteLine("====== Lookup Excel Read Fail ======");
                 }
+                //if (Convert.ToInt32(_row.ItemArray[5]) == 1)
+                //{
+                //    int u = 0;
+                //}
 
             }
 

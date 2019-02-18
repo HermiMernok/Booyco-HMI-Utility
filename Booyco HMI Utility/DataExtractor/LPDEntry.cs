@@ -132,6 +132,8 @@ namespace Booyco_HMI_Utility
             }
         }
 
+   
+
         private string _appendix;
         public string Appendix
         {
@@ -143,6 +145,34 @@ namespace Booyco_HMI_Utility
             {
                 _appendix = value;
                 OnPropertyChanged("Appendix");
+            }
+        }
+
+        private bool _isExpandable;
+        public bool IsExpandable
+        {
+            get
+            {
+                return _isExpandable;
+            }
+            set
+            {
+                _isExpandable = value;
+                OnPropertyChanged("IsExpandable");
+            }
+        }
+
+        private string _group;
+        public string Group
+        {
+            get
+            {
+                return _group;
+            }
+            set
+            {
+                _group = value;
+                OnPropertyChanged("Group");
             }
         }
 

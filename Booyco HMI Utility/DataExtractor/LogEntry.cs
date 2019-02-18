@@ -9,8 +9,8 @@ namespace Booyco_HMI_Utility
 {
     class LogEntry : INotifyPropertyChanged
     {
-        private int _number;
-        public int Number
+        private uint _number;
+        public uint Number
         {
             get
             {
@@ -106,6 +106,7 @@ namespace Booyco_HMI_Utility
             }
         }
 
+      
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
