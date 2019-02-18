@@ -63,7 +63,7 @@ namespace Booyco_HMI_Utility
         {
             InitializeComponent();
             BootFlashPersentage = 0;
-
+            BootStatus = "Bootloader progress..";
 
             DataContext = this;               
             dispatcherTimer = new DispatcherTimer();
@@ -87,6 +87,7 @@ namespace Booyco_HMI_Utility
             else if(this.Visibility == Visibility.Visible)
             {
                 BtnBack_Click(null, null);
+                BootReady = false;
             }
 
             if(bootfile!=null && bootfile != null)
@@ -98,17 +99,17 @@ namespace Booyco_HMI_Utility
                 btnBootload.IsEnabled = false;
             }
 
-            if (bootchunks > 0 && BootSentIndex > 1 && !BootDone && BootReady)
+            if (bootchunks > 0 && !BootDone && BootFlashPersentage>0)
             {
-                BootloadingProgress.Value = BootSentIndex / (double)bootchunks * 1000;
+                BootloadingProgress.Value = (BootSentIndex+ BootFlashPersentage) / ((double)bootchunks+100) * 1000;
                 BootFlashPersentage = 100;
             }                
             else
                 BootloadingProgress.Value = 0;
 
-            FlashEraseProgress.Value = BootFlashPersentage;
+ //           FlashEraseProgress.Value = BootFlashPersentage;
 
-            //BootStatusLbl.Content = BootStatus;
+            BootStatusLbl.Content = BootStatus;
         }
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)

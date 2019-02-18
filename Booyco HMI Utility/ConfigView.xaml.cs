@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Windows.Threading;
+using System.Collections.ObjectModel;
 
 namespace Booyco_HMI_Utility
 {
@@ -26,6 +27,7 @@ namespace Booyco_HMI_Utility
     {
         PropertyGroupDescription groupDescription = new PropertyGroupDescription("Group");
         PropertyGroupDescription SubgroupDescription = new PropertyGroupDescription("SubGroup");
+        ParametersDisplay ParametersDisplay = new ParametersDisplay();
         CollectionView parametrsGroup;
         #region OnProperty Changed
         /////////////////////////////////////////////////////////////
@@ -41,8 +43,7 @@ namespace Booyco_HMI_Utility
             DataContext = this;
             generalFunctions = new GeneralFunctions();
             InitializeComponent();
-            
-
+           
         }
         GeneralFunctions generalFunctions;
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
@@ -55,16 +56,21 @@ namespace Booyco_HMI_Utility
         {
             ExcelFileManagement excelFileManagement = new ExcelFileManagement();
             string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/CommanderParametersFile.xlsx";
+
+            Parameters = new List<Parameters>();
             Parameters = excelFileManagement.ParametersfromFile(_parameterPath);
+
+            Disp_Parameters = new ObservableCollection<ParametersDisplay>();
             Disp_Parameters = ParametersToDisplay(parameters);
+
             parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
             parametrsGroup.GroupDescriptions.Add(groupDescription);
             parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
         }
 
-        public List<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
+        public ObservableCollection<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
         {
-            List<ParametersDisplay> parametersDisplays = new List<ParametersDisplay>();
+            ObservableCollection<ParametersDisplay> parametersDisplays = new ObservableCollection<ParametersDisplay>();
             string VehicleName = "";
             string valueString = "";
             Visibility btnvisibility = Visibility.Collapsed;
@@ -133,7 +139,7 @@ namespace Booyco_HMI_Utility
                         BtnVisibility = btnvisibility,
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
-                        Group = Parameters[i].Group,
+                        Group = parameters[i].Group,
                         SubGroup = parameters[i].SubGroup
                     });
                 }              
@@ -141,6 +147,57 @@ namespace Booyco_HMI_Utility
             }
 
             return parametersDisplays;
+        }
+
+
+        public ParametersDisplay DisplayParameterUpdate(Parameters parameters, int Index)
+        {
+            string valueString = "";
+            Visibility btnvisibility = Visibility.Collapsed;
+            Visibility drpDwnVisibility = Visibility.Collapsed;
+            bool EditLbl = true;
+            int enumIndx = -1;
+
+            if (parameters.Ptype == 0)
+            {
+                valueString = parameters.CurrentValue.ToString();
+                enumIndx = -1;
+                btnvisibility = Visibility.Visible;
+                drpDwnVisibility = Visibility.Collapsed;
+                EditLbl = false;
+            }
+            else if (parameters.Ptype == 1)
+            {
+                valueString = (parameters.CurrentValue == 1) ? "true" : "false";
+                enumIndx = -1;
+                btnvisibility = Visibility.Visible;
+                drpDwnVisibility = Visibility.Collapsed;
+                EditLbl = true;
+            }
+            else if (parameters.Ptype == 2)
+            {
+                valueString = parameters.parameterEnums[parameters.CurrentValue];
+                enumIndx = parameters.CurrentValue;
+                btnvisibility = Visibility.Visible;
+                drpDwnVisibility = Visibility.Visible;
+                EditLbl = true;
+            }
+
+            ParametersDisplay newDisp_Parameter_value = new ParametersDisplay()
+            {
+                OriginIndx = Index,
+                Name = parameters.Name,
+                Value = valueString,
+                BtnVisibility = btnvisibility,
+                dropDownVisibility = drpDwnVisibility,
+                LablEdit = EditLbl,
+                parameterEnums = parameters.parameterEnums,
+                EnumIndx = enumIndx,
+                Group = parameters.Group,
+                SubGroup = parameters.SubGroup
+            };
+
+            return newDisp_Parameter_value;
         }
 
         #region properties
@@ -152,9 +209,9 @@ namespace Booyco_HMI_Utility
             set { parameters = value; OnPropertyChanged("Parameters"); }
         }
 
-        private List<ParametersDisplay> disp_parameters;
+        private ObservableCollection<ParametersDisplay> disp_parameters;
 
-        public List<ParametersDisplay> Disp_Parameters
+        public ObservableCollection<ParametersDisplay> Disp_Parameters
         {
             get { return disp_parameters; }
             set { disp_parameters = value; OnPropertyChanged("Disp_Parameters"); }
@@ -174,12 +231,10 @@ namespace Booyco_HMI_Utility
                 {
                     parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue;
                 }
-
-                Disp_Parameters = ParametersToDisplay(parameters);
-                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
-                parametrsGroup.GroupDescriptions.Add(groupDescription);
-                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
-                DGparameters.SelectedIndex = temp;
+                
+                Disp_Parameters[DGparameters.SelectedIndex] = DisplayParameterUpdate(parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx], Disp_Parameters[DGparameters.SelectedIndex].OriginIndx);
+                //Disp_Parameters = ParametersToDisplay(parameters);
+                //DGparameters.SelectedIndex = temp;
             }
         }
 
@@ -196,9 +251,9 @@ namespace Booyco_HMI_Utility
                 {
                     parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue;
                 }
-
-                Disp_Parameters = ParametersToDisplay(parameters);
-                DGparameters.SelectedIndex = temp;
+                Disp_Parameters[DGparameters.SelectedIndex] = DisplayParameterUpdate(parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx], Disp_Parameters[DGparameters.SelectedIndex].OriginIndx);
+                //Disp_Parameters = ParametersToDisplay(parameters);
+                //DGparameters.SelectedIndex = temp;
             }
         }
 
@@ -214,27 +269,14 @@ namespace Booyco_HMI_Utility
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox comboBox = (ComboBox)sender;
-            if (DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 2)
-            {                
-                //int temp = DGparameters.SelectedIndex;
-                //if(comboBox.SelectedIndex < parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue && comboBox.SelectedIndex > parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
-                //{
-                //    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;
-                //    Disp_Parameters[DGparameters.SelectedIndex].EnumIndx = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue;
-                //}
-                    
 
-                //Disp_Parameters = ParametersToDisplay(parameters);
-                //DGparameters.SelectedIndex = temp;
-            }
         }
 
         private void ComboBox_DropDownClosed(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;           
-            Disp_Parameters = ParametersToDisplay(parameters);
+            //Disp_Parameters = ParametersToDisplay(parameters);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

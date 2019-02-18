@@ -19,7 +19,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="1.5*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -57,12 +57,9 @@
         <Grid Grid.Column="1" Grid.Row="9"  Grid.ColumnSpan="2" Background="DarkGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar x:Name="FlashEraseProgress" Background="Black" Foreground="#8c0909" Margin="5"/>
-            <Label Content="Flash erase progress..." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
             <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
-            <Label Content="Bootfile progress..." Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+            <Label x:Name="BootStatusLbl" Content="{Binding BootStatus}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
 
         </Grid>
         <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="3" Content="{Binding DeviceName}"/>

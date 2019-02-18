@@ -41,7 +41,7 @@
 
     </Window.Resources>
 
-    <Viewbox Stretch="Fill">
+    <Viewbox Stretch="Fill" >
         <Grid Height="800" Width="1280">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5"/>
