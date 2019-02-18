@@ -35,7 +35,7 @@
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
 
 
-        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" >
+        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" HorizontalScrollBarVisibility="Disabled">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
                    Color="#8c0909"/>
@@ -98,8 +98,8 @@
             </DataGrid.GroupStyle>
                
             <DataGrid.Columns>
-                <DataGridTextColumn Width="0.8*" Header="Parameter" Binding="{Binding Name}" IsReadOnly="True"/>
-                <DataGridTemplateColumn Header="Value" Width="*">
+                <DataGridTextColumn Width="450" MinWidth="450" Header="Parameter" Binding="{Binding Name}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="Value" Width="*" MinWidth="430">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>

@@ -264,6 +264,18 @@ namespace Booyco_HMI_Utility
                 TextBox textBox = (TextBox)sender;
                 textBox.Text = generalFunctions.StringConditioner(textBox.Text);
                 textBox.SelectionStart = textBox.Text.Length;
+                String str = textBox.Text;
+                byte[] NameBytes = new byte[20];
+
+                NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
+                for (int i = 19; i > 0; i--)
+                {
+                    if((19-i) < NameBytes.Length)
+                        parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx-i].CurrentValue = NameBytes[19-i];
+                    else
+                        parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx - i].CurrentValue = (byte)' ';
+                }
+
             }
         }
 
