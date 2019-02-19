@@ -16,7 +16,8 @@ namespace Booyco_HMI_Utility
 {
     public class WiFiconfig
     {
-        bool endAll = false;
+        public static bool endAll = false;
+        public static string Hearted = "";
         public void WirelessHotspot(string ssid, string key, bool status)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe")
@@ -47,7 +48,8 @@ namespace Booyco_HMI_Utility
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
-            foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
+            var NetWorkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface item in NetWorkInterfaces)
             {
 
                 if (item.OperationalStatus == OperationalStatus.Up) //item.NetworkInterfaceType == _type && 
@@ -81,21 +83,28 @@ namespace Booyco_HMI_Utility
         int prevCount = 0;
         private void IPWatch()
         {
+            DateTime when = DateTime.Now;
+            TimeSpan ts = DateTime.Now.Subtract(when);
             while (true && !endAll)
             {
-                GlobalSharedData.NetworkDevices = GetAllLocalIPv4(NetworkInterfaceType.Ethernet);
-                if (GlobalSharedData.NetworkDevices.Count != prevCount)
+                ts = DateTime.Now.Subtract(when);
+                if (ts.TotalSeconds>1)
                 {
-                    prevCount = GlobalSharedData.NetworkDevices.Count;
-                }
+                    when = DateTime.Now;
+                    GlobalSharedData.NetworkDevices = GetAllLocalIPv4(NetworkInterfaceType.Ethernet);
+                    if (GlobalSharedData.NetworkDevices.Count != prevCount)
+                    {
+                        prevCount = GlobalSharedData.NetworkDevices.Count;
+                    }
 
-                if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceName.Contains("Wireless")).Count() > 0)
-                {
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint Up";
-                }
-                else
-                {
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint Error";
+                    if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceName.Contains("Wireless")).Count() > 0)
+                    {
+                        GlobalSharedData.WiFiApStatus = "Wifi Accesspoint Up";
+                    }
+                    else
+                    {
+                        GlobalSharedData.WiFiApStatus = "Wifi Accesspoint Error";
+                    }
                 }
 
             }
@@ -163,14 +172,14 @@ namespace Booyco_HMI_Utility
             tcpSocket.NoDelay = true;
 
             // Set the receive buffer size to 8k
-            //           tcpSocket.ReceiveBufferSize = 8192;
+            //tcpSocket.ReceiveBufferSize = 8192;
 
             //           // Set the timeout for synchronous receive methods to 
             //           // 1 second (1000 milliseconds.)
             //tcpSocket.ReceiveTimeout = 3000;
 
-            //           // Set the send buffer size to 8k.
-            //           tcpSocket.SendBufferSize = 8192;
+            // Set the send buffer size to 8k.
+            //tcpSocket.SendBufferSize = 8192;
 
             //           // Set the timeout for synchronous send methods
             //           // to 1 second (1000 milliseconds.)			
@@ -284,7 +293,7 @@ namespace Booyco_HMI_Utility
                     };
                     readThread.Start();
                     clientslot = clientnum;
-                    Thread sendThread = new Thread(() => SendBytes(client.RemoteEndPoint, clientslot))
+                    Thread sendThread = new Thread(() => ClientSendBytes(client.RemoteEndPoint, clientslot))
                     {
                         IsBackground = true,
                         Name = "ServerSend:" + clientnum.ToString()
@@ -313,7 +322,12 @@ namespace Booyco_HMI_Utility
 
             List<Socket> clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
             byte[] data2 = new byte[522];
+            byte[] Buffer = new byte[522];
             int i;
+            int count = 0;
+            clientR[0].ReceiveTimeout = 10000;
+            clientR[0].ReceiveBufferSize = 522;
+            clientR[0].NoDelay = true;
 
             while (clientR[0].Connected && !endAll)
             {
@@ -322,6 +336,21 @@ namespace Booyco_HMI_Utility
             {
                 if ((i = clientR[0].Receive(data2, data2.Length, SocketFlags.None)) != 0)
                     {
+                        if(i==522)
+                        {
+                            Array.Copy(data2, Buffer, 522);
+                        }
+                        else if(count == 0)
+                        {                           
+                            Array.Copy(data2, 0, Buffer, count, i);
+                            count = i;
+                        }
+                        else if(count>0)
+                        {
+                            Array.Copy(data2, 0, Buffer, count, 522 - count);
+                            count = 0;
+                        }
+
                        // string recmeg = Encoding.UTF8.GetString(data2, 0, i);
                         //Console.WriteLine("Received:" + recmeg + " from: " + clientR[0].RemoteEndPoint + " count:==== " + messagecount.ToString());
                         messagecount++;
@@ -329,20 +358,22 @@ namespace Booyco_HMI_Utility
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
 
-                        if (data2[2] == 'B' && data2[3] == 'h' && data2[521] == ']' && i == 522)
+                        if (Buffer[2] == 'B' && Buffer[3] == 'h' && Buffer[521] == ']')
                         {
 
                             ValidMessages++;
                             #region heartbeatmessage
                             if (!Bootloader.BootReady)
                             {
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(data2, 8, 15);
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(data2, 4);
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = data2[23];
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = data2[24];
-                                clientR[0].Send(HeartbeatMessage); //Send the data to the client
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
+                                //GlobalSharedData.ServerMessageSend = HeartbeatMessage;
+                                //clientR[0].Send(HeartbeatMessage); //Send the data to the client
                             }
 
+                            
                             Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
                             #endregion
                         }
@@ -351,8 +382,10 @@ namespace Booyco_HMI_Utility
                             Bootloader.BootloaderParse(data2, clientnumr);
                         }
 
+                        Hearted = "=heartbeat recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
+
                         //WiFimessages.Parse(data2, clientnumr);
-                        
+
                         data2 = new byte[522];
                     }
                 }
@@ -370,7 +403,7 @@ namespace Booyco_HMI_Utility
 
         }
 
-        private void SendBytes(EndPoint clientnumr, int remover)
+        private void ClientSendBytes(EndPoint clientnumr, int remover)
         {
 
 
@@ -383,6 +416,12 @@ namespace Booyco_HMI_Utility
                 {
                     //Send the data to the client
                     clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
+                    if (!Bootloader.BootStart)
+                    {
+                        Thread.Sleep(500);
+                        clientR[0].Send(HeartbeatMessage); //Send the data to the client
+                    }
+
                     if ((SelectedIP == clientnumr.ToString() || GlobalSharedData.BroadCast == true) && GlobalSharedData.ServerMessageSend != null && GlobalSharedData.ServerMessageSend != null)
                     {
                         data = new byte[GlobalSharedData.ServerMessageSend.Length];

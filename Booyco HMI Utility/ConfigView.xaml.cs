@@ -126,7 +126,8 @@ namespace Booyco_HMI_Utility
                         parameterEnums = parameters[i].parameterEnums,
                         EnumIndx = enumIndx,
                         Group = Parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup
+                        SubGroup = parameters[i].SubGroup,
+                        Description = parameters[i].Description
                     });
                 }
                 else if (parameters[i].Name.Contains("Name 20"))
@@ -140,7 +141,8 @@ namespace Booyco_HMI_Utility
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
                         Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup
+                        SubGroup = parameters[i].SubGroup,
+                        Description = parameters[i].Description
                     });
                 }              
 
@@ -194,7 +196,8 @@ namespace Booyco_HMI_Utility
                 parameterEnums = parameters.parameterEnums,
                 EnumIndx = enumIndx,
                 Group = parameters.Group,
-                SubGroup = parameters.SubGroup
+                SubGroup = parameters.SubGroup,
+                Description = parameters.Description
             };
 
             return newDisp_Parameter_value;
@@ -253,8 +256,47 @@ namespace Booyco_HMI_Utility
                 }
                 Disp_Parameters[DGparameters.SelectedIndex] = DisplayParameterUpdate(parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx], Disp_Parameters[DGparameters.SelectedIndex].OriginIndx);
                 //Disp_Parameters = ParametersToDisplay(parameters);
-                //DGparameters.SelectedIndex = temp;
+                DGparameters.SelectedIndex = temp;
             }
+        }
+
+        private void RowDoubleClick(object sender, RoutedEventArgs e)
+        {
+            var row = (DataGridRow)sender;
+            //if (row.DetailsVisibility == Visibility.Collapsed)
+            //{
+            //    DataLogIsExpanded = true;
+
+            //  //  Expander_Expanded(sender, e);
+            //}
+            //else
+            //{
+            //    DataLogIsExpanded = false;
+            // //   Expander_Collapsed(sender, e);
+            //}
+            row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+        }
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
+                if (vis is DataGridRow)
+                {
+                    var row = (DataGridRow)vis;
+                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                    break;
+                }
+        }
+
+        private void Expander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
+                if (vis is DataGridRow)
+                {
+                    var row = (DataGridRow)vis;
+                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                    break;
+                }
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

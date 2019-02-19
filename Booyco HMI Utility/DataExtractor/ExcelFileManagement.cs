@@ -138,7 +138,9 @@ namespace Booyco_HMI_Utility
                         Ptype = Convert.ToInt16(_row.ItemArray[5]),
                         enumVal = Convert.ToInt16(_row.ItemArray[6]),
                         Group = Convert.ToString(_row.ItemArray[7]),
-                        SubGroup = Convert.ToString(_row.ItemArray[8])
+                        SubGroup = Convert.ToString(_row.ItemArray[8]),
+                        Description = Convert.ToString(_row.ItemArray[9])
+
                     });
 
                     if(_row.ItemArray[12].ToString() != "")
