@@ -123,6 +123,10 @@
     <Compile Include="ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomMarker\CustomMarkerIndicator.xaml.cs">
+      <DependentUpon>CustomMarkerIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomMarker\MarkerEntry.cs" />
     <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
       <DependentUpon>DataExtractorView.xaml</DependentUpon>
@@ -175,6 +179,10 @@
     <Page Include="ConfigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomMarker\CustomMarkerIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="DataExtractor\DataExtractorView.xaml">
       <SubType>Designer</SubType>

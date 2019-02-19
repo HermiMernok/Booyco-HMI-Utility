@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Booyco_HMI_Utility.CustomMarker;
+using GMap.NET.WindowsPresentation;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -38,6 +41,7 @@ namespace Booyco_HMI_Utility
         public static string WiFiApStatus;
         public static bool  ViewMode = false;
         public static string FilePath = "";
+        public static List<MarkerEntry> PDSMapMarkers = new List<MarkerEntry>();
 
     }
 

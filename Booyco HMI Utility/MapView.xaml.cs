@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Booyco_HMI_Utility.CustomMarker;
+using Demo.WindowsPresentation.CustomMarkers;
 using GMap.NET;
 
 using GMap.NET.WindowsPresentation;
@@ -30,12 +32,32 @@ namespace Booyco_HMI_Utility
             InitializeComponent();
         }
 
-        public void AddMapMarker(GMapMarker _gpsMarker)
+        public void UpdateMapMarker()
         {
-         
-            MainMap.Markers.Add(_gpsMarker);
-            
+            MainMap.Markers.Clear();
+           
 
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers)
+            {
+                if (item.Type == 1)
+                {
+                   
+                    // PDSMarker1.Shape = new CustomMarkerAssetType(MainApp, PDSMarker1, PDS_Event_Information);
+                }
+                else if (item.Type == 2) 
+                {
+        
+                    //PDSMarker1.Shape = new CustomMarkerEllipse(MainApp, PDSMarker1, PDS_Event_Information);
+                    //PDSMarker1.Shape = new CircleVisual(PDSMarker1,Brushes.Red);
+                }         
+                else if(item.Type == 3)
+                {
+                    item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
+                }
+            
+                MainMap.Markers.Add(item.MapMarker);
+            }
+          
 
         }
 
@@ -87,8 +109,13 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
         }
 
-
-
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(this.Visibility == Visibility.Visible)
+            {
+                UpdateMapMarker();
+            }
+        }
     }
 
 

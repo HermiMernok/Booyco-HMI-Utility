@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using Booyco_HMI_Utility.CustomMarker;
 
 namespace Booyco_HMI_Utility
 {
@@ -255,34 +256,27 @@ namespace Booyco_HMI_Utility
 
             foreach (ProximityDetectionEvent EventItem in ProximityDetectionEventList)
             {
-                GMapMarker PDSMarker1 = new GMapMarker(new PointLatLng(EventItem.ThreatLatitude, EventItem.ThreatLongitude));
-                GMapMarker PDSMarker2 = new GMapMarker(new PointLatLng(EventItem.UnitLatitude, EventItem.UnitLongitude));
+                MarkerEntry PDSMarker1 = new MarkerEntry();
+                PDSMarker1.MapMarker = new GMapMarker(new PointLatLng(EventItem.ThreatLatitude, EventItem.ThreatLongitude));
+                MarkerEntry PDSMarker2 = new MarkerEntry();
+                PDSMarker2.MapMarker = new GMapMarker(new PointLatLng(EventItem.UnitLatitude, EventItem.UnitLongitude));
+      
                 if (TempEvent.ThreatTechnology == 5)
-                {
+                {                 
+                   PDSMarker1.Type = 1;
                    // PDSMarker1.Shape = new CustomMarkerAssetType(MainApp, PDSMarker1, PDS_Event_Information);
                 }
                 else
                 {
-                  //  PDSMarker1.Shape = new CustomMarkerEllipse(MainApp, PDSMarker1, PDS_Event_Information);
+                    PDSMarker1.Type = 2;
+                    //  PDSMarker1.Shape = new CustomMarkerEllipse(MainApp, PDSMarker1, PDS_Event_Information);
                     //PDSMarker1.Shape = new CircleVisual(PDSMarker1,Brushes.Red);
                 }
-                // PDSMarker2.Shape = new CustomMarkerIndicator(MainApp, PDSMarker2, TempEvent.UnitHeading, TempEvent.ThreatDisplayZone, Unit_Information);
-                PDSMarker1.Shape =  new Ellipse
-                {
-                    Width = 50,
-                    Height = 50,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1.5
-                };
-                PDSMarker2.Shape  = new Ellipse
-                {
-                    Width = 50,
-                    Height = 50,
-                    Stroke = Brushes.Red,
-                    StrokeThickness = 1.5
-                };
-                extendedWindow.MapView.AddMapMarker(PDSMarker1);
-                extendedWindow.MapView.AddMapMarker(PDSMarker2);
+                PDSMarker2.Type = 3;
+              
+                GlobalSharedData.PDSMapMarkers.Add(PDSMarker1);
+                GlobalSharedData.PDSMapMarkers.Add(PDSMarker2);
+                extendedWindow.MapView.UpdateMapMarker();          
                 extendedWindow.MapView.MainMap.Position = new PointLatLng(TempEvent.UnitLatitude, TempEvent.UnitLongitude);
             }
             
