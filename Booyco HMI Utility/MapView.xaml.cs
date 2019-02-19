@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,30 +35,30 @@ namespace Booyco_HMI_Utility
 
         public void UpdateMapMarker()
         {
-            MainMap.Markers.Clear();
+            this.MainMap.Markers.Clear();
            
-
-            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers)
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Ellipse))
             {
-                if (item.Type == 1)
+                if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
                 {
-                   
-                    // PDSMarker1.Shape = new CustomMarkerAssetType(MainApp, PDSMarker1, PDS_Event_Information);
+                    item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                    item.MapMarker.Shape = new CustomMarkerEllipse(this.MainMap, item);
+                    this.MainMap.Markers.Add(item.MapMarker);
                 }
-                else if (item.Type == 2) 
-                {
-        
-                    //PDSMarker1.Shape = new CustomMarkerEllipse(MainApp, PDSMarker1, PDS_Event_Information);
-                    //PDSMarker1.Shape = new CircleVisual(PDSMarker1,Brushes.Red);
-                }         
-                else if(item.Type == 3)
-                {
-                    item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
-                }
-            
-                MainMap.Markers.Add(item.MapMarker);
             }
-          
+
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
+            {
+                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
+            }
+
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
+            {
+                item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
+            }                   
+
 
         }
 
@@ -69,11 +70,12 @@ namespace Booyco_HMI_Utility
 
             // choose your provider here
             //MainMap.MapProvider = GMap.NET.MapProviders.OpenStreetMapProvider.Instance;
-              MainMap.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
+            MainMap.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
+            //MainMap.MapProvider = GMap.NET.MapProviders.GoogleTerrainMapProvider.Instance;
 
             // whole world zoom
             MainMap.MinZoom = 0;
-            MainMap.MaxZoom = 30;
+            MainMap.MaxZoom = 24;
             MainMap.Zoom = 19;
 
             // lets the map use the mousewheel to zoom
@@ -114,6 +116,90 @@ namespace Booyco_HMI_Utility
             if(this.Visibility == Visibility.Visible)
             {
                 UpdateMapMarker();
+            }
+        }
+
+        private void MainMap_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+             this.MainMap.Markers.Clear();
+
+            // double zoom = MainMap.Zoom;
+
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Ellipse))
+            {
+                if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
+                {
+                    item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                    item.MapMarker.Shape = new CustomMarkerEllipse(this.MainMap, item);
+                    this.MainMap.Markers.Add(item.MapMarker);
+                }
+            }
+
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
+            {
+                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
+            }
+
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
+            {
+                item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
+            }
+
+       
+      
+        }
+
+        private void ButtonMapType_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainMap.MapProvider == GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance)
+            {
+
+                MainMap.MapProvider = GMap.NET.MapProviders.GoogleTerrainMapProvider.Instance;
+                ButtonMapType.Content = "Satellite";
+                }
+            else
+            {
+               MainMap.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
+                ButtonMapType.Content = "Map";
+            }
+        }
+
+        private void ButtonClear_Click(object sender, RoutedEventArgs e)
+        {
+            MainMap.Markers.Clear();
+        }
+
+        private void ButtonPrintMap_Click(object sender, RoutedEventArgs e)
+        {
+            // === Open Save File Dialog ===
+            Microsoft.Win32.SaveFileDialog _saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+
+            // == Default extension ===
+            _saveFileDialog.DefaultExt = "jpeg";
+            // == filter types ===
+            _saveFileDialog.Filter = "JPEG File (*.jpeg)|*.jpeg";
+            _saveFileDialog.FileName = "Map";
+            _saveFileDialog.FilterIndex = 2;
+            _saveFileDialog.RestoreDirectory = true;
+            if (_saveFileDialog.ShowDialog() == true)
+            {
+                RenderTargetBitmap renderTargetBitmap =
+                 new RenderTargetBitmap
+                 (
+                     (int)GridMapView.ColumnDefinitions[1].ActualWidth + (int)GridMapView.ColumnDefinitions[2].ActualWidth + (int)GridMapView.ColumnDefinitions[3].ActualWidth + (int)GridMapView.ColumnDefinitions[4].ActualWidth,
+                     (int)GridMapView.RowDefinitions[1].ActualHeight + (int)GridMapView.RowDefinitions[2].ActualHeight + (int)GridMapView.RowDefinitions[3].ActualHeight + (int)GridMapView.RowDefinitions[4].ActualHeight + (int)GridMapView.RowDefinitions[5].ActualHeight + (int)GridMapView.RowDefinitions[6].ActualHeight,
+                     96,
+                     96, 
+                     PixelFormats.Pbgra32
+                );
+                renderTargetBitmap.Render(MainMap);
+                PngBitmapEncoder pngImage = new PngBitmapEncoder();
+                pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                using (Stream fileStream = File.Create(_saveFileDialog.FileName))
+                {
+                    pngImage.Save(fileStream);
+                }
             }
         }
     }

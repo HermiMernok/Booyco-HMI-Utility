@@ -40,6 +40,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
             if (marker.Zone == 1)
             {
                 PathIndicator.Fill = Brushes.Blue;
+               
             }
             else if (marker.Zone == 2)
             {
@@ -115,13 +116,15 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
       void CustomMarkerIndicator_MouseLeave(object sender, MouseEventArgs e)
       {
-         Marker.ZIndex -= 10000;
+            PathIndicator.Opacity = 1;
+        // Marker.ZIndex -= 10000;
          Popup.IsOpen = false;
       }
 
       void CustomMarkerIndicator_MouseEnter(object sender, MouseEventArgs e)
       {
-         Marker.ZIndex += 10000;
+            PathIndicator.Opacity = 0.5;
+            //Marker.ZIndex += 10000;
          Popup.IsOpen = true;
       }
 

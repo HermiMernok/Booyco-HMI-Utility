@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace Booyco_HMI_Utility.CustomMarker
 {
+
+    public enum MarkerType
+    {
+        Indicator,
+        Ellipse,
+        Point
+    }
+
     public class MarkerEntry
     {
 
@@ -15,5 +23,8 @@ namespace Booyco_HMI_Utility.CustomMarker
         public uint Zone;
         public double Heading;
         public uint Type;
+        public ushort Width;
+        public double Scale;
+        public ushort Height;
     }
 }
