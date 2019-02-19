@@ -16,11 +16,29 @@ using System.Windows.Threading;
 namespace Booyco_HMI_Utility
 {
     public class WiFiconfig
-    {
-        private DispatcherTimer dispatcherTimer;
+    {        
+        //get status of the wifi hotspot created by the device
+        #region WiFi hotspot
+        public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
+        {
+            List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
+            var NetWorkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface item in NetWorkInterfaces)
+            {
 
-        public static bool endAll = false;
-        public static string Hearted = "";
+                if (item.OperationalStatus == OperationalStatus.Up) //item.NetworkInterfaceType == _type && 
+                {
+                    foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            ipAddrList.Add(new NetworkDevice() { DeviceName = item.Name, DeviceTipe = item.NetworkInterfaceType.ToString(), DeviceIP = ip.Address.ToString() });
+                        }
+                    }
+                }
+            }
+            return ipAddrList;
+        }
         public void WirelessHotspot(string ssid, string key, bool status)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe")
@@ -47,32 +65,7 @@ namespace Booyco_HMI_Utility
                 }
             }
         }
-
-        public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
-        {
-            List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
-            var NetWorkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (NetworkInterface item in NetWorkInterfaces)
-            {
-
-                if (item.OperationalStatus == OperationalStatus.Up) //item.NetworkInterfaceType == _type && 
-                {
-                    foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
-                    {
-                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            ipAddrList.Add(new NetworkDevice() { DeviceName = item.Name, DeviceTipe = item.NetworkInterfaceType.ToString(), DeviceIP = ip.Address.ToString() });
-                        }
-                    }
-                }
-            }
-            return ipAddrList;
-        }
-
-        public static List<TCPclient> TCPclients = new List<TCPclient>();
-
-        public static byte[] HeartbeatMessage;
-
+        int prevCount = 0;
         public void IpWatcherStart()
         {
             dispatcherTimer = new DispatcherTimer();
@@ -80,8 +73,6 @@ namespace Booyco_HMI_Utility
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 1);
             dispatcherTimer.Start();
         }
-
-        int prevCount = 0;
         private void IPWatch(object sender, EventArgs e)
         {
 
@@ -101,11 +92,15 @@ namespace Booyco_HMI_Utility
             }
 
         }
+        #endregion
+      
+        public static string Hearted = "";
+        public static byte[] HeartbeatMessage;
 
-        public static string SelectedIP;
-
+        #region TCP server
         public void ServerRun()
         {
+            #region HeartbeatCreation
             HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
             HeartbeatMessage[0] = (byte)'[';
             HeartbeatMessage[1] = (byte)'&';
@@ -120,7 +115,7 @@ namespace Booyco_HMI_Utility
             HeartbeatMessage[10] = (byte)'a';
             HeartbeatMessage[11] = (byte)'t';
             HeartbeatMessage[521] = (byte)']';
-
+            #endregion
 
             Thread newThread = new Thread(new ThreadStart(StartServer))
             {
@@ -129,12 +124,20 @@ namespace Booyco_HMI_Utility
             };
             newThread.Start();
         }
-
+        
+        #region TCP server dependants
         IPEndPoint ip;
         TcpListener server;
         Socket socket;
         TcpClient client;
+        private DispatcherTimer dispatcherTimer;
+        public static bool endAll = false;
+        public static string SelectedIP;
         public static List<TcpClient> clients;
+        public static List<TCPclient> TCPclients = new List<TCPclient>();
+        private int clientnum = 0;
+        private static int pretCount = 0;
+        #endregion
 
         static void ConfigureTcpSocket(Socket tcpSocket)
         {
@@ -224,12 +227,12 @@ namespace Booyco_HMI_Utility
             {
                 server = new TcpListener(IPAddress.Any, 13000);
                 server.Start();
-//                ip = new IPEndPoint(IPAddress.Any, 13000); //Any IPAddress that connects to the server on any port
-//                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); //Initialize a new Socket
-//                ConfigureTcpSocket(socket);
-//                socket.Bind(ip); //Bind to the client's IP
-//                socket.Listen(10); //Listen for maximum 10 connections
-                
+                //                ip = new IPEndPoint(IPAddress.Any, 13000); //Any IPAddress that connects to the server on any port
+                //                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); //Initialize a new Socket
+                //                ConfigureTcpSocket(socket);
+                //                socket.Bind(ip); //Bind to the client's IP
+                //                socket.Listen(10); //Listen for maximum 10 connections
+
                 Thread ClientsThread = new Thread(new ThreadStart(GetClients))
                 {
                     IsBackground = true,
@@ -247,21 +250,7 @@ namespace Booyco_HMI_Utility
                 StartServer();
             }
         }
-
-        public void ServerStop()
-        {
-            endAll = true;
-            foreach (TcpClient item in clients)
-            {
-                item.Close();
-            }
-            server.Stop();
-            
-        }
-
-        private int clientnum = 0;
-        private static int pretCount = 0;
-
+ 
         private void GetClients()
         {
             int clientslot = 0;
@@ -446,7 +435,7 @@ namespace Booyco_HMI_Utility
             //ClientLsitChanged();
             //clientnum--;
         }
-
+        
         public List<TCPclient> ClientLsitChanged()
         {
 
@@ -481,6 +470,18 @@ namespace Booyco_HMI_Utility
 
         }
 
+        public void ServerStop()
+        {
+            endAll = true;
+            foreach (TcpClient item in clients)
+            {
+                item.Close();
+            }
+            server.Stop();
+
+        }
+
+        #region Open port management
         public class PRC
         {
             public int PID { get; set; }
@@ -554,9 +555,13 @@ namespace Booyco_HMI_Utility
                 return result;
             }
         }
+        #endregion
+        #endregion
 
-    }   
 
+    }
+
+    #region Class properties
     public class NetworkDevice : INotifyPropertyChanged
     {
         #region OnProperty Changed
@@ -650,4 +655,5 @@ namespace Booyco_HMI_Utility
 
 
     }
+    #endregion
 }
