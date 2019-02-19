@@ -41,17 +41,6 @@ namespace Booyco_HMI_Utility
         {
             InitializeComponent();
             DataContext = this;
-            WiFiconfig = new WiFiconfig();
-
-            string ssid = "GodZilla5", key = "Mp123456";
-            WiFiconfig.WirelessHotspot(ssid, key, true);
-
-            WiFiconfig.ServerRun();
-
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(ClientListUpdater);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
-            dispatcherTimer.Start();
         }
 
         private void ClientListUpdater(object sender, EventArgs e)
@@ -141,6 +130,30 @@ namespace Booyco_HMI_Utility
                 GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
             else if (DGTCPclientList.Items.Count == 1)
                 GlobalSharedData.SelectedDevice = 0;
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(this.Visibility == Visibility.Visible)
+            {
+                WiFiconfig = new WiFiconfig();
+
+                string ssid = "GodZilla5", key = "Mp123456";
+                WiFiconfig.WirelessHotspot(ssid, key, true);
+
+                WiFiconfig.ServerRun();
+
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(ClientListUpdater);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
+                dispatcherTimer.Start();
+            }
+            else
+            {
+
+                dispatcherTimer.Stop();
+                WiFiconfig.ServerStop();
+            }
         }
     }
 

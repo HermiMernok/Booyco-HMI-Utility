@@ -65,12 +65,7 @@ namespace Booyco_HMI_Utility
             BootFlashPersentage = 0;
             BootStatus = "Bootloader progress..";
 
-            DataContext = this;               
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(InfoUpdater);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
-            dispatcherTimer.Start();
-            
+            DataContext = this;                           
         }
 
         private void InfoUpdater(object sender, EventArgs e)
@@ -326,5 +321,19 @@ namespace Booyco_HMI_Utility
             set { _SelectedFirm = value; OnPropertyChanged("SelectedFirm"); }
         }
 
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(this.Visibility == Visibility.Visible)
+            {
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
+                dispatcherTimer.Start();
+            }
+            else
+            {
+                dispatcherTimer.Stop();
+            }
+        }
     }
 }
