@@ -30,7 +30,7 @@
         </Viewbox>
 
 
-        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="20" AutoGenerateColumns="False" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B" RowBackground="#FFB68181">
+        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="20" AutoGenerateColumns="False" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B" RowBackground="#FFB68181" Margin="5,15">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1.2*" Header="IP adress" Binding="{Binding IP}" />
                 <DataGridTextColumn Width="1.2*" Header="Name" Binding="{Binding Name}" />

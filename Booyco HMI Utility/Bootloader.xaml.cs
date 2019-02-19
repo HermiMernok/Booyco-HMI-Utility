@@ -72,28 +72,11 @@ namespace Booyco_HMI_Utility
 
         private void InfoUpdater(object sender, EventArgs e)
         {
-            if (WiFiconfig.clients.Count > 0 && GlobalSharedData.SelectedDevice != -1 && GlobalSharedData.SelectedDevice < WiFiconfig.clients.Count)
-            {
-                DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-                DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
-                FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
-                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
-                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-            }
-            else if(this.Visibility == Visibility.Visible)
+            if(this.Visibility == Visibility.Visible && WiFiconfig.clients.Count == 0)
             {
                 BtnBack_Click(null, null);
                 BootReady = false;
-            }
-
-            if(bootfile!=null && bootfile != null)
-            {
-                btnBootload.IsEnabled = true;
-            }
-            else
-            {
-                btnBootload.IsEnabled = false;
+                BootStart = false;
             }
 
             if (bootchunks > 0 && !BootDone && BootFlashPersentage>0)
@@ -116,6 +99,7 @@ namespace Booyco_HMI_Utility
             this.Visibility = Visibility.Collapsed;
         }
 
+        private static Thread BootloaderThread;
         private void Bootload_Click(object sender, RoutedEventArgs e)
         {
             BootStart = true;
@@ -123,42 +107,41 @@ namespace Booyco_HMI_Utility
             BootSentIndex = 0;
             BootAckIndex = -1;
             byte[] bootmessage = new byte[522];
-
-            Thread BootloaderThread = new Thread(BootloaderDo)
+            if(BootloaderThread != null && BootloaderThread.IsAlive)
             {
-                IsBackground = true,
-                Name = "BootloaderThread"
-            };
-            BootloaderThread.Start();
+
+            }
+            else
+            {
+                BootloaderThread = new Thread(BootloaderDo)
+                {
+                    IsBackground = true,
+                    Name = "BootloaderThread"
+                };
+                BootloaderThread.Start();
+            }
+
             BootStatus = "Asking device to boot...";
-            bootmessage = Enumerable.Repeat((byte)0, 522).ToArray();
-            bootmessage[0] = (byte)'[';
-            bootmessage[1] = (byte)'&';
-            bootmessage[2] = (byte)'B';
-            bootmessage[3] = (byte)'B';
-            bootmessage[4] = (byte)'0';
-            bootmessage[5] = (byte)'0';
-            bootmessage[521] = (byte)']';
-            GlobalSharedData.ServerMessageSend = bootmessage;
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
         }
 
         private void BootloaderDo()
         {
+            
             while (!WiFiconfig.endAll)
             {
+                //Thread.Sleep(100);
                 if (BootReady)
                 {
 
                     if (BootSentIndex == 0 && BootAckIndex == -1)
                     {
-                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
 
                     if (BootSentIndex < BootFileList.Count && BootAckIndex == BootSentIndex - 1)
                     {
-                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
@@ -168,8 +151,6 @@ namespace Booyco_HMI_Utility
                         Console.WriteLine("====================Bootloading done======================");
                         //WIFIcofig.ServerMessageSend = 
                         //BootReady = false;
-                        
-
                         break;
                     }
                 }
@@ -180,10 +161,11 @@ namespace Booyco_HMI_Utility
 
         public static void BootloaderParse(byte[] message, EndPoint endPoint)
         {
-            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&')) //
+            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&'))
             {
                 if (message[2] == 'B')
                 {
+                    #region Bootloading ready to start
                     if (message[3] == 'a' && message[6] == ']')
                     {
                         BootStatus = "Device ready to boot...";
@@ -191,7 +173,9 @@ namespace Booyco_HMI_Utility
                         BootReady = true;
                         WiFiconfig.SelectedIP = endPoint.ToString();
                     }
+                    #endregion
 
+                    #region Bootloading complete message
                     if (message[3] == 's' && message[6] == ']')
                     {
                         //done bootloading
@@ -202,24 +186,37 @@ namespace Booyco_HMI_Utility
                         Thread.Sleep(20);
                         GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
                     }
+                    #endregion
 
+                    #region Bootload error message
                     if (message[3] == 'e' && message[8] == ']')
                     {
-                        BootStatus = "Device bootloading packet error...";
-                        BootSentIndex--;
+                        if(BitConverter.ToUInt16(message, 4) == 0xFFFF)
+                        {
+                            BootSentIndex = 0;
+                            BootAckIndex = -1;
+                            BootStatus = "Device bootloading packet error...";
+                        }
+                        else
+                        {
+                            BootSentIndex--;
+                            BootStatus = "Device bootloading packet error...";
+                        }                        
+                        
                     }
+                    #endregion
 
+                    #region Bootload flash message persentage
                     if (message[3] == 'f' && message[7] == ']')
                     {
                         BootFlashPersentage = message[4];
-                        //BootReady = true;
                         BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
                     }
-
+                    #endregion
                 }
                 else if (message[2] == 'D')
                 {
-
+                    #region Bootload next index
                     if (message[3] == 'a' && message[8] == ']')
                     {
                         bootContinue = true;
@@ -227,6 +224,7 @@ namespace Booyco_HMI_Utility
                         BootStatus = "Device bootloading packet " + BootAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
 
                     }
+                    #endregion
                 }
             }
         }
@@ -290,6 +288,7 @@ namespace Booyco_HMI_Utility
                 bytesleft -= fileChunck;
             }
 
+            btnBootload.IsEnabled = true;
         }
 
         private string _Name;
@@ -346,13 +345,29 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
+                if (bootfile != null && bootfile != null)
+                {
+                    btnBootload.IsEnabled = true;
+                }
+                else
+                {
+                    btnBootload.IsEnabled = false;
+                }
+
+                DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
+                DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
+                FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
+                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
+                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
                 dispatcherTimer = new DispatcherTimer();
                 dispatcherTimer.Tick += new EventHandler(InfoUpdater);
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
                 dispatcherTimer.Start();
             }
             else
             {
+                BootStart = false;
                 dispatcherTimer.Stop();
             }
         }

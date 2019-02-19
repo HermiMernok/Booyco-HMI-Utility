@@ -150,7 +150,7 @@ namespace Booyco_HMI_Utility
             }
             else
             {
-
+                Bootloader.BootReady = Bootloader.BootStart = Bootloader.BootDone = false;
                 dispatcherTimer.Stop();
                 WiFiconfig.ServerStop();
             }
