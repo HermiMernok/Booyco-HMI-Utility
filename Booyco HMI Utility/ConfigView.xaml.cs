@@ -234,7 +234,7 @@ namespace Booyco_HMI_Utility
                 
                 Disp_Parameters[DGparameters.SelectedIndex] = DisplayParameterUpdate(parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx], Disp_Parameters[DGparameters.SelectedIndex].OriginIndx);
                 //Disp_Parameters = ParametersToDisplay(parameters);
-                //DGparameters.SelectedIndex = temp;
+                DGparameters.SelectedIndex = temp;
             }
         }
 
@@ -276,6 +276,13 @@ namespace Booyco_HMI_Utility
                         parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx - i].CurrentValue = (byte)' ';
                 }
 
+            }
+            else if(DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 0)
+            {
+                TextBox textBox = (TextBox)sender;
+                textBox.Text = generalFunctions.StringNumConditioner(textBox.Text);
+                textBox.SelectionStart = textBox.Text.Length;
+                parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = Convert.ToInt32(Disp_Parameters[DGparameters.SelectedIndex].Value);
             }
         }
 

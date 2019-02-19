@@ -16,6 +16,7 @@ namespace Booyco_HMI_Utility
 {
     public class WiFiconfig
     {
+        bool endAll = false;
         public void WirelessHotspot(string ssid, string key, bool status)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe")
@@ -80,7 +81,7 @@ namespace Booyco_HMI_Utility
         int prevCount = 0;
         private void IPWatch()
         {
-            while (true)
+            while (true && !endAll)
             {
                 GlobalSharedData.NetworkDevices = GetAllLocalIPv4(NetworkInterfaceType.Ethernet);
                 if (GlobalSharedData.NetworkDevices.Count != prevCount)
@@ -105,27 +106,21 @@ namespace Booyco_HMI_Utility
 
         public void ServerRun()
         {
-            //HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
-            //HeartbeatMessage[0] = (byte)'[';
-            //HeartbeatMessage[1] = (byte)'&';
-            //HeartbeatMessage[2] = (byte)'B';
-            //HeartbeatMessage[3] = (byte)'h';
-            //HeartbeatMessage[4] = (byte)'e';
-            //HeartbeatMessage[5] = (byte)'a';
-            //HeartbeatMessage[6] = (byte)'r';
-            //HeartbeatMessage[7] = (byte)'t';
-            //HeartbeatMessage[8] = (byte)'b';
-            //HeartbeatMessage[9] = (byte)'e';
-            //HeartbeatMessage[10] = (byte)'a';
-            //HeartbeatMessage[11] = (byte)'t';
-            //HeartbeatMessage[521] = (byte)']';
-
-            HeartbeatMessage = Enumerable.Repeat((byte)0, 5).ToArray();
+            HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
             HeartbeatMessage[0] = (byte)'[';
             HeartbeatMessage[1] = (byte)'&';
             HeartbeatMessage[2] = (byte)'B';
             HeartbeatMessage[3] = (byte)'h';
-            HeartbeatMessage[4] = (byte)']';
+            HeartbeatMessage[4] = (byte)'e';
+            HeartbeatMessage[5] = (byte)'a';
+            HeartbeatMessage[6] = (byte)'r';
+            HeartbeatMessage[7] = (byte)'t';
+            HeartbeatMessage[8] = (byte)'b';
+            HeartbeatMessage[9] = (byte)'e';
+            HeartbeatMessage[10] = (byte)'a';
+            HeartbeatMessage[11] = (byte)'t';
+            HeartbeatMessage[521] = (byte)']';
+
 
             Thread newThread = new Thread(new ThreadStart(StartServer))
             {
@@ -147,7 +142,7 @@ namespace Booyco_HMI_Utility
 
             //tcpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             tcpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-            
+
 
             //byte[] InValue = new byte[12];
             //bool ON_ = true;
@@ -165,14 +160,14 @@ namespace Booyco_HMI_Utility
             //tcpSocket.IOControl(IOControlCode.KeepAliveValues, InValue, null);
 
             // Disable the Nagle Algorithm for this tcp socket.
-            //tcpSocket.NoDelay = true;
+            tcpSocket.NoDelay = true;
 
             // Set the receive buffer size to 8k
             //           tcpSocket.ReceiveBufferSize = 8192;
 
             //           // Set the timeout for synchronous receive methods to 
             //           // 1 second (1000 milliseconds.)
-            ////           tcpSocket.ReceiveTimeout = 3000;
+            //tcpSocket.ReceiveTimeout = 3000;
 
             //           // Set the send buffer size to 8k.
             //           tcpSocket.SendBufferSize = 8192;
@@ -219,8 +214,8 @@ namespace Booyco_HMI_Utility
 
         private void StartServer()
         {
-            
 
+            endAll = false;
             IpWatcherStart();
             SelectedIP = "";
             clients = new List<Socket>();
@@ -250,6 +245,17 @@ namespace Booyco_HMI_Utility
             }
         }
 
+        public void ServerStop()
+        {
+            endAll = true;
+            foreach (var item in clients)
+            {
+                item.Close();
+            }
+            socket.Dispose();
+            
+        }
+
         private int clientnum = 0;
         private static int pretCount = 0;
 
@@ -258,7 +264,7 @@ namespace Booyco_HMI_Utility
             int clientslot = 0;
             GlobalSharedData.ServerStatus = "Waiting for a client...";
 
-            while (clientnum < 10)
+            while (clientnum < 10 && !endAll)
             {
                 Console.WriteLine("Waiting for a client...");
                 try
@@ -304,23 +310,23 @@ namespace Booyco_HMI_Utility
         {
             int messagecount = 0;
             int ValidMessages = 0;
+
+            List<Socket> clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
+            byte[] data2 = new byte[522];
+            int i;
+
+            while (clientR[0].Connected && !endAll)
+            {
+            //Thread.Sleep(50);
             try
             {
-                List<Socket> clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
-                byte[] data2 = new byte[522];
-                int i;
-
-                while (clientR[0].Connected)
-                {
-                    //Thread.Sleep(50);
-
-                    if ((i = clientR[0].Receive(data2, data2.Length,SocketFlags.None)) != 0)
+                if ((i = clientR[0].Receive(data2, data2.Length, SocketFlags.None)) != 0)
                     {
-                        string recmeg = Encoding.UTF8.GetString(data2, 0, i);
+                       // string recmeg = Encoding.UTF8.GetString(data2, 0, i);
                         //Console.WriteLine("Received:" + recmeg + " from: " + clientR[0].RemoteEndPoint + " count:==== " + messagecount.ToString());
                         messagecount++;
-                        Console.WriteLine("Recieved message: =======: " + messagecount.ToString() + "============================== length: " + i.ToString() );
-                        
+                        Console.WriteLine("Recieved message: =======: " + messagecount.ToString() + "============================== length: " + i.ToString());
+
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
 
                         if (data2[2] == 'B' && data2[3] == 'h' && data2[521] == ']' && i == 522)
@@ -338,25 +344,29 @@ namespace Booyco_HMI_Utility
                             }
 
                             Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
-                            #endregion                          
+                            #endregion
+                        }
+                        else if(data2[2] == 'B' || data2[2] == 'D')
+                        {
+                            Bootloader.BootloaderParse(data2, clientnumr);
                         }
 
                         //WiFimessages.Parse(data2, clientnumr);
-                        Bootloader.BootloaderParse(data2, clientnumr);
-
+                        
                         data2 = new byte[522];
                     }
-                    
-
                 }
-                Console.WriteLine("-------------- {0} closed recieve", clientnumr);
-                TCPclients.RemoveAt(clients.IndexOf(clientR[0]));
+                catch (Exception e)
+                {
+                    Console.WriteLine("-------------- {0} recieve broke", clientnumr);
+                    //Console.WriteLine(e.ToString());
+                }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("-------------- {0} recieve broke", clientnumr);
-                Console.WriteLine(e.ToString());
-            }
+            Console.WriteLine("-------------- {0} closed recieve", clientnumr);
+            clientR[0].Close();
+            clients.Remove(clientR[0]);
+            ClientLsitChanged();
+            clientnum--;
 
         }
 
@@ -364,24 +374,15 @@ namespace Booyco_HMI_Utility
         {
 
 
-            List<Socket> clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
-            for (int i = 0; i < 5; i++)
-            {
-                Thread.Sleep(500);
-                clientR[0].Send(HeartbeatMessage, HeartbeatMessage.Length, SocketFlags.None); //Send the data to the client
-            }
-            
+            List<Socket> clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();           
             byte[] data = new byte[HeartbeatMessage.Length];
             int counter = 0;
-            while (clientR[0].Connected)
+            while (clientR[0].Connected && !endAll)
             {
                 try
                 {
                     //Send the data to the client
                     clientR = clients.Where(t => t.RemoteEndPoint == clientnumr).ToList();
-                    //Thread.Sleep(500);
-                    //clientR[0].Send(HeartbeatMessage, HeartbeatMessage.Length, SocketFlags.None);
-                    //Console.WriteLine("sent heartbeat" + counter++.ToString());
                     if ((SelectedIP == clientnumr.ToString() || GlobalSharedData.BroadCast == true) && GlobalSharedData.ServerMessageSend != null && GlobalSharedData.ServerMessageSend != null)
                     {
                         data = new byte[GlobalSharedData.ServerMessageSend.Length];
@@ -400,10 +401,10 @@ namespace Booyco_HMI_Utility
             }
 
             Console.WriteLine("-------------- {0} closed send", clientnumr);
-            clientR[0].Close();
-            clients.Remove(clientR[0]);
-            ClientLsitChanged();
-            clientnum--;
+            //clientR[0].Close();
+            //clients.Remove(clientR[0]);
+            //ClientLsitChanged();
+            //clientnum--;
         }
 
         public List<TCPclient> ClientLsitChanged()
