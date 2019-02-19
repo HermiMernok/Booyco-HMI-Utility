@@ -103,6 +103,11 @@ namespace Booyco_HMI_Utility
                 ButtonConfigViewer.IsEnabled = true;
                 GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
             }
+            else
+            {
+                ButtonDataViewer.IsEnabled = false;
+                ButtonConfigViewer.IsEnabled = true;
+            }
         }
     }
 }

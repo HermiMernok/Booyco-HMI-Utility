@@ -27,10 +27,11 @@ namespace Booyco_HMI_Utility
         private const byte TOTAL_ENTRY_BYTES = 16;
         public UInt32 LogErrorDateTimeCounter = 0;
         public ExcelFileManagement ExcelFilemanager = new ExcelFileManagement();
-     
+        public bool AbortRequest = false;
+
         #endregion
 
-        public void ReadFile(string Log_Filename)
+        public bool ReadFile(string Log_Filename)
 
         {
             ExcelFilemanager.StoreLogProtocolInfo();
@@ -54,6 +55,13 @@ namespace Booyco_HMI_Utility
             TotalLogEntries = (UInt32)((float)_fileLength / (float)TOTAL_ENTRY_BYTES);
             for (uint i = 0; i < (int)TotalLogEntries - 1; i++)
             {
+                if (AbortRequest)
+                {
+
+                    PercentageComplete=0;
+                    ReportProgress(PercentageComplete);
+                    return false;
+                }
                 byte[] _logChuncks = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 byte[] _logData = { 0, 0, 0, 0, 0, 0, 0, 0 };
                 for (int j = 0; j < TOTAL_ENTRY_BYTES; j++)
@@ -75,7 +83,7 @@ namespace Booyco_HMI_Utility
                     UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
                     string _tempEventInfo = "";
                     try
-                    {
+                   {
                         if (ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID-1).Data[0].DataLink == "Empty")
                         {
                             _tempEventInfo = "No Information";
@@ -190,6 +198,7 @@ namespace Booyco_HMI_Utility
                 }
             }
 
+            return true;
             }
 
         }

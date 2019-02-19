@@ -33,7 +33,9 @@ namespace Booyco_HMI_Utility
         private string logFilename = "";
         private static BackgroundWorker backgroundWorkerReadFile = new BackgroundWorker();
         private DataLogManagement dataLogManager = new DataLogManagement();
-        private bool _dataLogIsExpanded;
+        private bool _dataLogIsExpanded = false;
+
+      
 
         public bool DataLogIsExpanded
         {       
@@ -74,7 +76,7 @@ namespace Booyco_HMI_Utility
             DataGridLogs.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, SelectAll_Executed));
 
             DataLogIsExpanded = new bool();
-            DataLogIsExpanded = false;
+      
          
                  
         }
@@ -100,7 +102,8 @@ namespace Booyco_HMI_Utility
         private void ProcessLogFile(object sender, DoWorkEventArgs e)
         {
             dataLogManager.ReadFile(logFilename);
-
+            
+           
         }
 
 
@@ -113,7 +116,8 @@ namespace Booyco_HMI_Utility
                 DataLogs.Clear();
                 DataLogs.AddRange(dataLogManager.TempList);
                 dataLogManager.TempList.Clear();
-
+                ButtonSave.IsEnabled = true;
+               
             }
             else
             {
@@ -122,34 +126,33 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
+        private void ButtonSaveFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            Microsoft.Win32.SaveFileDialog openFileDialog = new Microsoft.Win32.SaveFileDialog();
 
-            openFileDialog.DefaultExt = "All files(*.*)";
-            openFileDialog.Filter = "Log Fils (*.Mer) | *.Mer | Text Files (*.txt) | *.txt | All files(*.*) | *.*";
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                logFilename = openFileDialog.FileName;
-
-                // Start the background worker           
-
-                if (!backgroundWorkerReadFile.IsBusy)
-                {
-                    backgroundWorkerReadFile.RunWorkerAsync();
-                }
-            }
+           
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.File;
+            ButtonSave.IsEnabled = false;
+            dataLogManager.AbortRequest = true;
+          
+            DataLogs.Clear();
+            this.Visibility = Visibility.Collapsed;
         }
 
         private void Datagrid_Logs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if(ThreadsIsSelected())
+            {
+                ButtonMap.IsEnabled = true;
+            }
+            else
+            {
+                ButtonMap.IsEnabled = false;
+            }
         }
         private void ButtonMap_Click(object sender, RoutedEventArgs e)
         {
@@ -173,8 +176,77 @@ namespace Booyco_HMI_Utility
         }
         private RangeObservableCollection<ProximityDetectionEvent> ProximityDetectionEventList = new RangeObservableCollection<ProximityDetectionEvent>();
 
-        private void PlotThreads()
+        private bool ThreadsIsSelected()
         {
+          
+            uint Event_Count = 0;
+
+            foreach (LogEntry item in DataGridLogs.SelectedItems)
+            {
+                if (item != null)
+                {
+                    if (item.EventID == 150 || item.EventID == 157)
+                    {
+                       
+
+                        Event_Count++;
+                    }
+                    else if (item.EventID == 151 || item.EventID == 158)
+                    {
+                       
+                        Event_Count++;
+                    }
+                    else if (item.EventID == 152 || item.EventID == 159)
+                    {
+
+
+                        Event_Count++;
+
+                    }
+                    else if (item.EventID == 153 || item.EventID == 160)
+                    {
+                        
+
+                        Event_Count++;
+                    }
+                    else if (item.EventID == 154 || item.EventID == 161)
+                    {
+                      
+
+                        Event_Count++;
+                    }
+                    else if (item.EventID == 155 || item.EventID == 162)
+                    {
+                        
+                        Event_Count++;
+                    }
+                    else if (item.EventID == 156 || item.EventID == 163)
+                    {
+                        
+
+                        Event_Count++;
+                    }
+
+                    if (Event_Count == 7)
+                    {
+                        Event_Count = 0;
+                      
+                        return true;
+
+                    }
+
+
+                }
+
+            }
+
+            return false;
+   
+        }
+
+        private void  PlotThreads()
+        {
+          
             ProximityDetectionEvent TempEvent = new ProximityDetectionEvent();
             uint Event_Count = 0;
 
@@ -182,12 +254,12 @@ namespace Booyco_HMI_Utility
             {
                 if (item != null)
                 {
-                    if(item.EventID == 150 || item.EventID == 157)
+                    if (item.EventID == 150 || item.EventID == 157)
                     {
                         // TODO: Fix this two variables
                         TempEvent.DateTimeStamp = item.DateTime;
-                        TempEvent.ThreatNumber = item.Number;
-
+                        TempEvent.ThreatNumberStart = item.Number;
+                        TempEvent.ThreatNumberStop = item.Number + 6;
                         TempEvent.PrimaryID = BitConverter.ToUInt32(item.RawData, 0);
                         TempEvent.ThreatTechnology = item.RawData[4];
                         //uint PDS_01_Group = Map_Information1.RawDataEntry[5];
@@ -207,7 +279,8 @@ namespace Booyco_HMI_Utility
                     }
                     else if (item.EventID == 152 || item.EventID == 159)
                     {
-                      
+                        TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                        TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
 
                         Event_Count++;
 
@@ -229,25 +302,25 @@ namespace Booyco_HMI_Utility
                     }
                     else if (item.EventID == 155 || item.EventID == 162)
                     {
-                        TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                        TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                        TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                        TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
                         Event_Count++;
                     }
                     else if (item.EventID == 156 || item.EventID == 163)
                     {
-                        //TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(Log_Information.RawDataEntry, 0) * Math.Pow(10, -7));
-                        //TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(Log_Information.RawDataEntry, 4) * Math.Pow(10, -7));
+                        TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                        TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
 
                         Event_Count++;
                     }
 
-                    if (Event_Count == 6)
+                    if (Event_Count == 7)
                     {
                         Event_Count = 0;
                         ProximityDetectionEventList.Add(TempEvent);
                         TempEvent = new ProximityDetectionEvent();
-                    }
-                  
+                       
+                    }                
 
 
                 }
@@ -256,29 +329,81 @@ namespace Booyco_HMI_Utility
 
             foreach (ProximityDetectionEvent EventItem in ProximityDetectionEventList)
             {
+                GlobalSharedData.PDSMapMarkers.Clear();
+
+                string PDS_Event_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
+                                                "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
+                                                "Threat ID: 0x" + EventItem.PrimaryID.ToString("X") + "\n" +
+                                                "Threat Kind: " + EventItem.ThreatTechnology.ToString() + "\n" +
+                                                // "Threat Group: " + PDS_01_Group.ToString() + "\n" +
+                                                "Threat Type: " + EventItem.ThreatType.ToString() + "\n" +
+                                                "Threat Speed: " + EventItem.ThreatSpeed.ToString("##,#00.0") + " km/h\n" +
+                                                "Threat Distance: " + EventItem.ThreatDistance.ToString() + " m\n" +
+                                                "Threat Heading: " + EventItem.ThreatHeading.ToString() + " deg\n" +
+                                                "Threat Accuracy: " + EventItem.ThreatHorizontalAccuracy.ToString() + " m\n" +
+                                                "Threat Priority: " + EventItem.ThreatPriority.ToString() + "\n" +
+                                                "Threat Latitude: " + EventItem.ThreatLatitude.ToString() + " deg\n" +
+                                                "Threat Longitude: " + EventItem.ThreatLongitude.ToString() + " deg";
+
+                string Unit_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
+                                          "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
+                                          "Unit Speed: " + EventItem.UnitSpeed.ToString("##,#00.0") + " km/h\n" +
+                                          "Unit Heading: " + EventItem.UnitHeading.ToString("###,#.00") + " deg\n" +
+                                          "Unit Accuracy: " + EventItem.UnitHorizontalAccuracy.ToString() + " m\n" +
+                                          "Unit Latitude: " + EventItem.UnitLatitude.ToString() + " deg\n" +
+                                          "Unit Longitude: " + EventItem.UnitLongitude.ToString() + " deg\n" +
+                                          "Unit Presence Distance: " + EventItem.PresenceDistance.ToString() + " m\n" +
+                                          "Unit Warning Distance: " + EventItem.WarningDistance.ToString() + " m\n" +
+                                          "Unit Critical Distance: " + EventItem.CriticalDistance.ToString() + " m\n" +
+                                          "Threat Zone: " + EventItem.ThreatDisplayZone.ToString() + "\n" +
+                                          "Threat Display Width: " + EventItem.ThreatDisplayWidth.ToString() + "\n" +
+                                          "Threat Sector: " + EventItem.ThreatDisplaySector.ToString();
+
+                string POI_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
+                                          "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
+                                          "POI Distance (UTM Plot): " + EventItem.ThreatPOIUTMDistance.ToString("##,##00.00") + " m\n" +
+                                          "POI Distance (Log): " + EventItem.ThreatPOILOGDistance.ToString() + " m\n" +
+                                          "POI Latitude: " + EventItem.POILatitude.ToString() + " deg\n" +
+                                          "POI Longitude: " + EventItem.POILongitude.ToString() + " deg";
+
+
                 MarkerEntry PDSMarker1 = new MarkerEntry();
                 PDSMarker1.MapMarker = new GMapMarker(new PointLatLng(EventItem.ThreatLatitude, EventItem.ThreatLongitude));
                 MarkerEntry PDSMarker2 = new MarkerEntry();
                 PDSMarker2.MapMarker = new GMapMarker(new PointLatLng(EventItem.UnitLatitude, EventItem.UnitLongitude));
-      
+                MarkerEntry PDSMarkerPOI = new MarkerEntry();
+                PDSMarkerPOI.MapMarker = new GMapMarker(new PointLatLng(EventItem.POILongitude, EventItem.POILatitude));
+
                 if (TempEvent.ThreatTechnology == 5)
-                {                 
-                   PDSMarker1.Type = 1;
-                   // PDSMarker1.Shape = new CustomMarkerAssetType(MainApp, PDSMarker1, PDS_Event_Information);
+                {
+                    PDSMarker1.Heading = EventItem.ThreatHeading;
+                    PDSMarker1.Zone = 0;
+                    PDSMarker1.title = PDS_Event_Information;
+                    PDSMarker1.Type = (int)MarkerType.Indicator;                
                 }
                 else
-                {
-                    PDSMarker1.Type = 2;
-                    //  PDSMarker1.Shape = new CustomMarkerEllipse(MainApp, PDSMarker1, PDS_Event_Information);
-                    //PDSMarker1.Shape = new CircleVisual(PDSMarker1,Brushes.Red);
+                {                
+                    PDSMarker1.title = PDS_Event_Information;
+                    PDSMarker1.Width = EventItem.ThreatDisplayWidth;
+                    PDSMarker1.Height = EventItem.ThreatDisplayWidth;
+             
+                    PDSMarker1.Type = (int)MarkerType.Ellipse;                 
                 }
-                PDSMarker2.Type = 3;
+                PDSMarker2.Heading = EventItem.UnitHeading;
+                PDSMarker2.Zone = EventItem.ThreatDisplayZone;
+                PDSMarker2.title = Unit_Information;     
+                PDSMarker2.Type = (int)MarkerType.Indicator;
               
+                PDSMarkerPOI.Zone = EventItem.ThreatDisplayZone;
+                PDSMarkerPOI.title = POI_Information;
+                PDSMarkerPOI.Type = (int)MarkerType.Point;
+         
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarker1);
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarker2);
                 extendedWindow.MapView.UpdateMapMarker();          
-                extendedWindow.MapView.MainMap.Position = new PointLatLng(TempEvent.UnitLatitude, TempEvent.UnitLongitude);
+                
             }
+     
             
         }
 
@@ -308,19 +433,19 @@ namespace Booyco_HMI_Utility
         private void RowDoubleClick(object sender, RoutedEventArgs e)
         {
             var row = (DataGridRow)sender;
-            if (row.DetailsVisibility == Visibility.Collapsed)
-            {
-                DataLogIsExpanded = true;
-             
-              //  Expander_Expanded(sender, e);
-            }
-            else
-            {
-                DataLogIsExpanded = false;
-             //   Expander_Collapsed(sender, e);
-            }
+            //if (row.DetailsVisibility == Visibility.Collapsed)
+            //{
+            //    DataLogIsExpanded = true;
 
-                
+            //  //  Expander_Expanded(sender, e);
+            //}
+            //else
+            //{
+            //    DataLogIsExpanded = false;
+            // //   Expander_Collapsed(sender, e);
+            //}
+            row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
         }
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
@@ -348,6 +473,7 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
+                dataLogManager.AbortRequest = false;
                 if (GlobalSharedData.FilePath != "" && File.Exists(GlobalSharedData.FilePath))
                 {
                     logFilename = GlobalSharedData.FilePath;
@@ -358,6 +484,31 @@ namespace Booyco_HMI_Utility
                 }
             }
            
+        }
+
+        private void ButtonToggleExpanded_Click(object sender, RoutedEventArgs e)
+        {
+            //for (int i = 0; i < DataGridLogs.Items.Count; i++)
+            //{
+            //    DataGridRow row = (DataGridRow)DataGridLogs.ItemContainerGenerator
+            //                                               .ContainerFromIndex(i);
+            //    if (row != null)
+            //    { 
+            //    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            //}
+            //}
+
+            if (DataGridLogs.Columns[5].Visibility == Visibility.Visible)
+            {
+                DataGridLogs.Columns[5].Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                DataGridLogs.Columns[5].Visibility = Visibility.Visible;
+            }
+           
+
+         
         }
     }
 }

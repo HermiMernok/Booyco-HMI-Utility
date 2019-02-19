@@ -30,9 +30,9 @@
         <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
             <Label Content="Data Extractor" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
-        <Button Content="Back"  Margin="10"  Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
-        <Button Content="Open File"  Click="ButtonOpenFile_Click" Grid.Column="5" Grid.Row="2" Margin="10"/>
-        <DataGrid x:Name="DataGridLogs" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16"  SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,0,0,10">
+        <Button x:Name="ButtonBack" Content="Back"  Margin="10"  Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
+        <Button x:Name="ButtonSave" Content="Save"  Click="ButtonSaveFile_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="True"/>
+        <DataGrid x:Name="DataGridLogs" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16"  SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,0,0,0">
 
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
@@ -44,20 +44,11 @@
                 <DataGridTextColumn Width="4*" Header="Date" Binding="{Binding DateTime, StringFormat='{}{0:dd/MM/yyyy}'}" MinWidth="150" MaxWidth="150" />
                 <DataGridTextColumn Width="4*" Header="Time" Binding="{Binding DateTime, StringFormat='{}{0:HH:mm:ss:fff}'}" MinWidth="150" MaxWidth="150" />
                 <DataGridTextColumn Width="2*" Header="Event ID" Binding="{Binding EventID}" MinWidth="60" MaxWidth="60"/>
-                <DataGridTextColumn Width="8*" Binding="{Binding EventName}" Header="Event">
+                <DataGridTextColumn Width="8*" Binding="{Binding EventName}" Header="Event"/>
+                <DataGridTextColumn Width="8*" Binding="{Binding EventInfo}" Header="Event" Visibility="Collapsed"/>
 
-                </DataGridTextColumn>
-           
-            </DataGrid.Columns>
-            <DataGrid.RowHeaderTemplate>
-                <DataTemplate>
-                    <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed" >
-
-                    </Expander>
-                </DataTemplate>
-            </DataGrid.RowHeaderTemplate>
-           
-            <DataGrid.RowDetailsTemplate>
+                </DataGrid.Columns>
+                    <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding EventInfo}" Margin="10,5,0,0" />
                 </DataTemplate>
@@ -82,6 +73,8 @@
                     <TranslateTransform/>
                 </TransformGroup>
             </TextBlock.RenderTransform></TextBlock>
-        <Button Content="Map" Margin="10"  Click="ButtonMap_Click" Grid.Column="5" Grid.Row="3"/>
+        <Button x:Name="ButtonMap" Content="Map" Margin="10"  Click="ButtonMap_Click" Grid.Column="5" Grid.Row="3" IsEnabled="False"/>
+        <Button  Margin="10,110,230,0"  Click="ButtonToggleExpanded_Click" Grid.Column="1" Grid.Row="5" RenderTransformOrigin="0.6,1.545"/>
+
     </Grid>
 </UserControl>

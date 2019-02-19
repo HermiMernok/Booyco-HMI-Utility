@@ -10,16 +10,30 @@ namespace ProximityDetectionSystemInfo
     class ProximityDetectionEvent
     {
 
-        private uint _ThreatNumber;
-        public uint ThreatNumber
+        private uint _ThreatNumberStart;
+        public uint ThreatNumberStart
         {
-            get { return _ThreatNumber; }
+            get { return _ThreatNumberStart; }
             set
             {
-                if (_ThreatNumber != value)
+                if (_ThreatNumberStart != value)
                 {
-                    _ThreatNumber = value;
-                    OnPropertyChanged("ThreatNumber");
+                    _ThreatNumberStart = value;
+                    OnPropertyChanged("ThreatNumberStart");
+                }
+            }
+        }
+
+        private uint _ThreatNumberStop;
+        public uint ThreatNumberStop
+        {
+            get { return _ThreatNumberStop; }
+            set
+            {
+                if (_ThreatNumberStop != value)
+                {
+                    _ThreatNumberStop = value;
+                    OnPropertyChanged("ThreatNumberStop");
                 }
             }
         }
@@ -114,7 +128,7 @@ namespace ProximityDetectionSystemInfo
             get { return _ThreatDisplayZone; }
             set
             {
-                if (_ThreatDisplayZone!= value)
+                if (_ThreatDisplayZone != value)
                 {
                     _ThreatDisplayZone = value;
                     OnPropertyChanged("ThreatDisplayZone");
@@ -136,6 +150,48 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
+        private UInt16 _PresenceDistance;
+        public UInt16 PresenceDistance
+        {
+            get { return _PresenceDistance; }
+            set
+            {
+                if (_PresenceDistance != value)
+                {
+                    _PresenceDistance = value;
+                    OnPropertyChanged("PresenceDistance");
+                }
+            }
+        }
+
+        private UInt16 _WarningDistance;
+        public UInt16 WarningDistance
+        {
+            get { return _WarningDistance; }
+            set
+            {
+                if (_WarningDistance != value)
+                {
+                    _WarningDistance = value;
+                    OnPropertyChanged("WarningDistance");
+                }
+            }
+        }
+
+        private UInt16 _CriticalDistance;
+        public UInt16 CriticalDistance
+        {
+            get { return _CriticalDistance; }
+            set
+            {
+                if (_CriticalDistance != value)
+                {
+                    _CriticalDistance = value;
+                    OnPropertyChanged("CriticalDistance");
+                }
+            }
+        }
+
         private UInt16 _ThreatDistance;
         public UInt16 ThreatDistance
         {
@@ -150,8 +206,36 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
-        private Int16 _ThreatHeading;
-        public Int16 ThreatHeading
+        private double _ThreatPOIUTMDistance;
+        public double ThreatPOIUTMDistance
+        {
+            get { return _ThreatPOIUTMDistance; }
+            set
+            {
+                if (_ThreatPOIUTMDistance != value)
+                {
+                    _ThreatPOIUTMDistance = value;
+                    OnPropertyChanged("ThreatPOIUTMDistance");
+                }
+            }
+        }
+
+        private UInt16 _ThreatPOILOGDistance;
+        public UInt16 ThreatPOILOGDistance
+        {
+            get { return _ThreatPOILOGDistance; }
+            set
+            {
+                if (_ThreatPOILOGDistance != value)
+                {
+                    _ThreatPOILOGDistance = value;
+                    OnPropertyChanged("ThreatPOILOGDistance");
+                }
+            }
+        }
+
+        private double _ThreatHeading;
+        public double ThreatHeading
         {
             get { return _ThreatHeading; }
             set
@@ -286,6 +370,34 @@ namespace ProximityDetectionSystemInfo
                 {
                     _UnitLongitude = value;
                     OnPropertyChanged("UnitLongitude");
+                }
+            }
+        }
+
+        private double _POILatitude;
+        public double POILatitude
+        {
+            get { return _POILatitude; }
+            set
+            {
+                if (_POILatitude != value)
+                {
+                    _POILatitude = value;
+                    OnPropertyChanged("POILatitude");
+                }
+            }
+        }
+
+        private double _POILongitude;
+        public double POILongitude
+        {
+            get { return _POILongitude; }
+            set
+            {
+                if (_POILongitude != value)
+                {
+                    _POILongitude = value;
+                    OnPropertyChanged("POILongitude");
                 }
             }
         }
