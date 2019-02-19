@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,14 +22,14 @@ namespace Booyco_HMI_Utility
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private DispatcherTimer dispatcherTimer;
       
         public MainWindow()
         {
             InitializeComponent();
-
+            DataContext = this;
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
             ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
 
@@ -109,17 +110,38 @@ namespace Booyco_HMI_Utility
                 ProgrammingDone.Visibility = Visibility.Visible;
                 Bootloader.BootDone = false;
             }
-         
+
             //else
             //    ProgrammingDone.Visibility = Visibility.Collapsed;
 
 
             #endregion
+            HeartbeatCount = WiFiconfig.Hearted; 
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(Environment.ExitCode);
         }
+
+
+        #region OnProperty Changed
+        /////////////////////////////////////////////////////////////
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        /////////////////////////////////////////////////////////////
+        #endregion
+
+        private string _HeartbeatCount;
+
+        public string HeartbeatCount
+        {
+            get { return _HeartbeatCount; }
+            set { _HeartbeatCount = value; OnPropertyChanged("HeartbeatCount"); }
+        }
+
     }
 }

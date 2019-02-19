@@ -35,7 +35,7 @@
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
 
 
-        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" HorizontalScrollBarVisibility="Disabled">
+        <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" RowDetailsVisibilityMode="Collapsed"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" HorizontalScrollBarVisibility="Disabled">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
                    Color="#8c0909"/>
@@ -122,6 +122,24 @@
 
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="{x:Type DataGridRow}">
+                    <EventSetter Event="MouseDoubleClick" Handler="RowDoubleClick"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <!--<DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed" >
+
+                    </Expander>
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>-->
+
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Description}" Margin="5" TextWrapping="Wrap" FontSize="15" Foreground="Silver" />
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
         </DataGrid>
 
     </Grid>

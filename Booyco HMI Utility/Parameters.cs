@@ -20,6 +20,7 @@ namespace Booyco_HMI_Utility
         public int Ptype;
         public int enumVal;
         public List<string> parameterEnums;
+        public string Description;
 
     }
     
@@ -56,6 +57,7 @@ namespace Booyco_HMI_Utility
         public bool LablEdit { get; set; }
         public List<string> parameterEnums { get; set; }
         public int EnumIndx { get; set; }
+        public string Description { get; set; }
     }
 
     public class ParameterEnum

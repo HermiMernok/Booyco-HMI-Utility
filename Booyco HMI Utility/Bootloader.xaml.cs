@@ -42,6 +42,8 @@ namespace Booyco_HMI_Utility
 
         public static string BootStatus { get; set; }
 
+        public static bool BootStart { get; set; }
+
         public static int BootFlashPersentage { get; set; }
 
         public static bool BootReady { get; set; }
@@ -64,7 +66,7 @@ namespace Booyco_HMI_Utility
             InitializeComponent();
             BootFlashPersentage = 0;
             BootStatus = "Bootloader progress..";
-
+            LicenseBool = false;
             DataContext = this;                           
         }
 
@@ -97,7 +99,8 @@ namespace Booyco_HMI_Utility
             if (bootchunks > 0 && !BootDone && BootFlashPersentage>0)
             {
                 BootloadingProgress.Value = (BootSentIndex+ BootFlashPersentage) / ((double)bootchunks+100) * 1000;
-                BootFlashPersentage = 100;
+                if(BootSentIndex>0)
+                    BootFlashPersentage = 100;
             }                
             else
                 BootloadingProgress.Value = 0;
@@ -115,10 +118,11 @@ namespace Booyco_HMI_Utility
 
         private void Bootload_Click(object sender, RoutedEventArgs e)
         {
-
+            BootStart = true;
             BootReady = false;
             BootSentIndex = 0;
             BootAckIndex = -1;
+            byte[] bootmessage = new byte[522];
 
             Thread BootloaderThread = new Thread(BootloaderDo)
             {
@@ -127,12 +131,20 @@ namespace Booyco_HMI_Utility
             };
             BootloaderThread.Start();
             BootStatus = "Asking device to boot...";
-            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+            bootmessage = Enumerable.Repeat((byte)0, 522).ToArray();
+            bootmessage[0] = (byte)'[';
+            bootmessage[1] = (byte)'&';
+            bootmessage[2] = (byte)'B';
+            bootmessage[3] = (byte)'B';
+            bootmessage[4] = (byte)'0';
+            bootmessage[5] = (byte)'0';
+            bootmessage[521] = (byte)']';
+            GlobalSharedData.ServerMessageSend = bootmessage;
         }
 
         private void BootloaderDo()
         {
-            while (true)
+            while (!WiFiconfig.endAll)
             {
                 if (BootReady)
                 {
@@ -320,6 +332,15 @@ namespace Booyco_HMI_Utility
             get { return _SelectedFirm; }
             set { _SelectedFirm = value; OnPropertyChanged("SelectedFirm"); }
         }
+
+        private bool _LicenseBool;
+
+        public bool LicenseBool
+        {
+            get { return _LicenseBool; }
+            set { _LicenseBool = value; }
+        }
+
 
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
