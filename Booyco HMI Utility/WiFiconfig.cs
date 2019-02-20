@@ -354,12 +354,13 @@ namespace Booyco_HMI_Utility
                             #region heartbeatmessage
                             //if(!Bootloader.BootReady && !Bootloader.BootStart)
                             //{
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
-                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
-                                stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client                         
-                                Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
+                            GlobalSharedData.ServerStatus = "Heartbeat message recieved";
+                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
+                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
+                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
+                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
+                            stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client                         
+                            Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
                             //}
                             #endregion
                         }
@@ -371,7 +372,7 @@ namespace Booyco_HMI_Utility
                         #endregion
 
                         Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
-                        GlobalSharedData.ServerStatus = "Message recieved";
+                        
                         //WiFimessages.Parse(data2, clientnumr);
 
                         data2 = new byte[522];

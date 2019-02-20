@@ -76,7 +76,7 @@ namespace Booyco_HMI_Utility
 
         private void InfoUpdater(object sender, EventArgs e)
         {
-            if(this.Visibility == Visibility.Visible && WiFiconfig.clients.Count == 0)
+            if(Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t=> t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
             {
                 WiFiconfig.ConnectionError = true;
                 BtnBack_Click(null, null);
