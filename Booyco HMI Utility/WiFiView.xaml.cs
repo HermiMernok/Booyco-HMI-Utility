@@ -45,6 +45,7 @@ namespace Booyco_HMI_Utility
 
         private void ClientListUpdater(object sender, EventArgs e)
         {
+            ServerStatusView = GlobalSharedData.ServerStatus;
             NetworkDevicesp = GlobalSharedData.NetworkDevices;
             TCPclients = WiFiconfig.ClientLsitChanged();
             if (WiFiconfig.clients != null)
@@ -121,6 +122,15 @@ namespace Booyco_HMI_Utility
             get { return _btnEnabler; }
             set { _btnEnabler = value; OnPropertyChanged("btnEnabler"); }
         }
+
+        private string _ServerStatusView;
+
+        public string ServerStatusView
+        {
+            get { return _ServerStatusView; }
+            set { _ServerStatusView = value; OnPropertyChanged("ServerStatusView"); }
+        }
+
 
         #endregion
 

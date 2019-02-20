@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-
 
 namespace Booyco_HMI_Utility
 {
@@ -33,10 +33,18 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
             ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
 
+            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(WindowUpdateTimer);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             dispatcherTimer.Start();
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            // Log the exception, display it, etc
+            Console.WriteLine((e.Exception as Exception).Message);
         }
 
         private void WindowUpdateTimer(object sender, EventArgs e)
@@ -111,16 +119,28 @@ namespace Booyco_HMI_Utility
                 Bootloader.BootDone = false;
             }
 
+            if(WiFiconfig.ConnectionError)
+            {
+                Error_messageView.Visibility = Visibility.Visible;
+                Bootloader.BootDone = false;
+                WiFiconfig.ConnectionError = false;
+            }
+
             //else
             //    ProgrammingDone.Visibility = Visibility.Collapsed;
 
 
             #endregion
-            HeartbeatCount = WiFiconfig.Hearted; 
+            HeartbeatCount = GlobalSharedData.ServerStatus; 
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            WiFiconfig.endAll = true;
+
+            var prc = new ProcManager();
+            prc.KillByPort(13000);
+            
             Environment.Exit(Environment.ExitCode);
         }
 

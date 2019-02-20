@@ -28,8 +28,7 @@
         <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
             <Label Content="WiFi Interface" Foreground="Black"/>
         </Viewbox>
-
-
+        
         <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" FontSize="20" AutoGenerateColumns="False" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B" RowBackground="#FFB68181" Margin="5,15">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1.2*" Header="IP adress" Binding="{Binding IP}" />
@@ -41,7 +40,7 @@
         <Button x:Name="BtnBootload" Content="Bootload" Grid.Column="2" Margin="15" Grid.Row="3" Click="BtnBootload_Click" IsEnabled="{Binding btnEnabler}" />
         <Button x:Name="BtnConfig" Content="Configure" Grid.Column="2" Margin="15" Grid.Row="4" Click="BtnConfig_Click"  IsEnabled="{Binding btnEnabler}"/>
         <Button x:Name="BtnDatView" Content="Data View" Grid.Column="2" Margin="15" Grid.Row="5" Click="BtnDatView_Click" IsEnabled="{Binding btnEnabler}" />
-        <Button x:Name="BtnMain" Content="Main Menu" Grid.Column="2" Margin="15" Grid.Row="6" Click="BtnMain_Click"  />
+        <Button x:Name="BtnMain" Content="Back" Grid.Column="2" Margin="15" Grid.Row="6" Click="BtnMain_Click"  />
 
 
 

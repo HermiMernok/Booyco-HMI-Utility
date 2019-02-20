@@ -93,7 +93,8 @@ namespace Booyco_HMI_Utility
 
         }
         #endregion
-      
+
+        public static bool ConnectionError = false;
         public static string Hearted = "";
         public static byte[] HeartbeatMessage;
 
@@ -254,7 +255,7 @@ namespace Booyco_HMI_Utility
         private void GetClients()
         {
             int clientslot = 0;
-            GlobalSharedData.ServerStatus = "Waiting for a client...";
+            GlobalSharedData.ServerStatus = " Server running. Waiting for a client...";
 
             while (clientnum < 10 && !endAll)
             {
@@ -294,7 +295,7 @@ namespace Booyco_HMI_Utility
             }
 
             Console.WriteLine("Maximum amount of clients reached!");
-            GlobalSharedData.ServerStatus = "Maximum amount of clients reached!";
+            GlobalSharedData.ServerStatus = "Server closed";
 
         }
 
@@ -308,7 +309,7 @@ namespace Booyco_HMI_Utility
             byte[] Buffer = new byte[522];
             int i;
             int count = 0;
-            clientR[0].ReceiveTimeout = 8000;
+            clientR[0].ReceiveTimeout = 15000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -362,14 +363,15 @@ namespace Booyco_HMI_Utility
                             //}
                             #endregion
                         }
-                        else if(Buffer[2] == 'B' || Buffer[2] == 'D')
+                        else if(Buffer[2] == 'B')
                         {
+                            ValidMessages++;
                             Bootloader.BootloaderParse(data2, clientnumr);
                         }
                         #endregion
 
                         Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
-
+                        GlobalSharedData.ServerStatus = "Message recieved";
                         //WiFimessages.Parse(data2, clientnumr);
 
                         data2 = new byte[522];
@@ -413,6 +415,7 @@ namespace Booyco_HMI_Utility
                             data = GlobalSharedData.ServerMessageSend;
                             stream.Write(data, 0, data.Length); //Send the data to the client
                             //ServerStatus = "Sent: " + ServerMessageSend + " to " + clientR[0].RemoteEndPoint;
+                            GlobalSharedData.ServerStatus = "Message sent";
                             Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
                             GlobalSharedData.ServerMessageSend = null;
                         }
@@ -473,93 +476,100 @@ namespace Booyco_HMI_Utility
         public void ServerStop()
         {
             endAll = true;
-            foreach (TcpClient item in clients)
+            try
             {
-                item.Close();
-            }
-            server.Stop();
-
-        }
-
-        #region Open port management
-        public class PRC
-        {
-            public int PID { get; set; }
-            public int Port { get; set; }
-            public string Protocol { get; set; }
-        }
-        public class ProcManager
-        {
-            public void KillByPort(int port)
-            {
-                var processes = GetAllProcesses();
-                if (processes.Any(p => p.Port == port))
-                    try
-                    {
-                        Process.GetProcessById(processes.First(p => p.Port == port).PID).Kill();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                else
+                foreach (TcpClient item in clients)
                 {
-                    Console.WriteLine("No process to kill!");
+                    item.Close();
                 }
+                server.Stop();
             }
-
-            public List<PRC> GetAllProcesses()
+            catch
             {
-                var pStartInfo = new ProcessStartInfo();
-                pStartInfo.FileName = "netstat.exe";
-                pStartInfo.Arguments = "-a -n -o";
-                pStartInfo.WindowStyle = ProcessWindowStyle.Maximized;
-                pStartInfo.UseShellExecute = false;
-                pStartInfo.RedirectStandardInput = true;
-                pStartInfo.RedirectStandardOutput = true;
-                pStartInfo.RedirectStandardError = true;
+                Console.WriteLine("Server close error=========");
+            }                       
 
-                var process = new Process()
-                {
-                    StartInfo = pStartInfo
-                };
-                process.Start();
-
-                var soStream = process.StandardOutput;
-
-                var output = soStream.ReadToEnd();
-                if (process.ExitCode != 0)
-                    throw new Exception("somethign broke");
-
-                var result = new List<PRC>();
-
-                var lines = Regex.Split(output, "\r\n");
-                foreach (var line in lines)
-                {
-                    if (line.Trim().StartsWith("Proto"))
-                        continue;
-
-                    var parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    var len = parts.Length;
-                    if (len > 2)
-                        result.Add(new PRC
-                        {
-                            Protocol = parts[0],
-                            Port = int.Parse(parts[1].Split(':').Last()),
-                            PID = int.Parse(parts[len - 1])
-                        });
-
-
-                }
-                return result;
-            }
         }
-        #endregion
         #endregion
 
 
     }
+
+    #region Open port management
+    public class PRC
+    {
+        public int PID { get; set; }
+        public int Port { get; set; }
+        public string Protocol { get; set; }
+    }
+    public class ProcManager
+    {
+        public void KillByPort(int port)
+        {
+            var processes = GetAllProcesses();
+            if (processes.Any(p => p.Port == port))
+                try
+                {
+                    Process.GetProcessById(processes.First(p => p.Port == port).PID).Kill();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            else
+            {
+                Console.WriteLine("No process to kill!");
+            }
+        }
+
+        public List<PRC> GetAllProcesses()
+        {
+            var pStartInfo = new ProcessStartInfo();
+            pStartInfo.FileName = "netstat.exe";
+            pStartInfo.Arguments = "-a -n -o";
+            pStartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+            pStartInfo.UseShellExecute = false;
+            pStartInfo.RedirectStandardInput = true;
+            pStartInfo.RedirectStandardOutput = true;
+            pStartInfo.RedirectStandardError = true;
+
+            var process = new Process()
+            {
+                StartInfo = pStartInfo
+            };
+            process.Start();
+
+            var soStream = process.StandardOutput;
+
+            var output = soStream.ReadToEnd();
+            if (process.ExitCode != 0)
+                throw new Exception("somethign broke");
+
+            var result = new List<PRC>();
+
+            var lines = Regex.Split(output, "\r\n");
+            foreach (var line in lines)
+            {
+                if (line.Trim().StartsWith("Proto"))
+                    continue;
+
+                var parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                var len = parts.Length;
+                if (len > 2)
+                    result.Add(new PRC
+                    {
+                        Protocol = parts[0],
+                        Port = int.Parse(parts[1].Split(':').Last()),
+                        PID = int.Parse(parts[len - 1])
+                    });
+
+
+            }
+            return result;
+        }
+    }
+    #endregion
 
     #region Class properties
     public class NetworkDevice : INotifyPropertyChanged

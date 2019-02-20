@@ -49,7 +49,7 @@
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="BtnDiffFile" Content="Select different file" Grid.Column="1" Margin="5" Click="FileSelect_Click"/>
-            <Button x:Name="btnBootload" Content="Bootload" Grid.Column="2" Margin="5" Click="Bootload_Click"/>
+            <Button x:Name="btnBootload" Content="Bootload" Grid.Column="2" Margin="5" Click="Bootload_Click" IsEnabled="{Binding BootBtnEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             <Button x:Name="btnBack" Content="Back" Grid.Column="3" Margin="5" Click="BtnBack_Click"/>
 
 
@@ -59,7 +59,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
-            <Label x:Name="BootStatusLbl" Content="{Binding BootStatus}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+            <Label x:Name="BootStatusLbl" Content="{Binding BootStatusView}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
 
         </Grid>
         <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="3" Content="{Binding DeviceName}"/>

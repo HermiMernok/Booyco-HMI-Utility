@@ -137,6 +137,9 @@
     <Compile Include="DataExtractor\LogEntry.cs" />
     <Compile Include="DateTimeUtility\DateTimeCheck.cs" />
     <Compile Include="DataExtractor\ExcelFileManagement.cs" />
+    <Compile Include="Error_messageView.xaml.cs">
+      <DependentUpon>Error_messageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExtendedWindow.xaml.cs">
       <DependentUpon>ExtendedWindow.xaml</DependentUpon>
     </Compile>
@@ -195,6 +198,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="DataExtractor\DataExtractorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Error_messageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

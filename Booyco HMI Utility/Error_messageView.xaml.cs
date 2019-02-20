@@ -16,18 +16,17 @@ using System.Windows.Shapes;
 namespace Booyco_HMI_Utility
 {
     /// <summary>
-    /// Interaction logic for ProgrammingDone.xaml
+    /// Interaction logic for Error_messageView.xaml
     /// </summary>
-    public partial class ProgrammingDone : UserControl
+    public partial class Error_messageView : UserControl
     {
-        public ProgrammingDone()
+        public Error_messageView()
         {
             InitializeComponent();
         }
 
         private void BtnProgramDone_Click(object sender, RoutedEventArgs e)
         {
-            Bootloader.BootDone = false;
             this.Visibility = Visibility.Collapsed;
         }
     }
