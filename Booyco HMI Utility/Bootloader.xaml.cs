@@ -71,7 +71,33 @@ namespace Booyco_HMI_Utility
             BootFlashPersentage = 0;
             BootStatusView = "Waiting instructions..";
             LicenseBool = false;
-            BootStop = false;
+            //BootStop = false;
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible)
+            {
+                BootStatusView = BootStatus = "Waiting for instructions...";
+                BootBtnEnabled = (bootfile == null || bootfile == "") ? false : true;
+
+                DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
+                DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
+                FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
+                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+                dispatcherTimer.Start();
+            }
+            else
+            {
+                BootReady = false;
+                BootStop = true;
+                dispatcherTimer.Stop();
+
+            }
         }
 
         private void InfoUpdater(object sender, EventArgs e)
@@ -81,7 +107,6 @@ namespace Booyco_HMI_Utility
                 WiFiconfig.ConnectionError = true;
                 BtnBack_Click(null, null);
                 BootReady = false;
-                BootStart = false;
             }
 
             if (bootchunks > 0 && !BootDone && BootFlashPersentage>0)
@@ -92,8 +117,6 @@ namespace Booyco_HMI_Utility
             }                
             else
                 BootloadingProgress.Value = 0;
-
-            //           FlashEraseProgress.Value = BootFlashPersentage;
 
             BootStatusView = BootStatus;
         }
@@ -107,8 +130,8 @@ namespace Booyco_HMI_Utility
         private static Thread BootloaderThread;
         private void Bootload_Click(object sender, RoutedEventArgs e)
         {
-            BootStart = true;
             BootReady = false;
+            BootStop = false;
             BootSentIndex = 0;
             BootAckIndex = -1;
             byte[] bootmessage = new byte[522];
@@ -163,7 +186,7 @@ namespace Booyco_HMI_Utility
             }
             BootBtnEnabled = true;
             BootStop = false;
-
+            BootFlashPersentage = 0;
         }
 
         public static void BootloaderParse(byte[] message, EndPoint endPoint)
@@ -175,7 +198,7 @@ namespace Booyco_HMI_Utility
                 if (message[3] == 'a' && message[6] == ']')
                 {
                     BootStatus = "Device ready to boot...";
-                    GlobalSharedData.ServerStatus = "Boor ready message recieved";
+                    GlobalSharedData.ServerStatus = "Boot ready message recieved";
                     GlobalSharedData.BroadCast = false;
                     BootReady = true;
                     WiFiconfig.SelectedIP = endPoint.ToString();
@@ -311,6 +334,7 @@ namespace Booyco_HMI_Utility
 
         }
 
+        #region Properties
         private string _bootStatus = "";
 
         public string BootStatusView
@@ -386,51 +410,7 @@ namespace Booyco_HMI_Utility
             set { _BootBtnEnabled = value; OnPropertyChanged("BootBtnEnabled"); }
         }
 
+        #endregion
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if(this.Visibility == Visibility.Visible)
-            {
-                BootStatusView = BootStatus = "Waiting for instructions...";
-                if (bootfile == null || bootfile == "")
-                {
-                    //btnBootload.IsEnabled = false;
-                    BootBtnEnabled = false;                    
-                }
-                else
-                {
-                    //btnBootload.IsEnabled = true;
-                    BootBtnEnabled = true;
-                }
-
-                DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-                DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
-                FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
-                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
-                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-                dispatcherTimer = new DispatcherTimer();
-                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-                dispatcherTimer.Start();
-                BootReady = false;
-                BootStop = true;
-                BootFlashPersentage = 0;
-                BootSentIndex = 0;
-                BootAckIndex = -1;
-            }
-            else
-            {
-                BootReady = false;
-                BootStart = false;
-                BootStop = true;
-                dispatcherTimer.Stop();
-                BootloadingProgress.Value = 0;
-                BootStatusView = BootStatus = "Waiting for instructions...";
-                BootFlashPersentage = 0;
-                BootSentIndex = 0;
-                BootAckIndex = -1;
-            }
-        }
     }
 }

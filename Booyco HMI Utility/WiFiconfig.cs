@@ -16,9 +16,12 @@ using System.Windows.Threading;
 namespace Booyco_HMI_Utility
 {
     public class WiFiconfig
-    {        
+    {
         //get status of the wifi hotspot created by the device
         #region WiFi hotspot
+        public string WiFiHotspotSSID = "BooycoHMIUtility";
+        public string WiFiKey = "Mp123456";
+
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
@@ -70,9 +73,10 @@ namespace Booyco_HMI_Utility
         {
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(IPWatch);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 1);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
             dispatcherTimer.Start();
         }
+        int retry = 0;
         private void IPWatch(object sender, EventArgs e)
         {
 
@@ -82,13 +86,32 @@ namespace Booyco_HMI_Utility
                 prevCount = GlobalSharedData.NetworkDevices.Count;
             }
 
-            if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceName.Contains("Wireless")).Count() > 0)
+            if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() > 0 && GlobalSharedData.NetworkDevices.Where(t => t.DeviceIP == "192.168.137.1").ToList().Count >= 1)
             {
-                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint Up";
+                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint created";
             }
-            else
+            else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() == 0)
+            {                
+                if(retry++<5)
+                {
+                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create, retrying...";
+                    WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
+                    dispatcherTimer.Stop();
+                }
+                else
+                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+
+            }
+            else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() > 0 && GlobalSharedData.NetworkDevices.Where(t => t.DeviceIP == "192.168.137.1").ToList().Count < 1)
             {
-                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint Error";
+                if (retry++ < 5)
+                {
+                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create, retrying...";
+                    WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
+                    dispatcherTimer.Stop();
+                }
+                else
+                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
             }
 
         }
@@ -266,7 +289,7 @@ namespace Booyco_HMI_Utility
                     clients.Add(client);
                     IPEndPoint clientep = (IPEndPoint)clients[clientnum].Client.RemoteEndPoint;
 
-                    Console.WriteLine("Connected with {0} at port {1}", clientep.Address, clientep.Port);
+                    //Console.WriteLine("Connected with {0} at port {1}", clientep.Address, clientep.Port);
                     GlobalSharedData.ServerStatus = "Connected with " + clientep.Address + " at port" + clientep.Port;
                     ClientLsitChanged();
 
@@ -309,7 +332,8 @@ namespace Booyco_HMI_Utility
             byte[] Buffer = new byte[522];
             int i;
             int count = 0;
-            clientR[0].ReceiveTimeout = 15000;
+            int heartbeatCounter = 0;
+            clientR[0].ReceiveTimeout = 10000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -340,9 +364,10 @@ namespace Booyco_HMI_Utility
                         
                         #endregion
                         #region Message Debug
-                        // string recmeg = Encoding.UTF8.GetString(data2, 0, i);
+                        //string recmeg = Encoding.UTF8.GetString(data2, 0, i);
                         //Console.WriteLine("Received:" + recmeg + " from: " + clientR[0].RemoteEndPoint + " count:==== " + messagecount.ToString());
-                        Console.WriteLine("Recieved message: =======: " + messagecount.ToString() + " ============= length: " + i.ToString());
+                        //Console.WriteLine("Recieved message: =======: " + messagecount.ToString() + " ============= length: " + i.ToString());
+                        //Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10));
                         #endregion
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
@@ -352,16 +377,16 @@ namespace Booyco_HMI_Utility
                         {
                             ValidMessages++;
                             #region heartbeatmessage
-                            //if(!Bootloader.BootReady && !Bootloader.BootStart)
-                            //{
-                            GlobalSharedData.ServerStatus = "Heartbeat message recieved";
-                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
-                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
-                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
-                            TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
-                            stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client                         
-                            Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
-                            //}
+                            if (!Bootloader.BootReady)
+                            {
+                                GlobalSharedData.ServerStatus = "Heartbeat message recieved: " + heartbeatCounter++.ToString();
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
+                                TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
+                                stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client                         
+                                //Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
+                            }
                             #endregion
                         }
                         else if(Buffer[2] == 'B')
@@ -417,7 +442,8 @@ namespace Booyco_HMI_Utility
                             stream.Write(data, 0, data.Length); //Send the data to the client
                             //ServerStatus = "Sent: " + ServerMessageSend + " to " + clientR[0].RemoteEndPoint;
                             GlobalSharedData.ServerStatus = "Message sent";
-                            Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
+                            //Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
+                            //Console.WriteLine("Sent: " +  Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend,0,3));
                             GlobalSharedData.ServerMessageSend = null;
                         }
                     }
@@ -445,10 +471,7 @@ namespace Booyco_HMI_Utility
 
             try
             {
-                if (clients.Count == 0)
-                {
-                    Bootloader.BootStart = false;
-                }
+
                 if (clients != null && clients.Count != pretCount)
                 {
                     List<TCPclient> TCPclientsdumm = new List<TCPclient>();
@@ -462,7 +485,6 @@ namespace Booyco_HMI_Utility
                 }
                 else
                     return TCPclients;
-
                 
             }
             catch

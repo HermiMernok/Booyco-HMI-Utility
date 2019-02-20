@@ -131,7 +131,8 @@ namespace Booyco_HMI_Utility
 
 
             #endregion
-            HeartbeatCount = GlobalSharedData.ServerStatus; 
+            HeartbeatCount = GlobalSharedData.ServerStatus;
+            WiFiApStatus = GlobalSharedData.WiFiApStatus;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -162,6 +163,15 @@ namespace Booyco_HMI_Utility
             get { return _HeartbeatCount; }
             set { _HeartbeatCount = value; OnPropertyChanged("HeartbeatCount"); }
         }
+
+        private string _WiFiApStatus;
+
+        public string WiFiApStatus
+        {
+            get { return _WiFiApStatus; }
+            set { _WiFiApStatus = value; OnPropertyChanged("WiFiApStatus"); }
+        }
+
 
     }
 }

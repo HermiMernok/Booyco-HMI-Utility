@@ -27,7 +27,6 @@ namespace Booyco_HMI_Utility
 
         private void BtnProgramDone_Click(object sender, RoutedEventArgs e)
         {
-            Bootloader.BootDone = false;
             this.Visibility = Visibility.Collapsed;
         }
     }

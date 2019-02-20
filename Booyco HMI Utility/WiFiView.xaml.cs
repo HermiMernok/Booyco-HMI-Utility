@@ -40,7 +40,14 @@ namespace Booyco_HMI_Utility
         public WiFiView()
         {
             InitializeComponent();
+            
             DataContext = this;
+            WiFiconfig = new WiFiconfig();
+
+            WiFiconfig.WirelessHotspot(null, null, false);
+            string ssid = "BooycoHMIUtility", key = "Mp123456";
+            WiFiconfig.WirelessHotspot(ssid, key, true);
+            WiFiconfig.IpWatcherStart();
         }
 
         private void ClientListUpdater(object sender, EventArgs e)
@@ -146,13 +153,8 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
-                WiFiconfig = new WiFiconfig();
-
-                string ssid = "GodZilla5", key = "Mp123456";
-                WiFiconfig.WirelessHotspot(ssid, key, true);
-
+//                WiFiconfig = new WiFiconfig();          
                 WiFiconfig.ServerRun();
-
                 dispatcherTimer = new DispatcherTimer();
                 dispatcherTimer.Tick += new EventHandler(ClientListUpdater);
                 dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
@@ -160,7 +162,7 @@ namespace Booyco_HMI_Utility
             }
             else
             {
-                Bootloader.BootReady = Bootloader.BootStart = Bootloader.BootDone = false;
+                Bootloader.BootReady = Bootloader.BootDone = false;
                 dispatcherTimer.Stop();
                 WiFiconfig.ServerStop();
             }

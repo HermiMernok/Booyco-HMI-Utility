@@ -41,8 +41,5 @@
         <Button x:Name="BtnConfig" Content="Configure" Grid.Column="2" Margin="15" Grid.Row="4" Click="BtnConfig_Click"  IsEnabled="{Binding btnEnabler}"/>
         <Button x:Name="BtnDatView" Content="Data View" Grid.Column="2" Margin="15" Grid.Row="5" Click="BtnDatView_Click" IsEnabled="{Binding btnEnabler}" />
         <Button x:Name="BtnMain" Content="Back" Grid.Column="2" Margin="15" Grid.Row="6" Click="BtnMain_Click"  />
-
-
-
     </Grid>
 </UserControl>

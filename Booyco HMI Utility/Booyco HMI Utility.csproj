@@ -52,7 +52,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon2.ico</ApplicationIcon>
+    <ApplicationIcon>Images\icon2.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -301,7 +301,7 @@
     <Resource Include="Images\Booyco Logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
+    <Resource Include="Images\icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ButtonImages\File2.png" />
@@ -335,7 +335,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon2.ico" />
+    <Resource Include="Images\icon2.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PDSMap\" />
