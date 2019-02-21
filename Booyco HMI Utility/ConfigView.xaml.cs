@@ -170,9 +170,9 @@ namespace Booyco_HMI_Utility
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            //if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-            //    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
-            //else
+            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+               GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
+            else
                 backBtner = true;
         }
 
@@ -516,10 +516,13 @@ namespace Booyco_HMI_Utility
                 {                   
                     ConfigSendReady = true;
                     ConfigSendStop = false;
+                    ConfigSentIndex = 0;
+                    ConfigSentAckIndex = -1;
+                    Thread.Sleep(2);
                     ConfigStatus = "Device ready to configure...";
-                    GlobalSharedData.ServerStatus = "Config ready message recieved";
-                    GlobalSharedData.BroadCast = false;
-                    WiFiconfig.SelectedIP = endPoint.ToString();
+                    //GlobalSharedData.ServerStatus = "Config ready message recieved";
+                    //GlobalSharedData.BroadCast = false;
+                    //WiFiconfig.SelectedIP = endPoint.ToString();
                 }
                 #endregion
 
@@ -569,7 +572,7 @@ namespace Booyco_HMI_Utility
                 #endregion
 
                 #region Configure Exit message
-                if (message[3] == 'x' && message[8] == ']')
+                if (message[3] == 'x' && message[6] == ']')
                 {
                     backBtner = true;
                 }
