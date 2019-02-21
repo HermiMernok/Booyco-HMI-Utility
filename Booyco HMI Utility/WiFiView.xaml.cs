@@ -44,7 +44,7 @@ namespace Booyco_HMI_Utility
             DataContext = this;
             WiFiconfig = new WiFiconfig();
 
-            WiFiconfig.WirelessHotspot(null, null, false);
+            //WiFiconfig.WirelessHotspot(null, null, false);
             string ssid = "BooycoHMIUtility", key = "Mp123456";
             WiFiconfig.WirelessHotspot(ssid, key, true);
             WiFiconfig.IpWatcherStart();
@@ -54,7 +54,7 @@ namespace Booyco_HMI_Utility
         {
             ServerStatusView = GlobalSharedData.ServerStatus;
             NetworkDevicesp = GlobalSharedData.NetworkDevices;
-            TCPclients = WiFiconfig.ClientLsitChanged();
+            TCPclients = WiFiconfig.ClientLsitChanged(TCPclients);
             if (WiFiconfig.clients != null)
             {
                 if (WiFiconfig.clients.Count == 0)
@@ -67,7 +67,8 @@ namespace Booyco_HMI_Utility
                     btnEnabler = true;
                 }
             }
-
+            if (DGTCPclientList.Items.Count == 1)
+                GlobalSharedData.SelectedDevice = 0;
         }
 
         #region DisplayHandler
@@ -93,8 +94,8 @@ namespace Booyco_HMI_Utility
         #endregion
 
         #region Properties
-        private List<TCPclient> _TCPclients;
-        public List<TCPclient> TCPclients
+        private List<TCPclientR> _TCPclients;
+        public List<TCPclientR> TCPclients
         {
             get
             {
@@ -166,6 +167,12 @@ namespace Booyco_HMI_Utility
                 dispatcherTimer.Stop();
                 WiFiconfig.ServerStop();
             }
+        }
+
+        private void DGTCPclientList_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            if (DGTCPclientList.SelectedIndex != -1)
+                GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
         }
     }
 

@@ -32,6 +32,7 @@ namespace Booyco_HMI_Utility
         ParametersDisplay ParametersDisplay = new ParametersDisplay();
         CollectionView parametrsGroup;
         GeneralFunctions generalFunctions;
+        private static bool backBtner = false;
 
         private DispatcherTimer dispatcherTimer;
 
@@ -50,6 +51,55 @@ namespace Booyco_HMI_Utility
             generalFunctions = new GeneralFunctions();
             InitializeComponent();
            
+        }
+
+        private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible) //when the view is opened
+            {
+                GetDefaultParametersFromFile();
+                //if(DGTCPclientList.SelectedIndex != -1)
+                    WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+                dispatcherTimer.Start();
+            }
+            else //when the view is closed
+            {
+                ConfigSendStop = true;
+                dispatcherTimer.Stop();
+            }
+        }
+
+        private void InfoUpdater(object sender, EventArgs e)
+        {
+            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi && Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
+            {
+                WiFiconfig.ConnectionError = true;
+                backBtner = true;
+                //ConfigSendReady = false;
+            }
+
+            if(backBtner)
+            {
+                backBtner = false;
+                ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
+                this.Visibility = Visibility.Collapsed;
+                ConfigSendStop = true;
+            }
+
+            //if (bootchunks > 0 && !BootDone && BootFlashPersentage > 0)
+            //{
+            //    BootloadingProgress.Value = (BootSentIndex + BootFlashPersentage) / ((double)bootchunks + 100) * 1000;
+            //    if (BootSentIndex > 0)
+            //        BootFlashPersentage = 100;
+            //}
+            //else
+            //    BootloadingProgress.Value = 0;
+
+            //BootStatusView = BootStatus;
         }
 
         private void GetDefaultParametersFromFile()
@@ -88,7 +138,7 @@ namespace Booyco_HMI_Utility
             int bytesleft = 0;
             int ConfigfileSize = 0;
             bytesleft = ConfigfileSize = paraMeterBytes.Length;
-
+            ConfigSendList.Clear();
             Configchunks = (int)Math.Round(ConfigfileSize / (double)fileChunck);
             int shifter = 0;
             for (int i = 0; i <= Configchunks; i++)
@@ -120,9 +170,10 @@ namespace Booyco_HMI_Utility
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
-            this.Visibility = Visibility.Collapsed;
-            ConfigSendStop = true;
+            //if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+            //    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
+            //else
+                backBtner = true;
         }
 
         private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
@@ -130,15 +181,16 @@ namespace Booyco_HMI_Utility
             
         }
 
+        private static Thread ConfigureThread;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Save_ParaMetersToFile();
 
             //BootStart = true;
             ConfigSendReady = false;
+            ConfigSendStop = false;
             ConfigSentIndex = 0;
             ConfigSentAckIndex = -1;
-            byte[] bootmessage = new byte[522];
             if (ConfigureThread != null && ConfigureThread.IsAlive)
             {
 
@@ -153,8 +205,8 @@ namespace Booyco_HMI_Utility
                 ConfigureThread.Start();
             }
 
-            ConfigStatus = "Asking device to boot...";
-            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+            ConfigStatus = "Asking device to configure parameters...";
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
 
 
         }
@@ -430,10 +482,10 @@ namespace Booyco_HMI_Utility
             parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = comboBox.SelectedIndex;           
             //Disp_Parameters = ParametersToDisplay(parameters);
         }
-        private static Thread ConfigureThread;
-        
+
         #endregion
 
+        #region Config Send properties
         List<byte[]> ConfigSendList = new List<byte[]>();
 
         public static string ConfigStatus { get; set; }
@@ -452,6 +504,8 @@ namespace Booyco_HMI_Utility
 
         public static int ConfigSentAckIndex { get; set; }
 
+        #endregion
+
         public static void ConfigSendParse(byte[] message, EndPoint endPoint)
         {
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'P'))
@@ -459,11 +513,12 @@ namespace Booyco_HMI_Utility
 
                 #region Configure ready to start
                 if (message[3] == 'a' && message[6] == ']')
-                {
-                    ConfigStatus = "Device ready to boot...";
+                {                   
+                    ConfigSendReady = true;
+                    ConfigSendStop = false;
+                    ConfigStatus = "Device ready to configure...";
                     GlobalSharedData.ServerStatus = "Config ready message recieved";
                     GlobalSharedData.BroadCast = false;
-                    ConfigSendReady = true;
                     WiFiconfig.SelectedIP = endPoint.ToString();
                 }
                 #endregion
@@ -485,12 +540,12 @@ namespace Booyco_HMI_Utility
                 #region Configure complete message
                 if (message[3] == 's' && message[6] == ']')
                 {
-                    ConfigStatus = "Device bootloading done...";
+                    ConfigStatus = "Device config read done...";
                     ConfigSendDone = true;
-                    ConfigSendReady = false;
-                    Thread.Sleep(20);
-                    GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
-                    GlobalSharedData.ServerStatus = "Config acknowledgment message recieved";
+                    ConfigSendStop = true;
+                    //Thread.Sleep(20);
+                    //GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
+                    //GlobalSharedData.ServerStatus = "Config paramaters sent message recieved";
                 }
                 #endregion
 
@@ -502,15 +557,27 @@ namespace Booyco_HMI_Utility
                         ConfigSentIndex = 0;
                         ConfigSentAckIndex = -1;
                         ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
+                        ConfigSendReady = true;
                     }
                     else
                     {
-                        ConfigSentAckIndex--;
+                        ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
                         ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
                     }
 
                 }
                 #endregion
+
+                #region Configure Exit message
+                if (message[3] == 'x' && message[8] == ']')
+                {
+                    backBtner = true;
+                }
+                #endregion
+            }
+            else
+            {
+                
             }
         }
 
@@ -537,7 +604,7 @@ namespace Booyco_HMI_Utility
 
                     if (ConfigSentIndex == ConfigSendList.Count)
                     {
-                        Console.WriteLine("====================Bootloading done======================");
+                        Console.WriteLine("====================Parameters sent done======================");
                         //WIFIcofig.ServerMessageSend = 
                         //BootReady = false;
                         break;
@@ -549,17 +616,6 @@ namespace Booyco_HMI_Utility
             ConfigSendStop = false;
         }
 
-        private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if(this.Visibility == Visibility.Visible) //when the view is opened
-            {
-                GetDefaultParametersFromFile();
-            }
-            else //when the view is closed
-            {
-                ConfigSendStop = true;
-            }
-        }
     }
 }
 

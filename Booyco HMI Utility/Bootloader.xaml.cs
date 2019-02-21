@@ -57,12 +57,10 @@ namespace Booyco_HMI_Utility
         public static bool bootContinue;
 
         public static int BootAckIndex { get; set; }
-
-        byte[] bootfilebytes;
-        int bootfileSize = 0;
+        
+       
         static int bootchunks = 0;
-        int bytesleft = 0;
-
+       
         public Bootloader()
         {
             DataContext = this;
@@ -80,7 +78,8 @@ namespace Booyco_HMI_Utility
             {
                 BootStatusView = BootStatus = "Waiting for instructions...";
                 BootBtnEnabled = (bootfile == null || bootfile == "") ? false : true;
-
+                SelectFilebtnEnab = true;
+                BackbtnText = "Back";
                 DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
                 DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
                 FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
@@ -134,7 +133,6 @@ namespace Booyco_HMI_Utility
             BootStop = false;
             BootSentIndex = 0;
             BootAckIndex = -1;
-            byte[] bootmessage = new byte[522];
             if(BootloaderThread != null && BootloaderThread.IsAlive)
             {
 
@@ -155,7 +153,8 @@ namespace Booyco_HMI_Utility
 
         private void BootloaderDo()
         {
-            BootBtnEnabled = false;
+            SelectFilebtnEnab = BootBtnEnabled = false;
+            BackbtnText = "Cancel";
             while (!WiFiconfig.endAll && !BootStop)
             {
                 //Thread.Sleep(100);
@@ -184,7 +183,8 @@ namespace Booyco_HMI_Utility
                 }
 
             }
-            BootBtnEnabled = true;
+            SelectFilebtnEnab = BootBtnEnabled = true;
+            BackbtnText = "Back";
             BootStop = false;
             BootFlashPersentage = 0;
         }
@@ -263,9 +263,13 @@ namespace Booyco_HMI_Utility
 
         private void FileSelect_Click(object sender, RoutedEventArgs e)
         {
+            byte[] bootfilebytes;
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
                 bootfilebytes = File.ReadAllBytes(openFileDialog.FileName);
+            else
+                bootfilebytes = null;
 
             bootfile = openFileDialog.FileName;
 
@@ -290,9 +294,10 @@ namespace Booyco_HMI_Utility
                 //           txtEditor.Text = openFileDialog.FileName;
 
                 bootfile = openFileDialog.FileName;
-
+                int bytesleft = 0;
+                int bootfileSize = 0;
                 int fileChunck = 512;
-
+                BootFileList = new List<byte[]>();
                 bytesleft = bootfileSize = bootfilebytes.Length;
                 bootchunks = (int)Math.Round(bootfileSize / (double)fileChunck);
                 int shifter = 0;
@@ -361,6 +366,15 @@ namespace Booyco_HMI_Utility
             set { _Name = value; OnPropertyChanged("DeviceName"); }
         }
 
+        private string _BackbtnText;
+
+        public string BackbtnText
+        {
+            get { return _BackbtnText; }
+            set { _BackbtnText = value; OnPropertyChanged("BackbtnText"); }
+        }
+
+
         private int _FirmwareRev;
 
         public int FirmwareRev
@@ -409,6 +423,15 @@ namespace Booyco_HMI_Utility
             get { return _BootBtnEnabled; }
             set { _BootBtnEnabled = value; OnPropertyChanged("BootBtnEnabled"); }
         }
+
+        private bool _selectFilebtnEnab;
+
+        public bool SelectFilebtnEnab
+        {
+            get { return _selectFilebtnEnab; }
+            set { _selectFilebtnEnab = value; OnPropertyChanged("SelectFilebtnEnab"); }
+        }
+
 
         #endregion
 
