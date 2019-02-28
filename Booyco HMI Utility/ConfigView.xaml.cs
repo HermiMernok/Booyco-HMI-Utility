@@ -58,7 +58,7 @@ namespace Booyco_HMI_Utility
             if (this.Visibility == Visibility.Visible) //when the view is opened
             {
                 GetDefaultParametersFromFile();
-                //if(DGTCPclientList.SelectedIndex != -1)
+                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
                     WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
 
                 dispatcherTimer = new DispatcherTimer();
@@ -172,8 +172,9 @@ namespace Booyco_HMI_Utility
         {
             if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
-            else
-                backBtner = true;
+            //            else
+
+            backBtner = true;
         }
 
         private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
