@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="710" d:DesignWidth="1280">
     
-    <Grid Background="White">
+    <Grid Background="White" IsVisibleChanged="Grid_IsVisibleChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>

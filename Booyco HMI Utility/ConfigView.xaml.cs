@@ -17,6 +17,8 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
+using System.Net;
+using System.Threading;
 
 namespace Booyco_HMI_Utility
 {
@@ -29,6 +31,11 @@ namespace Booyco_HMI_Utility
         PropertyGroupDescription SubgroupDescription = new PropertyGroupDescription("SubGroup");
         ParametersDisplay ParametersDisplay = new ParametersDisplay();
         CollectionView parametrsGroup;
+        GeneralFunctions generalFunctions;
+        private static bool backBtner = false;
+
+        private DispatcherTimer dispatcherTimer;
+
         #region OnProperty Changed
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
@@ -45,14 +52,57 @@ namespace Booyco_HMI_Utility
             InitializeComponent();
            
         }
-        GeneralFunctions generalFunctions;
-        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+
+        private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
-            this.Visibility = Visibility.Collapsed;
+            if (this.Visibility == Visibility.Visible) //when the view is opened
+            {
+                GetDefaultParametersFromFile();
+                //if(DGTCPclientList.SelectedIndex != -1)
+                    WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+                dispatcherTimer.Start();
+            }
+            else //when the view is closed
+            {
+                ConfigSendStop = true;
+                dispatcherTimer.Stop();
+            }
         }
 
-        private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
+        private void InfoUpdater(object sender, EventArgs e)
+        {
+            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi && Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
+            {
+                WiFiconfig.ConnectionError = true;
+                backBtner = true;
+                //ConfigSendReady = false;
+            }
+
+            if(backBtner)
+            {
+                backBtner = false;
+                ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
+                this.Visibility = Visibility.Collapsed;
+                ConfigSendStop = true;
+            }
+
+            //if (bootchunks > 0 && !BootDone && BootFlashPersentage > 0)
+            //{
+            //    BootloadingProgress.Value = (BootSentIndex + BootFlashPersentage) / ((double)bootchunks + 100) * 1000;
+            //    if (BootSentIndex > 0)
+            //        BootFlashPersentage = 100;
+            //}
+            //else
+            //    BootloadingProgress.Value = 0;
+
+            //BootStatusView = BootStatus;
+        }
+
+        private void GetDefaultParametersFromFile()
         {
             ExcelFileManagement excelFileManagement = new ExcelFileManagement();
             string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/CommanderParametersFile.xlsx";
@@ -66,6 +116,99 @@ namespace Booyco_HMI_Utility
             parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
             parametrsGroup.GroupDescriptions.Add(groupDescription);
             parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+
+            Save_ParaMetersToFile();
+        }
+
+        static int Configchunks = 0;
+
+        private void Save_ParaMetersToFile()
+        {
+            byte[] paraMeterBytes = new byte[parameters.Count * 4];
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
+            }
+
+            string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
+            File.WriteAllText("Parameters.mer", hex);
+
+            int fileChunck = 512;
+            int bytesleft = 0;
+            int ConfigfileSize = 0;
+            bytesleft = ConfigfileSize = paraMeterBytes.Length;
+            ConfigSendList.Clear();
+            Configchunks = (int)Math.Round(ConfigfileSize / (double)fileChunck);
+            int shifter = 0;
+            for (int i = 0; i <= Configchunks; i++)
+            {
+                byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
+                byte[] bytes = BitConverter.GetBytes(i);
+                byte[] bytes2 = BitConverter.GetBytes(Configchunks);
+                bootchunk[0] = (byte)'[';
+                bootchunk[1] = (byte)'&';
+                bootchunk[2] = (byte)'P';
+                bootchunk[3] = (byte)'D';
+                bootchunk[4] = bytes[0];
+                bootchunk[5] = bytes[1];
+                bootchunk[6] = bytes2[0];
+                bootchunk[7] = bytes2[1];
+
+                if (bytesleft > fileChunck)
+                    Array.Copy(paraMeterBytes, shifter, bootchunk, 8, fileChunck);
+                else if (bytesleft > 0)
+                    Array.Copy(paraMeterBytes, shifter, bootchunk, 8, bytesleft);
+
+                bootchunk[520] = 0;
+                bootchunk[521] = (byte)']';
+                ConfigSendList.Add(bootchunk);
+                shifter += fileChunck;
+                bytesleft -= fileChunck;
+            }
+        }
+
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+               GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
+            else
+                backBtner = true;
+        }
+
+        private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private static Thread ConfigureThread;
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Save_ParaMetersToFile();
+
+            //BootStart = true;
+            ConfigSendReady = false;
+            ConfigSendStop = false;
+            ConfigSentIndex = 0;
+            ConfigSentAckIndex = -1;
+            if (ConfigureThread != null && ConfigureThread.IsAlive)
+            {
+
+            }
+            else
+            {
+                ConfigureThread = new Thread(ConfigSendDo)
+                {
+                    IsBackground = true,
+                    Name = "BootloaderThread"
+                };
+                ConfigureThread.Start();
+            }
+
+            ConfigStatus = "Asking device to configure parameters...";
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
+
+
         }
 
         public ObservableCollection<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
@@ -151,7 +294,6 @@ namespace Booyco_HMI_Utility
             return parametersDisplays;
         }
 
-
         public ParametersDisplay DisplayParameterUpdate(Parameters parameters, int Index)
         {
             string valueString = "";
@@ -219,8 +361,9 @@ namespace Booyco_HMI_Utility
             get { return disp_parameters; }
             set { disp_parameters = value; OnPropertyChanged("Disp_Parameters"); }
         }
-        #endregion     
+        #endregion
 
+        #region Datagrid functions
         private void min_Button_Click(object sender, RoutedEventArgs e)
         {
             if (DGparameters.SelectedIndex != -1)
@@ -340,23 +483,142 @@ namespace Booyco_HMI_Utility
             //Disp_Parameters = ParametersToDisplay(parameters);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Save_ParaMetersToFile();
-        }
+        #endregion
 
-        public void Save_ParaMetersToFile()
-        {
-            byte[] paraMeterBytes = new byte[parameters.Count*4];
+        #region Config Send properties
+        List<byte[]> ConfigSendList = new List<byte[]>();
 
-            for (int i = 0; i < parameters.Count; i++)
+        public static string ConfigStatus { get; set; }
+
+        public static bool ConfigSendReady { get; set; }
+
+        public static bool ConfigSendDone { get; set; }
+
+        public static int ConfigPersentage { get; set; }
+
+        public static int ConfigSentIndex { get; set; }
+
+        public static bool ConfigSendStop { get; set; }
+
+        public static bool bootContinue;
+
+        public static int ConfigSentAckIndex { get; set; }
+
+        #endregion
+
+        public static void ConfigSendParse(byte[] message, EndPoint endPoint)
+        {
+            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'P'))
             {
-                Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue),0,paraMeterBytes,i*4,4);
-            }
 
-            string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
-            File.WriteAllText("Parameters.mer", hex);
+                #region Configure ready to start
+                if (message[3] == 'a' && message[6] == ']')
+                {                   
+                    ConfigSendReady = true;
+                    ConfigSendStop = false;
+                    ConfigSentIndex = 0;
+                    ConfigSentAckIndex = -1;
+                    Thread.Sleep(2);
+                    ConfigStatus = "Device ready to configure...";
+                    //GlobalSharedData.ServerStatus = "Config ready message recieved";
+                    //GlobalSharedData.BroadCast = false;
+                    //WiFiconfig.SelectedIP = endPoint.ToString();
+                }
+                #endregion
+
+                #region Configure next index
+                if (message[3] == 'D')
+                {
+                    if (message[4] == 'a' && message[9] == ']')
+                    {
+                        bootContinue = true;
+                        ConfigSentAckIndex = BitConverter.ToUInt16(message, 5);
+                        //ConfigStatus = "Device bootloading packet " + ConfigSentAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
+                        GlobalSharedData.ServerStatus = "Config acknowledgment message recieved";
+
+                    }
+                }
+                #endregion
+
+                #region Configure complete message
+                if (message[3] == 's' && message[6] == ']')
+                {
+                    ConfigStatus = "Device config read done...";
+                    ConfigSendDone = true;
+                    ConfigSendStop = true;
+                    //Thread.Sleep(20);
+                    //GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
+                    //GlobalSharedData.ServerStatus = "Config paramaters sent message recieved";
+                }
+                #endregion
+
+                #region Configure error message
+                if (message[3] == 'e' && message[8] == ']')
+                {
+                    if (BitConverter.ToUInt16(message, 4) == 0xFFFF)
+                    {
+                        ConfigSentIndex = 0;
+                        ConfigSentAckIndex = -1;
+                        ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
+                        ConfigSendReady = true;
+                    }
+                    else
+                    {
+                        ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
+                        ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
+                    }
+
+                }
+                #endregion
+
+                #region Configure Exit message
+                if (message[3] == 'x' && message[6] == ']')
+                {
+                    backBtner = true;
+                }
+                #endregion
+            }
+            else
+            {
+                
+            }
         }
+
+        private void ConfigSendDo()
+        {
+            //BootBtnEnabled = false;
+            while (!WiFiconfig.endAll && !ConfigSendStop)
+            {
+                //Thread.Sleep(100);
+                if (ConfigSendReady)
+                {
+
+                    if (ConfigSentIndex == 0 && ConfigSentAckIndex == -1)
+                    {
+                        GlobalSharedData.ServerMessageSend = ConfigSendList.ElementAt(ConfigSentIndex);
+                        ConfigSentIndex++;
+                    }
+
+                    if (ConfigSentIndex < ConfigSendList.Count && ConfigSentAckIndex == ConfigSentIndex - 1)
+                    {
+                        GlobalSharedData.ServerMessageSend = ConfigSendList.ElementAt(ConfigSentIndex);
+                        ConfigSentIndex++;
+                    }
+
+                    if (ConfigSentIndex == ConfigSendList.Count)
+                    {
+                        Console.WriteLine("====================Parameters sent done======================");
+                        //WIFIcofig.ServerMessageSend = 
+                        //BootReady = false;
+                        break;
+                    }
+                }
+
+            }
+            //BootBtnEnabled = true;
+            ConfigSendStop = false;
+        }
+
     }
 }
 

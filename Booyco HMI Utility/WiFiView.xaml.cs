@@ -40,13 +40,21 @@ namespace Booyco_HMI_Utility
         public WiFiView()
         {
             InitializeComponent();
+            
             DataContext = this;
+            WiFiconfig = new WiFiconfig();
+
+            //WiFiconfig.WirelessHotspot(null, null, false);
+            string ssid = "BooycoHMIUtility", key = "Mp123456";
+            WiFiconfig.WirelessHotspot(ssid, key, true);
+            WiFiconfig.IpWatcherStart();
         }
 
         private void ClientListUpdater(object sender, EventArgs e)
         {
+            ServerStatusView = GlobalSharedData.ServerStatus;
             NetworkDevicesp = GlobalSharedData.NetworkDevices;
-            TCPclients = WiFiconfig.ClientLsitChanged();
+            TCPclients = WiFiconfig.ClientLsitChanged(TCPclients);
             if (WiFiconfig.clients != null)
             {
                 if (WiFiconfig.clients.Count == 0)
@@ -59,7 +67,8 @@ namespace Booyco_HMI_Utility
                     btnEnabler = true;
                 }
             }
-
+            if (DGTCPclientList.Items.Count == 1)
+                GlobalSharedData.SelectedDevice = 0;
         }
 
         #region DisplayHandler
@@ -85,8 +94,8 @@ namespace Booyco_HMI_Utility
         #endregion
 
         #region Properties
-        private List<TCPclient> _TCPclients;
-        public List<TCPclient> TCPclients
+        private List<TCPclientR> _TCPclients;
+        public List<TCPclientR> TCPclients
         {
             get
             {
@@ -122,6 +131,15 @@ namespace Booyco_HMI_Utility
             set { _btnEnabler = value; OnPropertyChanged("btnEnabler"); }
         }
 
+        private string _ServerStatusView;
+
+        public string ServerStatusView
+        {
+            get { return _ServerStatusView; }
+            set { _ServerStatusView = value; OnPropertyChanged("ServerStatusView"); }
+        }
+
+
         #endregion
 
         private void DGTCPclientList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -136,13 +154,8 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
-                WiFiconfig = new WiFiconfig();
-
-                string ssid = "GodZilla5", key = "Mp123456";
-                WiFiconfig.WirelessHotspot(ssid, key, true);
-
+//                WiFiconfig = new WiFiconfig();          
                 WiFiconfig.ServerRun();
-
                 dispatcherTimer = new DispatcherTimer();
                 dispatcherTimer.Tick += new EventHandler(ClientListUpdater);
                 dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
@@ -150,10 +163,16 @@ namespace Booyco_HMI_Utility
             }
             else
             {
-
+                Bootloader.BootReady = Bootloader.BootDone = false;
                 dispatcherTimer.Stop();
                 WiFiconfig.ServerStop();
             }
+        }
+
+        private void DGTCPclientList_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            if (DGTCPclientList.SelectedIndex != -1)
+                GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
         }
     }
 

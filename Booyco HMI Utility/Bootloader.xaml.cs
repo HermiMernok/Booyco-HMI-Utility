@@ -40,13 +40,15 @@ namespace Booyco_HMI_Utility
 
         List<byte[]> BootFileList = new List<byte[]>();
 
-        public static string BootStatus { get; set; }
-
         public static bool BootStart { get; set; }
 
         public static int BootFlashPersentage { get; set; }
 
         public static bool BootReady { get; set; }
+
+        public static bool BootStop { get; set; }
+
+        public static string BootStatus { get; set; }
 
         public static bool BootDone { get; set; }
 
@@ -55,45 +57,55 @@ namespace Booyco_HMI_Utility
         public static bool bootContinue;
 
         public static int BootAckIndex { get; set; }
-
-        byte[] bootfilebytes;
-        int bootfileSize = 0;
+        
+       
         static int bootchunks = 0;
-        int bytesleft = 0;
-
+       
         public Bootloader()
         {
+            DataContext = this;
+            BootBtnEnabled = false;
             InitializeComponent();
             BootFlashPersentage = 0;
-            BootStatus = "Bootloader progress..";
+            BootStatusView = "Waiting instructions..";
             LicenseBool = false;
-            DataContext = this;                           
+            //BootStop = false;
         }
 
-        private void InfoUpdater(object sender, EventArgs e)
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (WiFiconfig.clients.Count > 0 && GlobalSharedData.SelectedDevice != -1 && GlobalSharedData.SelectedDevice < WiFiconfig.clients.Count)
+            if (this.Visibility == Visibility.Visible)
             {
+                BootStatusView = BootStatus = "Waiting for instructions...";
+                BootBtnEnabled = (bootfile == null || bootfile == "") ? false : true;
+                SelectFilebtnEnab = true;
+                BackbtnText = "Back";
                 DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
                 DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
                 FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
                 WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
-                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-                //DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
-            }
-            else if(this.Visibility == Visibility.Visible)
-            {
-                BtnBack_Click(null, null);
-                BootReady = false;
-            }
 
-            if(bootfile!=null && bootfile != null)
-            {
-                btnBootload.IsEnabled = true;
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+                dispatcherTimer.Start();
             }
             else
             {
-                btnBootload.IsEnabled = false;
+                BootReady = false;
+                BootStop = true;
+                dispatcherTimer.Stop();
+
+            }
+        }
+
+        private void InfoUpdater(object sender, EventArgs e)
+        {
+            if(Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t=> t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
+            {
+                WiFiconfig.ConnectionError = true;
+                BtnBack_Click(null, null);
+                BootReady = false;
             }
 
             if (bootchunks > 0 && !BootDone && BootFlashPersentage>0)
@@ -105,9 +117,7 @@ namespace Booyco_HMI_Utility
             else
                 BootloadingProgress.Value = 0;
 
- //           FlashEraseProgress.Value = BootFlashPersentage;
-
-            BootStatusLbl.Content = BootStatus;
+            BootStatusView = BootStatus;
         }
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
@@ -116,49 +126,49 @@ namespace Booyco_HMI_Utility
             this.Visibility = Visibility.Collapsed;
         }
 
+        private static Thread BootloaderThread;
         private void Bootload_Click(object sender, RoutedEventArgs e)
         {
-            BootStart = true;
             BootReady = false;
+            BootStop = false;
             BootSentIndex = 0;
             BootAckIndex = -1;
-            byte[] bootmessage = new byte[522];
-
-            Thread BootloaderThread = new Thread(BootloaderDo)
+            if(BootloaderThread != null && BootloaderThread.IsAlive)
             {
-                IsBackground = true,
-                Name = "BootloaderThread"
-            };
-            BootloaderThread.Start();
+
+            }
+            else
+            {
+                BootloaderThread = new Thread(BootloaderDo)
+                {
+                    IsBackground = true,
+                    Name = "BootloaderThread"
+                };
+                BootloaderThread.Start();
+            }
+
             BootStatus = "Asking device to boot...";
-            bootmessage = Enumerable.Repeat((byte)0, 522).ToArray();
-            bootmessage[0] = (byte)'[';
-            bootmessage[1] = (byte)'&';
-            bootmessage[2] = (byte)'B';
-            bootmessage[3] = (byte)'B';
-            bootmessage[4] = (byte)'0';
-            bootmessage[5] = (byte)'0';
-            bootmessage[521] = (byte)']';
-            GlobalSharedData.ServerMessageSend = bootmessage;
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
         }
 
         private void BootloaderDo()
         {
-            while (!WiFiconfig.endAll)
+            SelectFilebtnEnab = BootBtnEnabled = false;
+            BackbtnText = "Cancel";
+            while (!WiFiconfig.endAll && !BootStop)
             {
+                //Thread.Sleep(100);
                 if (BootReady)
                 {
 
                     if (BootSentIndex == 0 && BootAckIndex == -1)
                     {
-                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
 
                     if (BootSentIndex < BootFileList.Count && BootAckIndex == BootSentIndex - 1)
                     {
-                        //Thread.Sleep(10);
                         GlobalSharedData.ServerMessageSend = BootFileList.ElementAt(BootSentIndex);
                         BootSentIndex++;
                     }
@@ -168,129 +178,185 @@ namespace Booyco_HMI_Utility
                         Console.WriteLine("====================Bootloading done======================");
                         //WIFIcofig.ServerMessageSend = 
                         //BootReady = false;
-                        
-
                         break;
                     }
                 }
 
             }
-
+            SelectFilebtnEnab = BootBtnEnabled = true;
+            BackbtnText = "Back";
+            BootStop = false;
+            BootFlashPersentage = 0;
         }
 
         public static void BootloaderParse(byte[] message, EndPoint endPoint)
         {
-            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&')) //
+            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'B'))
             {
-                if (message[2] == 'B')
+
+                #region Bootloading ready to start
+                if (message[3] == 'a' && message[6] == ']')
                 {
-                    if (message[3] == 'a' && message[6] == ']')
-                    {
-                        BootStatus = "Device ready to boot...";
-                        GlobalSharedData.BroadCast = false;
-                        BootReady = true;
-                        WiFiconfig.SelectedIP = endPoint.ToString();
-                    }
-
-                    if (message[3] == 's' && message[6] == ']')
-                    {
-                        //done bootloading
-                        BootStatus = "Device bootloading done...";
-                        BootDone = true;
-                        BootFlashPersentage = 0;
-                        BootReady = false;
-                        Thread.Sleep(20);
-                        GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
-                    }
-
-                    if (message[3] == 'e' && message[8] == ']')
-                    {
-                        BootStatus = "Device bootloading packet error...";
-                        BootSentIndex--;
-                    }
-
-                    if (message[3] == 'f' && message[7] == ']')
-                    {
-                        BootFlashPersentage = message[4];
-                        //BootReady = true;
-                        BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
-                    }
-
+                    BootStatus = "Device ready to boot...";
+                    GlobalSharedData.ServerStatus = "Boot ready message recieved";
+                    GlobalSharedData.BroadCast = false;
+                    BootReady = true;
+                    WiFiconfig.SelectedIP = endPoint.ToString();
                 }
-                else if (message[2] == 'D')
-                {
+                #endregion
 
-                    if (message[3] == 'a' && message[8] == ']')
+                #region Bootload next index
+                if (message[3] == 'D')
+                {                        
+                    if (message[4] == 'a' && message[9] == ']')
                     {
                         bootContinue = true;
-                        BootAckIndex = BitConverter.ToUInt16(message, 4);
+                        BootAckIndex = BitConverter.ToUInt16(message, 5);
                         BootStatus = "Device bootloading packet " + BootAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
+                        GlobalSharedData.ServerStatus = "Boot acknowledgment message recieved";
 
-                    }
+                    }                       
                 }
+                #endregion
+
+                #region Bootloading complete message
+                if (message[3] == 's' && message[6] == ']')
+                {
+                    //done bootloading
+                    BootStatus = "Device bootloading done...";
+                    BootDone = true;                      
+                    BootFlashPersentage = 0;
+                    BootReady = false;
+                    Thread.Sleep(20);
+                    GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
+                    GlobalSharedData.ServerStatus = "Boot acknowledgment message recieved";
+                }
+                #endregion
+
+                #region Bootload error message
+                if (message[3] == 'e' && message[8] == ']')
+                {
+                    if(BitConverter.ToUInt16(message, 4) == 0xFFFF)
+                    {
+                        BootSentIndex = 0;
+                        BootAckIndex = -1;
+                        BootStatus = "Waiting for device, please be patient... " + BootAckIndex.ToString() + "...";
+                    }
+                    else
+                    {
+                        BootSentIndex--;
+                        BootStatus = "Waiting for device, please be patient... " + BootAckIndex.ToString() + "...";
+                    }                        
+                        
+                }
+                #endregion
+
+                #region Bootload flash message persentage
+                if (message[3] == 'f' && message[7] == ']')
+                {
+                    BootFlashPersentage = message[4];
+                    BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
+                }
+                #endregion
             }
         }
 
         private void FileSelect_Click(object sender, RoutedEventArgs e)
         {
+            byte[] bootfilebytes;
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
                 bootfilebytes = File.ReadAllBytes(openFileDialog.FileName);
+            else
+                bootfilebytes = null;
 
             bootfile = openFileDialog.FileName;
 
-            int fileNameStart = bootfile.LastIndexOf("\\") + 1;
-            string fileSub = bootfile.Substring(fileNameStart, bootfile.Length - fileNameStart);
-
- //           File.WriteAllBytes(fileSub, bootfilebytes);
-
-            if (bootfile.Contains("M-PFW-"))
+            if(bootfile != "")
             {
-                int start = bootfile.IndexOf("M-PFW");
-                string firm = bootfile.Substring(start+6, 3);
-                SelectedFirm = Int16.Parse(firm);
+                int fileNameStart = bootfile.LastIndexOf("\\") + 1;
+                string fileSub = bootfile.Substring(fileNameStart, bootfile.Length - fileNameStart);
+
+                //           File.WriteAllBytes(fileSub, bootfilebytes);
+
+                if (bootfile.Contains("M-PFW-"))
+                {
+                    int start = bootfile.IndexOf("M-PFW");
+                    string firm = bootfile.Substring(start + 6, 3);
+                    SelectedFirm = Int16.Parse(firm);
+                }
+
+
+
+                //bootfilebytes = File.ReadAllBytes("D:\\Users\\NeilPretorius\\Desktop\\V14 2\\TITAN VISION - V14\\ME-VISION-L4-PFW\\Debug\\ME-VISION-L4-PFW.binary");
+
+                //           txtEditor.Text = openFileDialog.FileName;
+
+                bootfile = openFileDialog.FileName;
+                int bytesleft = 0;
+                int bootfileSize = 0;
+                int fileChunck = 512;
+                BootFileList = new List<byte[]>();
+                bytesleft = bootfileSize = bootfilebytes.Length;
+                bootchunks = (int)Math.Round(bootfileSize / (double)fileChunck);
+                int shifter = 0;
+                for (int i = 0; i <= bootchunks; i++)
+                {
+                    byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
+                    byte[] bytes = BitConverter.GetBytes(i);
+                    byte[] bytes2 = BitConverter.GetBytes(bootchunks);
+                    bootchunk[0] = (byte)'[';
+                    bootchunk[1] = (byte)'&';
+                    bootchunk[2] = (byte)'B';
+                    bootchunk[3] = (byte)'D';
+                    bootchunk[4] = bytes[0];
+                    bootchunk[5] = bytes[1];
+                    bootchunk[6] = bytes2[0];
+                    bootchunk[7] = bytes2[1];
+
+                    if (bytesleft > fileChunck)
+                        Array.Copy(bootfilebytes, shifter, bootchunk, 8, fileChunck);
+                    else if (bytesleft > 0)
+                        Array.Copy(bootfilebytes, shifter, bootchunk, 8, bytesleft);
+
+                    bootchunk[520] = 0;
+                    bootchunk[521] = (byte)']';
+                    BootFileList.Add(bootchunk);
+                    shifter += fileChunck;
+                    bytesleft -= fileChunck;
+                }
+
+                //btnBootload.IsEnabled = true;
+                BootBtnEnabled = true;
+            }
+            else
+            {
+                //btnBootload.IsEnabled = false;
+                BootBtnEnabled = false;
             }
 
-            
-
-            //bootfilebytes = File.ReadAllBytes("D:\\Users\\NeilPretorius\\Desktop\\V14 2\\TITAN VISION - V14\\ME-VISION-L4-PFW\\Debug\\ME-VISION-L4-PFW.binary");
-
-            //           txtEditor.Text = openFileDialog.FileName;
-
-            bootfile = openFileDialog.FileName;
-
-            int fileChunck = 512;
-
-            bytesleft = bootfileSize = bootfilebytes.Length;
-            bootchunks = (int)Math.Round(bootfileSize / (double)fileChunck);
-            int shifter = 0;
-            for (int i = 0; i <= bootchunks; i++)
-            {
-                byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
-                byte[] bytes = BitConverter.GetBytes(i);
-                byte[] bytes2 = BitConverter.GetBytes(bootchunks);
-                bootchunk[0] = (byte)'[';
-                bootchunk[1] = (byte)'&';
-                bootchunk[2] = (byte)'D';
-                bootchunk[3] = bytes[0];
-                bootchunk[4] = bytes[1];
-                bootchunk[5] = bytes2[0];
-                bootchunk[6] = bytes2[1];
-
-                if (bytesleft > fileChunck)
-                    Array.Copy(bootfilebytes, shifter, bootchunk, 7, fileChunck);
-                else if (bytesleft > 0)
-                    Array.Copy(bootfilebytes, shifter, bootchunk, 7, bytesleft);
-
-                bootchunk[519] = 0;
-                bootchunk[520] = 0;
-                bootchunk[521] = (byte)']';
-                BootFileList.Add(bootchunk);
-                shifter += fileChunck;
-                bytesleft -= fileChunck;
-            }
 
         }
+
+        #region Properties
+        private string _bootStatus = "";
+
+        public string BootStatusView
+        {
+            get { return _bootStatus; }
+            set
+            {
+                if (value != null)
+                    _bootStatus = value;
+                else
+                {
+                    _bootStatus = "Waiting for instructions...";
+                }
+                    OnPropertyChanged("BootStatusView");
+            }
+        }
+
 
         private string _Name;
 
@@ -299,6 +365,15 @@ namespace Booyco_HMI_Utility
             get { return _Name; }
             set { _Name = value; OnPropertyChanged("DeviceName"); }
         }
+
+        private string _BackbtnText;
+
+        public string BackbtnText
+        {
+            get { return _BackbtnText; }
+            set { _BackbtnText = value; OnPropertyChanged("BackbtnText"); }
+        }
+
 
         private int _FirmwareRev;
 
@@ -338,23 +413,27 @@ namespace Booyco_HMI_Utility
         public bool LicenseBool
         {
             get { return _LicenseBool; }
-            set { _LicenseBool = value; }
+            set { _LicenseBool = value; OnPropertyChanged("LicenseBool"); }
         }
 
+        private bool _BootBtnEnabled;
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        public bool BootBtnEnabled
         {
-            if(this.Visibility == Visibility.Visible)
-            {
-                dispatcherTimer = new DispatcherTimer();
-                dispatcherTimer.Tick += new EventHandler(InfoUpdater);
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
-                dispatcherTimer.Start();
-            }
-            else
-            {
-                dispatcherTimer.Stop();
-            }
+            get { return _BootBtnEnabled; }
+            set { _BootBtnEnabled = value; OnPropertyChanged("BootBtnEnabled"); }
         }
+
+        private bool _selectFilebtnEnab;
+
+        public bool SelectFilebtnEnab
+        {
+            get { return _selectFilebtnEnab; }
+            set { _selectFilebtnEnab = value; OnPropertyChanged("SelectFilebtnEnab"); }
+        }
+
+
+        #endregion
+
     }
 }
