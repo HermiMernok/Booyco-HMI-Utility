@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
              d:DesignHeight="710" d:DesignWidth="1280" Background="White" IsVisibleChanged="UserControl_IsVisibleChanged">
@@ -44,7 +45,31 @@
                 <DataGridTextColumn Width="4*" Header="Date" Binding="{Binding DateTime, StringFormat='{}{0:dd/MM/yyyy}'}" MinWidth="150" MaxWidth="150" />
                 <DataGridTextColumn Width="4*" Header="Time" Binding="{Binding DateTime, StringFormat='{}{0:HH:mm:ss:fff}'}" MinWidth="150" MaxWidth="150" />
                 <DataGridTextColumn Width="2*" Header="Event ID" Binding="{Binding EventID}" MinWidth="60" MaxWidth="60"/>
-                <DataGridTextColumn Width="8*" Binding="{Binding EventName}" Header="Event"/>
+                <DataGridTextColumn Width="8*" Binding="{Binding EventName}" >
+                <DataGridTextColumn.HeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </DataGridTextColumn.HeaderStyle>
+
+                    <DataGridTextColumn.Header>
+                        <Grid Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Event Name" VerticalAlignment="Center" />
+                            
+                                <!--<xctk:CheckComboBox x:Name="CheckComboBox_Events" HorizontalAlignment="Left" Height="28" 
+                                                        MouseEnter="CheckComboBox_Events_Mouse_Enter" VerticalAlignment="Top" 
+                                                        Width="16" Grid.Column="1" Background="Transparent" BorderThickness="0" 
+                                                        ItemSelectionChanged="CheckComboBox_Events_ItemSelectionChanged" 
+                                                        MouseLeave="CheckComboBox_Events_Mouse_Leave"
+                                                         PreviewKeyDown="PreviewKeyDown_Filter_Key"
+                                                        />-->
+                        </Grid>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
                 <DataGridTextColumn Width="8*" Binding="{Binding EventInfo}" Header="Event" Visibility="Collapsed"/>
 
                 </DataGrid.Columns>

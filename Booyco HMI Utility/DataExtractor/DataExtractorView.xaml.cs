@@ -59,7 +59,7 @@ namespace Booyco_HMI_Utility
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private ExtendedWindow extendedWindow = new ExtendedWindow();
+        private ExtendedWindow extendedWindow= new ExtendedWindow();
 
 
         public DataExtractorView()
@@ -509,6 +509,89 @@ namespace Booyco_HMI_Utility
            
 
          
+        }
+
+        private void PreviewKeyDown_Filter_Key(object sender, KeyEventArgs e)
+        {          
+                // == check if enter is pressed ===
+                if (e.Key == Key.Enter)
+                {
+                    // === if enter is pressed filter data logs ===
+                    //Button_Filter_Click(null, null);
+                }
+            
+        }
+        /// <summary>
+        /// CheckComboBox mouse Enter event
+        ///  - add border to checkcombobox when mouse enters the user control(CheckComboBox)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CheckComboBox_Events_Mouse_Enter(object sender, MouseEventArgs e)
+        {
+           // CheckComboBox_Events.BorderThickness = new Thickness(1.0);
+        }
+
+        /// <summary>
+        /// CheckComboBox mouse exit event
+        ///  - remove border to checkcombobox when mouse leaves the user control (CheckComboBox)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CheckComboBox_Events_Mouse_Leave(object sender, MouseEventArgs e)
+        {
+            //CheckComboBox_Events.BorderThickness = new Thickness(0.0);
+        }
+        /// <summary>
+        /// Check if "Select All" entry is selected in CheckComboBox_Events.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CheckComboBox_Events_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
+    {
+        string selectedItem = e.Item as string; //cast to the type in the ItemsSource
+        if (selectedItem == "Select All" && e.IsSelected)
+        {
+           // Select_All_CheckComboBox(CheckComboBox_Events, true);
+        }
+        if (selectedItem == "Select All" && !e.IsSelected)
+        {
+            //Select_All_CheckComboBox(CheckComboBox_Events, false);
+        }
+    }
+        /// <summary>
+        /// This function is used to select/unslect all the entries in a CheckCombobox.
+        /// </summary>
+        /// <param name="ChekComboBox_Temp"></param>
+        /// <param name="Checked"></param>
+        private void Select_All_CheckComboBox(Xceed.Wpf.Toolkit.CheckComboBox CheckComboBox_Temp, bool Checked)
+        {
+            // === If checked is true ===
+            if (Checked)
+            {
+
+                // === check each checkbox in the checkCombobox ===
+                foreach (var item in CheckComboBox_Temp.Items)
+                {
+                    if (!CheckComboBox_Temp.SelectedItems.Contains(item))
+                    {
+                        CheckComboBox_Temp.SelectedItems.Add(item);
+                    }
+                }
+            }
+
+            // === if check is false ===
+            else
+            {
+                // === uncheck each checkbox in the checkcombobox ===
+                foreach (var item in CheckComboBox_Temp.Items)
+                {
+                    if (CheckComboBox_Temp.SelectedItems.Contains(item))
+                    {
+                        CheckComboBox_Temp.SelectedItems.Remove(item);
+                    }
+                }
+            }
         }
     }
 }
