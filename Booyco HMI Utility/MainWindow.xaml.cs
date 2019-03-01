@@ -101,12 +101,16 @@ namespace Booyco_HMI_Utility
                 DataExtractorView.DisplayWindowMap();
                 BootView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
                 MapView.Visibility = Visibility.Collapsed;
+                HMIDisplayView.Visibility = Visibility.Collapsed;
                 DataExtractorView.Visibility = Visibility.Visible;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Mapview)
             {
-                MapView.Visibility = Visibility.Visible;
-                
+                MapView.Visibility = Visibility.Visible;                
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.HMIDisplayView)
+            {
+                HMIDisplayView.Visibility = Visibility.Visible;
             }
             else
             {

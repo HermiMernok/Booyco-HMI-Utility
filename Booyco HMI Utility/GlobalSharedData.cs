@@ -21,7 +21,8 @@ namespace Booyco_HMI_Utility
         Bootload,
         Confiure,
         Dataview,
-        Mapview
+        Mapview,
+        HMIDisplayView
     }
 
 

@@ -593,5 +593,10 @@ namespace Booyco_HMI_Utility
                 }
             }
         }
+
+        private void ButtonDisplay_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.HMIDisplayView;
+        }
     }
 }
