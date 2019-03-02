@@ -119,12 +119,28 @@ namespace Booyco_HMI_Utility
                 Bootloader.BootDone = false;
             }
 
+            if(Bootloader.FileError)
+            {
+                Bootloader.FileError = false;
+                ErrorView = true;
+                Error_messageView.ErrorMessage = Bootloader.FileErrorMessage;
+            }
+
             if(WiFiconfig.ConnectionError)
             {
-                Error_messageView.Visibility = Visibility.Visible;
+                Error_messageView.ErrorMessage = "Connection Lost!";                
                 Bootloader.BootDone = false;
                 WiFiconfig.ConnectionError = false;
+                ErrorView = true;
             }
+
+            if(ErrorView)
+            {
+                ErrorView = false;
+                Error_messageView.Visibility = Visibility.Visible;
+            }
+
+
 
             //else
             //    ProgrammingDone.Visibility = Visibility.Collapsed;
@@ -172,6 +188,6 @@ namespace Booyco_HMI_Utility
             set { _WiFiApStatus = value; OnPropertyChanged("WiFiApStatus"); }
         }
 
-
+        public bool ErrorView { get; private set; }
     }
 }
