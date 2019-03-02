@@ -122,6 +122,18 @@ namespace Booyco_HMI_Utility
                 BtnBack_Click(null, null);
                 BootReady = false;
             }
+            else if (WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count > 0)
+            {
+                DeviceName = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Name;
+                DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
+                FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
+                FirmSub = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmSubRev;
+                FirmwareApp = 56;
+
+                FirmwareString = "M-PFW-" + ((FirmwareApp < 100) ? "0" + FirmwareApp.ToString() : FirmwareApp.ToString()) + "-" +
+                    ((FirmwareRev < 10) ? "0" + FirmwareRev.ToString() : FirmwareRev.ToString()) + "-" +
+                    ((FirmSub < 10) ? "0" + FirmSub.ToString() : FirmSub.ToString());
+            }
 
             if (bootchunks > 0 && !BootDone && BootFlashPersentage>0)
             {
@@ -131,6 +143,8 @@ namespace Booyco_HMI_Utility
             }                
             else
                 BootloadingProgress.Value = 0;
+
+            
 
             BootStatuspersentage = "Overall progress: " + (Math.Round(BootloadingProgress.Value/10 , 1)).ToString() + "%";
 
@@ -290,7 +304,7 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private void FileSelect_Click(object sender, RoutedEventArgs e)
+        public void FileSelect_Click(object sender, RoutedEventArgs e)
         {
             byte[] bootfilebytes;
 
@@ -572,5 +586,6 @@ namespace Booyco_HMI_Utility
         {
             SureMessageVis = Visibility.Collapsed;
         }
+
     }
 }
