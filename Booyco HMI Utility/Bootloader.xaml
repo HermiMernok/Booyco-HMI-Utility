@@ -7,69 +7,113 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200" IsVisibleChanged="UserControl_IsVisibleChanged">
 
-
     <Grid Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="1.5*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
 
         <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
             <Label Content="Bootloader" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Viewbox>
-
-        <Label Content="Device Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
-        <Label Content="Name:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
-        <Label Content="Firmware revision:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Foreground="Gray"/>
-        <Label Content="Selected firmware:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
-        <Label Content="VID:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="Gray"/>
-        <Label Content="Licensed:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Top" Foreground="Gray"/>
-
-        <Grid Grid.Column="1" Grid.Row="8"  Grid.ColumnSpan="2" Margin="0,0,0,5">
+        <Border BorderBrush="Black" BorderThickness="2" Grid.Row="2" Grid.Column="1" Grid.RowSpan="4">
+            <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.8*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="BtnDiffFile" Content="Select different file" Grid.Column="1" Margin="5" Click="FileSelect_Click" IsEnabled="{Binding SelectFilebtnEnab}"/>
-            <Button x:Name="btnBootload" Content="Bootload" Grid.Column="2" Margin="5" Click="Bootload_Click" IsEnabled="{Binding BootBtnEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            <Button x:Name="btnBack" Content="{Binding BackbtnText}" Grid.Column="3" Margin="5" Click="BtnBack_Click"/>
+            <!--Heading-->
+            <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
+            <!--Device info-->
+            <Label Content="Name:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Foreground="Gray"/>
+            <Label Content="VID:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Foreground="Gray"/>
+            <Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
+            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="1" Content="{Binding DeviceName}"/>
+            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="2" Content="{Binding DeviceVID}"/>
+            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="3" Content="{Binding LicenseBool}"/>
+
+            <Label Content="Firmware Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
+            <!--Firmware info-->
+            <Label Content="Current device firmware:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
+            <Label Content="Selected firmware revision:" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="Gray"/>
+            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="5" Content="{Binding FirmwareString}"/>
+            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="6" Content="{Binding SelectedFirmwareString}"/>
 
 
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="9"  Grid.ColumnSpan="2" Background="DarkGray">
+        </Border>
+        <Grid Grid.Column="1" Grid.Row="6"  Grid.ColumnSpan="2" Background="Gray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
-            <Label x:Name="BootStatusLbl" Content="{Binding BootStatusView}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"/>
+            <Label x:Name="BootStatusLbl" Content="{Binding BootStatusView}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
+            <Label x:Name="BootStatus2Lbl" Content="{Binding BootStatuspersentage}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
+
 
         </Grid>
-        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="3" Content="{Binding DeviceName}"/>
-        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="4" Content="{Binding FirmwareRev}"/>
-        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="5" Content="{Binding SelectedFirm}"/>
-        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="6" Content="{Binding DeviceVID}"/>
-        <Label Grid.Column="2" Foreground="DarkRed" Grid.Row="7" Content="{Binding LicenseBool}"/>
+        <!---->
+        <Button x:Name="btnBack" Content="{Binding BackbtnText}" Grid.Column="2" Click="BtnBack_Click" Grid.Row="5" Margin="10"/>
+        <Button x:Name="btnBootload" Content="Bootload" Grid.Column="2" Click="Bootload_Click" IsEnabled="{Binding BootBtnEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10" Grid.Row="3"/>
+        <Button x:Name="BtnDiffFile" Content="Select file" Grid.Column="2" Click="FileSelect_Click" IsEnabled="{Binding SelectFilebtnEnab}" Margin="10" Grid.Row="2"/>
 
+        <Grid Grid.Row="0" Grid.RowSpan="6" Grid.ColumnSpan="5" Visibility="{Binding SureMessageVis}" >
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.2"/>
+            </Grid.Background>
 
-    </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="White" Grid.Column="1" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Warning :" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
+                <TextBlock x:Name="ErrorMessagelbl" Text="Are you sure that you want to bootload the selected firmware?" Foreground="Black" Grid.Column="1"  Grid.Row="2" Grid.ColumnSpan="2" FontSize="30" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
+                <Button Content="Yes" Grid.Column="1" Grid.Row="3" Margin="15" Click="Button_Click"/>
+                <Button Content="No" Grid.Column="2" Grid.Row="3" Margin="15" Click="Button_Click_1"/>
+            </Grid>
+        </Grid>
+         </Grid>
 
 
 </UserControl>

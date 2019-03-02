@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using NativeWifi;
 
 namespace Booyco_HMI_Utility
 {
@@ -344,7 +345,7 @@ namespace Booyco_HMI_Utility
         private void ClientsPoll(EndPoint clientnumr)
         {
             List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
-            while (true)
+            while (!endAll)
             {
                 try
                 {
@@ -354,6 +355,7 @@ namespace Booyco_HMI_Utility
                         if (!clientR[0].Client.Poll(10, SelectMode.SelectRead))
                         {
                             Thread.Sleep(1000);
+//                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
                         }
                         else
                         {
@@ -365,7 +367,7 @@ namespace Booyco_HMI_Utility
                             break;
                         }
                     }
-                    catch
+                    catch(Exception f)
                     {
                         Console.WriteLine("Polling failed, error");
                         clientR[0].Close();

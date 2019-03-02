@@ -5,7 +5,41 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1280">
+             d:DesignHeight="800" d:DesignWidth="1280" IsVisibleChanged="UserControl_IsVisibleChanged">
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#8c0909"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#630606"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="SlateGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
     <Grid>
         <Grid.Background>
             <SolidColorBrush Color="Black" Opacity="0.2"/>
@@ -24,6 +58,7 @@
         <Grid Background="White" Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="0.2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="*"/>
@@ -33,8 +68,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Connection lost!" Foreground="Black" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" FontSize="50"/>
-            <Button x:Name="btnProgramDone" Content="OK" Grid.Column="1" Grid.Row="2" Click="BtnProgramDone_Click" />
+            <Label Content="Error :" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
+            <TextBlock x:Name="ErrorMessagelbl" Text="Connection lost!" Foreground="Black" Grid.Column="1"  Grid.Row="2" FontSize="30" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
+            <Button x:Name="btnProgramDone" Content="OK" Grid.Column="1" Grid.Row="3" Click="BtnProgramDone_Click" />
         </Grid>    
     </Grid>
 </UserControl>

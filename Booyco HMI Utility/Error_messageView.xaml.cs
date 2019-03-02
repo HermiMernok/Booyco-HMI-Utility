@@ -20,6 +20,8 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class Error_messageView : UserControl
     {
+        public static string ErrorMessage = "";
+
         public Error_messageView()
         {
             InitializeComponent();
@@ -28,6 +30,11 @@ namespace Booyco_HMI_Utility
         private void BtnProgramDone_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ErrorMessagelbl.Text = ErrorMessage;
         }
     }
 }
