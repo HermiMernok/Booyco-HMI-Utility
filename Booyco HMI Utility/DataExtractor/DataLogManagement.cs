@@ -82,6 +82,8 @@ namespace Booyco_HMI_Utility
                 {
                     UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
                     string _tempEventInfo = "";
+                    List<string> _tempDataList = new List<string>();
+                 
                     try
                    {
                         if (ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID-1).Data[0].DataLink == "Empty")
@@ -107,12 +109,14 @@ namespace Booyco_HMI_Utility
                                     {
                                         if (_dataLookupEntry.IsInt)
                                         {
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + (BitConverter.ToInt32(_logData, _index)*_scale).ToString();
+                                            _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
                                             _index += 4;
                                         }
                                         else
                                         {
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + (BitConverter.ToUInt32(_logData, _index)*_scale).ToString();
+                                             _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " +_tempDataList.Last();
                                             _index += 4;
                                         }
                                     }
@@ -121,12 +125,14 @@ namespace Booyco_HMI_Utility
 
                                         if (_dataLookupEntry.IsInt)
                                         {
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + (BitConverter.ToInt16(_logData, _index) * _scale).ToString();
+                                            _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " +_tempDataList.Last();
                                             _index += 2;
                                         }
                                         else
                                         {
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + (BitConverter.ToUInt16(_logData, _index) * _scale).ToString();
+                                            _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
                                             _index += 2;
                                         }
                                     }
@@ -136,12 +142,14 @@ namespace Booyco_HMI_Utility
 
                                         if (_dataLookupEntry.IsInt)
                                         {
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + ((ushort)_logData[_index]*_scale).ToString();
+                                            _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
                                             _index += 1;
                                         }
                                         else
                                         {
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + (_logData[_index]*_scale).ToString();
+                                            _tempDataList.Add((_logData[_index] * _scale).ToString());
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
                                             _index += 1;
                                         }
                                     }
@@ -161,17 +169,39 @@ namespace Booyco_HMI_Utility
 
                     try
                     {
-                        TempList.Add(new LogEntry
+                        if(_tempEventID >150 && _tempEventID <157)
                         {
-                            Number = i,
-                            EventID = _tempEventID,
-                            EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
-                            RawEntry = _logChuncks,
-                            RawData = _logData,
-                            EventInfo = _tempEventInfo,
-                            DateTime = _eventDateTime,
-                         
-                        });
+                            if(TempList.Last().EventID == 150)
+                            {
+                                TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
+                                TempList.Last().DataList.AddRange(_tempDataList);
+                            }
+
+                        }
+                        else if(_tempEventID > 157 && _tempEventID < 164)
+                        {
+                            if (TempList.Last().EventID == 157)
+                            {
+                                TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
+                                TempList.Last().DataList.AddRange(_tempDataList);
+                            }
+                        }
+                        else
+                        {
+                            TempList.Add(new LogEntry
+                            {
+                                Number = i,
+                                EventID = _tempEventID,
+                                EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
+                                RawEntry = _logChuncks,
+                                RawData = _logData,
+                                EventInfo = _tempEventInfo,
+                                DateTime = _eventDateTime,
+                                DataList = _tempDataList,
+
+                            });
+                        }
+                       
                     }
                     catch
                     {

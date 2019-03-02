@@ -594,8 +594,65 @@ namespace Booyco_HMI_Utility
             }
         }
 
+    
+
         private void ButtonDisplay_Click(object sender, RoutedEventArgs e)
         {
+           
+            GlobalSharedData.HMIDisplayList.Clear();
+            DateTime _clearTime = new DateTime();
+            foreach (LogEntry item in DataGridLogs.SelectedItems )
+            {
+                HMIDisplayEntry _tempHMIDisplayEntry = new HMIDisplayEntry();
+                PDSThreatEvent _tempPDSThreatEvent = new PDSThreatEvent();
+
+                if (item.EventID == 150)
+                {
+                    _tempPDSThreatEvent.ThreatBID = item.DataList.ElementAt(0);
+                     _tempPDSThreatEvent.ThreatGroup = item.DataList.ElementAt(2);
+                    _tempPDSThreatEvent.ThreatType = item.DataList.ElementAt(3);
+                    _tempPDSThreatEvent.ThreatWidth = item.DataList.ElementAt(4);
+                    _tempPDSThreatEvent.ThreatSector = item.DataList.ElementAt(5);
+                    _tempPDSThreatEvent.ThreatZone = item.DataList.ElementAt(6);
+                    _tempPDSThreatEvent.ThreatDistance = item.DataList.ElementAt(8);                   
+                    _tempPDSThreatEvent.ThreatHeading = item.DataList.ElementAt(9);
+                    _tempPDSThreatEvent.DateTime = item.DateTime;
+                    HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == item.DataList.First());
+                
+                if(_foundItem != null)
+                {
+                        if (_foundItem.EndDateTime != _clearTime)
+                        {
+                            _tempHMIDisplayEntry.StartDateTime = item.DateTime;
+                            _tempHMIDisplayEntry.ThreatBID = item.DataList.First();
+                            _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
+                            GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+                        }
+                        else
+                        {
+                            _foundItem.PDSThreat.Add(_tempPDSThreatEvent);
+                          
+                        }
+                }
+                else
+                {
+                    _tempHMIDisplayEntry.StartDateTime = item.DateTime;
+                    _tempHMIDisplayEntry.ThreatBID = item.DataList.First();
+                    _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
+                        GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+                }
+               
+                                        
+                }
+                if (item.EventID == 157)
+                {
+                    HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == item.DataList.First());
+                    if(_foundItem != null)
+                    {
+                        _foundItem.EndDateTime = item.DateTime;
+                    }
+                }
+            }
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.HMIDisplayView;
         }
     }

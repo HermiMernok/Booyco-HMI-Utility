@@ -200,17 +200,18 @@
     <Compile Include="ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomMarker\CustomMarkerEllipse.xaml.cs" />
-    <Compile Include="CustomMarker\CustomMarkerIndicator.xaml.cs">
+    <Compile Include="DataExtractor\CustomMarker\CustomMarkerEllipse.xaml.cs" />
+    <Compile Include="DataExtractor\CustomMarker\CustomMarkerIndicator.xaml.cs">
       <DependentUpon>CustomMarkerIndicator.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomMarker\CustomMarkerPoint.xaml.cs" />
-    <Compile Include="CustomMarker\MarkerEntry.cs" />
+    <Compile Include="DataExtractor\CustomMarker\CustomMarkerPoint.xaml.cs" />
+    <Compile Include="DataExtractor\CustomMarker\MarkerEntry.cs" />
     <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
       <DependentUpon>DataExtractorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataExtractor\DataLogManagement.cs" />
+    <Compile Include="DataExtractor\HMIDisplayEntry.cs" />
     <Compile Include="DataExtractor\HMIDisplayView.xaml.cs">
       <DependentUpon>HMIDisplayView.xaml</DependentUpon>
     </Compile>
@@ -262,15 +263,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CustomMarker\CustomMarkerEllipse.xaml">
+    <Page Include="DataExtractor\CustomMarker\CustomMarkerEllipse.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="CustomMarker\CustomMarkerIndicator.xaml">
+    <Page Include="DataExtractor\CustomMarker\CustomMarkerIndicator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="CustomMarker\CustomMarkerPoint.xaml">
+    <Page Include="DataExtractor\CustomMarker\CustomMarkerPoint.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
