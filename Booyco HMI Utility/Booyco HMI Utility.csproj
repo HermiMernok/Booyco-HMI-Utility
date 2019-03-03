@@ -203,24 +203,27 @@
     <Compile Include="ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataExtractor\CustomMarker\CustomMarkerEllipse.xaml.cs" />
-    <Compile Include="DataExtractor\CustomMarker\CustomMarkerIndicator.xaml.cs">
-      <DependentUpon>CustomMarkerIndicator.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DataExtractor\CustomMarker\CustomMarkerPoint.xaml.cs" />
-    <Compile Include="DataExtractor\CustomMarker\MarkerEntry.cs" />
-    <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
       <DependentUpon>DataExtractorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataExtractor\DataLogManagement.cs" />
-    <Compile Include="DataExtractor\HMIDisplayEntry.cs" />
-    <Compile Include="DataExtractor\HMIDisplayView.xaml.cs">
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerEllipse.xaml.cs" />
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerIndicator.xaml.cs">
+      <DependentUpon>CustomMarkerIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerPoint.xaml.cs" />
+    <Compile Include="DataLogViewer\CustomMarker\MarkerEntry.cs" />
+    <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
+    <Compile Include="DataLogViewer\DataLogView.xaml.cs">
+      <DependentUpon>DataLogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogViewer\DataLogManagement.cs" />
+    <Compile Include="DataLogViewer\HMIDisplayEntry.cs" />
+    <Compile Include="DataLogViewer\HMIDisplayView.xaml.cs">
       <DependentUpon>HMIDisplayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataExtractor\LogEntry.cs" />
+    <Compile Include="DataLogViewer\LogEntry.cs" />
     <Compile Include="DateTimeUtility\DateTimeCheck.cs" />
-    <Compile Include="DataExtractor\ExcelFileManagement.cs" />
+    <Compile Include="DataLogViewer\ExcelFileManagement.cs" />
     <Compile Include="Error_messageView.xaml.cs">
       <DependentUpon>Error_messageView.xaml</DependentUpon>
     </Compile>
@@ -232,11 +235,11 @@
       <DependentUpon>FileView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalSharedData.cs" />
-    <Compile Include="DataExtractor\LPDEntry.cs" />
+    <Compile Include="DataLogViewer\LPDEntry.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataExtractor\MapView.xaml.cs">
+    <Compile Include="DataLogViewer\MapView.xaml.cs">
       <DependentUpon>MapView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Parameters.cs" />
@@ -266,23 +269,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DataExtractor\CustomMarker\CustomMarkerEllipse.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="DataExtractor\CustomMarker\CustomMarkerIndicator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="DataExtractor\CustomMarker\CustomMarkerPoint.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="DataExtractor\DataExtractorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DataExtractor\HMIDisplayView.xaml">
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerEllipse.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerPoint.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataLogViewer\DataLogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataLogViewer\HMIDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -306,7 +313,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DataExtractor\MapView.xaml">
+    <Page Include="DataLogViewer\MapView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

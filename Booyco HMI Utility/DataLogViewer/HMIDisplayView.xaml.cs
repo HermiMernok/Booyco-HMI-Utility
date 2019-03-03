@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Booyco_HMI_Utility
 {
@@ -22,16 +23,26 @@ namespace Booyco_HMI_Utility
     {
 
         public bool CloseRequest = false;
+        private DispatcherTimer dispatcherPlayTimer;
+        private bool DisplpayPlay = false;
+
         public HMIDisplayView()
         {
             InitializeComponent();
+
+            dispatcherPlayTimer = new DispatcherTimer();
+            dispatcherPlayTimer.Tick += new EventHandler(PlayTimerTick);
+            dispatcherPlayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+   
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
             CloseRequest = true;
         }
+
+
 
         private void ButtonNewWindow_Click(object sender, RoutedEventArgs e)
         {
@@ -52,53 +63,62 @@ namespace Booyco_HMI_Utility
                 _rectangle.Opacity -= 0.2;
             }
         }
+        private void PlayTimerTick(object sender, EventArgs e)
+        {
+            Slider_DateTime.Value += 5000000;
+        }
 
-        private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+            private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
               if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.HMIDisplayView)
             {
                 //GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone;
-                PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone),Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
-
-                DateTime _startTime = new DateTime(2100,1,1);
-                DateTime _endTime = new DateTime();
-                DateTime _clearTime = new DateTime();
-
-                foreach (HMIDisplayEntry item in GlobalSharedData.HMIDisplayList)
+                if (GlobalSharedData.HMIDisplayList.Count() != 0)
                 {
-                   
 
-                    if (_clearTime == item.EndDateTime)
+                    PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
+
+                    DateTime _startTime = new DateTime(2100, 1, 1);
+                    DateTime _endTime = new DateTime();
+                    DateTime _clearTime = new DateTime();
+
+                    foreach (HMIDisplayEntry item in GlobalSharedData.HMIDisplayList)
                     {
 
-                        foreach (PDSThreatEvent tempPDSThreat in item.PDSThreat)
+
+                        if (_clearTime == item.EndDateTime)
                         {
-                            if (item.EndDateTime < tempPDSThreat.DateTime)
+
+                            foreach (PDSThreatEvent tempPDSThreat in item.PDSThreat)
                             {
-                                item.EndDateTime = tempPDSThreat.DateTime;
+                                if (item.EndDateTime < tempPDSThreat.DateTime)
+                                {
+                                    item.EndDateTime = tempPDSThreat.DateTime;
+                                }
                             }
+
                         }
-                    
-                    }
-                    if(_startTime.Ticks > item.StartDateTime.Ticks)
-                    {
-                        _startTime = item.StartDateTime;
-                    }
+                        if (_startTime.Ticks > item.StartDateTime.Ticks)
+                        {
+                            _startTime = item.StartDateTime;
+                        }
 
-                    if (_endTime.Ticks < item.EndDateTime.Ticks)
-                    {
-                        _endTime = item.EndDateTime;
-                    }
+                        if (_endTime.Ticks < item.EndDateTime.Ticks)
+                        {
+                            _endTime = item.EndDateTime;
+                        }
 
 
+                    }
+
+                    Slider_DateTime.Minimum = _startTime.Ticks + 1;
+                    TextBlock_StartDateTime.Text = _startTime.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
+
+
+                    Slider_DateTime.Maximum = _endTime.Ticks + 1;
+                    TextBlock_EndDateTime.Text = _endTime.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
                 }
-
-                Slider_DateTime.Minimum = _startTime.Ticks+3;
-                TextBlock_StartDateTime.Text = _startTime.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-
-                Slider_DateTime.Maximum = _endTime.Ticks+1;
-                TextBlock_EndDateTime.Text = _endTime.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-
+                
 
             }
 
@@ -153,16 +173,16 @@ namespace Booyco_HMI_Utility
 
         void ClusterOpacity(int sector, int width, double opacity , string _rectangleName)
         {
-            if(width > 36)
+            if(width > 360)
             {
-                width = 36;
+                width = 360;
             }
             if(sector > 12)
            {
                 sector = 12;
             }
 
-            int numberSegements = width * 10 / 15;
+            int numberSegements = width / 15;
 
             int startPos = sector * 2 - numberSegements / 2 + 1;
 
@@ -204,7 +224,7 @@ namespace Booyco_HMI_Utility
                 if (Convert.ToUInt32(item.ThreatBID) > 0)
                 {
 
-                    int firstindex = item.PDSThreat.FindIndex(p => p.DateTime > _dateTime && p.DateTime < item.EndDateTime);
+                    int firstindex = item.PDSThreat.FindLastIndex(p => p.DateTime < _dateTime);
 
                     // int lastindex = item.PDSThreat.FindLastIndex(p => p.DateTime < _dateTime);
 
@@ -235,13 +255,27 @@ namespace Booyco_HMI_Utility
             if (count > 0)
             {
                 TextBlock_Title.Foreground = new SolidColorBrush(Color.FromRgb(255, 165, 0)); 
-            TextBlock_Title.Text = "PDS(1/" + count.ToString() + ") - Proximity Detection 01";
+                TextBlock_Title.Text = "PDS(1/" + count.ToString() + ") - Proximity Detection 01";
 
             }
             else
             {
                 TextBlock_Time.Text = _enddateTime.ToString("hh:mm:ss");
                 TextBlock_Title.Text = "";
+            }
+        }
+
+        private void Button_Play_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplpayPlay)
+            {
+                dispatcherPlayTimer.Stop();
+                DisplpayPlay = false;
+            }
+            else
+            {
+                dispatcherPlayTimer.Start();
+                DisplpayPlay = true;
             }
         }
     }

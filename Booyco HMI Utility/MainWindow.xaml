@@ -61,6 +61,7 @@
             <local:WiFiView x:Name="WiFiView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
           
             <local:Bootloader x:Name="BootView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
+            <local:DataLogView x:Name="DataLogView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:DataExtractorView x:Name="DataExtractorView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ConfigView x:Name="ConfigView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ProgrammingDone x:Name="ProgrammingDone"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>

@@ -20,7 +20,8 @@ namespace Booyco_HMI_Utility
         GPRS,
         Bootload,
         Confiure,
-        Dataview,
+        DataLogView,
+        DataExtractorView,
         Mapview,
         HMIDisplayView
     }

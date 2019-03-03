@@ -37,7 +37,7 @@ namespace Booyco_HMI_Utility
 
         private void ButtonDataViewer_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
         }
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {

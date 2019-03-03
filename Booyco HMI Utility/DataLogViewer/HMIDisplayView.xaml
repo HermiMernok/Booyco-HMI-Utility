@@ -162,12 +162,13 @@
             <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>
             <Label Content="Booyco HMI Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
         </Grid>
-
-        <Button x:Name="ButtonClear" Content="Clear" Margin="10" Click="ButtonClear_Click" Grid.Column="5" Grid.Row="3"/>
         <Slider x:Name="Slider_DateTime" Grid.Column="1" HorizontalAlignment="Left" Margin="10,5,0,0" Grid.Row="6" VerticalAlignment="Top" RenderTransformOrigin="-3.333,2.852" Grid.ColumnSpan="4" Width="996" Height="25" ValueChanged="Slider_DateTime_ValueChanged"/>
         <TextBlock x:Name="TextBlock_SelectDateTime" HorizontalAlignment="Center" Text="Selected DateTime" TextAlignment="Center" FontSize="10" Grid.Column="2"  Margin="10,30,0,0" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Top" Grid.ColumnSpan="2" Width="488"/>
         <TextBlock x:Name="TextBlock_StartDateTime" FontSize="10" Grid.Column="1" Text="Start DateTime" HorizontalAlignment="Left" Margin="10,30,0,0" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Top" Width="204"/>
         <TextBlock x:Name="TextBlock_EndDateTime" FontSize="10" Grid.Column="4"  Text="End DateTime"  TextAlignment="Right" HorizontalAlignment="Right" Margin="0,30,10,0" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Top" Width="204"/>
+        <Button x:Name="Button_Play" Content="Play" Grid.Column="2" HorizontalAlignment="Left" Margin="219,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="74" Click="Button_Play_Click" Grid.ColumnSpan="2" Height="27" Grid.RowSpan="2"/>
+        <Button x:Name="Button_Backward" Content="&lt;" Grid.Column="2" HorizontalAlignment="Left" Margin="179,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="35" Height="27" Grid.RowSpan="2"/>
+        <Button x:Name="Button_Forward" Content="&gt;" Grid.Column="3" HorizontalAlignment="Left" Margin="44,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="35" Height="27" Grid.RowSpan="2"/>
 
     </Grid>
 </UserControl>

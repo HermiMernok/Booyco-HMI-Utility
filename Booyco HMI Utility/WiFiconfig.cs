@@ -20,7 +20,7 @@ namespace Booyco_HMI_Utility
     {
         //get status of the wifi hotspot created by the device
         #region WiFi hotspot
-        public string WiFiHotspotSSID = "BooycoHMIUtility";
+        public string WiFiHotspotSSID = "HermiWifi";
         public string WiFiKey = "Mp123456";
 
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
@@ -436,6 +436,7 @@ namespace Booyco_HMI_Utility
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
                         Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
+                        Console.WriteLine("Recieved: " + string.Concat(data2.Select(b => b.ToString("X2"))) );
                         #region Message Paresers
                         if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'B' && data2[3] == 'h' /*&& Buffer[521] == ']'*/)
                         {
@@ -469,6 +470,10 @@ namespace Booyco_HMI_Utility
                         else if(Buffer[2] == 'P')
                         {
                             ConfigView.ConfigSendParse(data2, clientnumr);
+                        }
+                        else if(Buffer[2] == 'L')
+                        {
+                            DataExtractorView.DataExtractorSendParse(data2, clientnumr);
                         }
 
                         #endregion
