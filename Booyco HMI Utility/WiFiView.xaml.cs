@@ -39,15 +39,9 @@ namespace Booyco_HMI_Utility
 
         public WiFiView()
         {
-            InitializeComponent();
-            
+            InitializeComponent();           
             DataContext = this;
-            WiFiconfig = new WiFiconfig();
-
-            //WiFiconfig.WirelessHotspot(null, null, false);
-            string ssid = "BooycoHMIUtility", key = "Mp123456";
-            WiFiconfig.WirelessHotspot(ssid, key, true);
-            WiFiconfig.IpWatcherStart();
+            //WiFiconfig = new WiFiconfig();
         }
 
         private void ClientListUpdater(object sender, EventArgs e)
@@ -154,7 +148,7 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
-//                WiFiconfig = new WiFiconfig();          
+                WiFiconfig = new WiFiconfig();          
                 WiFiconfig.ServerRun();
                 dispatcherTimer = new DispatcherTimer();
                 dispatcherTimer.Tick += new EventHandler(ClientListUpdater);

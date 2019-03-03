@@ -332,6 +332,7 @@ namespace Booyco_HMI_Utility
                     start += 4;
                     firm = bootfile.Substring(start, 2);
                     SelectedFirmRev = Int16.Parse(firm);
+                    start += 3;
                     firm = bootfile.Substring(start, 2);
                     SelectedFirmSubRev = Int16.Parse(firm);
 

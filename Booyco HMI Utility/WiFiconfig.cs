@@ -43,7 +43,7 @@ namespace Booyco_HMI_Utility
             }
             return ipAddrList;
         }
-        public void WirelessHotspot(string ssid, string key, bool status)
+        public static void WirelessHotspot(string ssid, string key, bool status)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe")
             {
@@ -69,6 +69,7 @@ namespace Booyco_HMI_Utility
                 }
             }
         }
+
         int prevCount = 0;
         public void IpWatcherStart()
         {
@@ -77,7 +78,7 @@ namespace Booyco_HMI_Utility
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
             dispatcherTimer.Start();
         }
-        int retry = 0;
+
         private void IPWatch(object sender, EventArgs e)
         {
 
@@ -93,26 +94,12 @@ namespace Booyco_HMI_Utility
             }
             else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() == 0)
             {                
-                if(retry++<5)
-                {
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create, retrying...";
-                    //WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
-                    //dispatcherTimer.Stop();
-                }
-                else
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
 
             }
             else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() > 0 && GlobalSharedData.NetworkDevices.Where(t => t.DeviceIP == "192.168.137.1").ToList().Count < 1)
             {
-                if (retry++ < 5)
-                {
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create, retrying...";
-                    //WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
-                    //dispatcherTimer.Stop();
-                }
-                else
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
             }
 
         }
@@ -125,6 +112,9 @@ namespace Booyco_HMI_Utility
         #region TCP server
         public void ServerRun()
         {
+            WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
+            IpWatcherStart();
+
             #region HeartbeatCreation
             HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
             HeartbeatMessage[0] = (byte)'[';
@@ -245,7 +235,6 @@ namespace Booyco_HMI_Utility
         {
 
             endAll = false;
-            IpWatcherStart();
             SelectedIP = "";
             clients = new List<TcpClient>();
             try
@@ -618,6 +607,7 @@ namespace Booyco_HMI_Utility
             endAll = true;
             try
             {
+
                 foreach (TcpClient item in clients)
                 {
                     try
@@ -641,6 +631,7 @@ namespace Booyco_HMI_Utility
                 try
                 {
                     server.Stop();
+                    WirelessHotspot(null, null, false);
                 }
                 catch
                 {
