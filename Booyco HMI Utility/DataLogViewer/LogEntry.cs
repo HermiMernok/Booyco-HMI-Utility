@@ -106,7 +106,21 @@ namespace Booyco_HMI_Utility
             }
         }
 
-      
+        private List<string> _dataList;
+        public List<string> DataList
+        {
+            get
+            {
+                return _dataList;
+            }
+            set
+            {
+                _dataList = value;
+                OnPropertyChanged("DataList");
+            }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {

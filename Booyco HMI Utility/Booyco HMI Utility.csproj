@@ -97,7 +97,9 @@
     <Reference Include="System.Data.SQLite.Linq, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.109.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -110,6 +112,81 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Aero.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Metro.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.MetroAccent, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.MetroAccent.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.Themes.MetroAccent.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Office2007, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Office2007.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.Themes.Office2007.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.VS2010.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Windows10, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.AvalonDock.Themes.Windows10.3.8.19076.18510\lib\net40\Xceed.Wpf.AvalonDock.Themes.Windows10.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.DataGrid.Toolkit.3.8.19076.18510\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid.Themes.Metro, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.DataGrid.Themes.Metro.3.8.19076.18510\lib\net40\Xceed.Wpf.DataGrid.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid.Themes.Office2007, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.DataGrid.Themes.Office2007.3.8.19076.18510\lib\net40\Xceed.Wpf.DataGrid.Themes.Office2007.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid.Themes.Windows10, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.DataGrid.Themes.Windows10.3.8.19076.18510\lib\net40\Xceed.Wpf.DataGrid.Themes.Windows10.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.ListBox, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.ListBox.3.8.19076.18510\lib\net40\Xceed.Wpf.ListBox.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.ListBox.Themes.LiveExplorer, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.ListBox.Themes.LiveExplorer.3.8.19076.18510\lib\net40\Xceed.Wpf.ListBox.Themes.LiveExplorer.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.ListBox.Themes.Metro, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.ListBox.Themes.Metro.3.8.19076.18510\lib\net40\Xceed.Wpf.ListBox.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.ListBox.Themes.Office2007, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.ListBox.Themes.Office2007.3.8.19076.18510\lib\net40\Xceed.Wpf.ListBox.Themes.Office2007.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.ListBox.Themes.Windows10, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.ListBox.Themes.Windows10.3.8.19076.18510\lib\net40\Xceed.Wpf.ListBox.Themes.Windows10.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.ListBox.Themes.WMP11, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.ListBox.Themes.WMP11.3.8.19076.18510\lib\net40\Xceed.Wpf.ListBox.Themes.WMP11.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Themes, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Themes.3.8.19076.18510\lib\net40\Xceed.Wpf.Themes.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Themes.Metro, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Themes.Metro.3.8.19076.18510\lib\net40\Xceed.Wpf.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Themes.Office2007, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Themes.Office2007.3.8.19076.18510\lib\net40\Xceed.Wpf.Themes.Office2007.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Themes.Windows10, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Themes.Windows10.3.8.19076.18510\lib\net40\Xceed.Wpf.Themes.Windows10.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.3.8.19076.18510\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit.Themes.Metro, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.Themes.Metro.3.8.19076.18510\lib\net40\Xceed.Wpf.Toolkit.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit.Themes.Office2007, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.Themes.Office2007.3.8.19076.18510\lib\net40\Xceed.Wpf.Toolkit.Themes.Office2007.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit.Themes.Windows10, Version=3.8.19076.18510, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.Themes.Windows10.3.8.19076.18510\lib\net40\Xceed.Wpf.Toolkit.Themes.Windows10.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -126,20 +203,27 @@
     <Compile Include="ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomMarker\CustomMarkerEllipse.xaml.cs" />
-    <Compile Include="CustomMarker\CustomMarkerIndicator.xaml.cs">
-      <DependentUpon>CustomMarkerIndicator.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomMarker\CustomMarkerPoint.xaml.cs" />
-    <Compile Include="CustomMarker\MarkerEntry.cs" />
-    <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
       <DependentUpon>DataExtractorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataExtractor\DataLogManagement.cs" />
-    <Compile Include="DataExtractor\LogEntry.cs" />
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerEllipse.xaml.cs" />
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerIndicator.xaml.cs">
+      <DependentUpon>CustomMarkerIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerPoint.xaml.cs" />
+    <Compile Include="DataLogViewer\CustomMarker\MarkerEntry.cs" />
+    <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
+    <Compile Include="DataLogViewer\DataLogView.xaml.cs">
+      <DependentUpon>DataLogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogViewer\DataLogManagement.cs" />
+    <Compile Include="DataLogViewer\HMIDisplayEntry.cs" />
+    <Compile Include="DataLogViewer\HMIDisplayView.xaml.cs">
+      <DependentUpon>HMIDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogViewer\LogEntry.cs" />
     <Compile Include="DateTimeUtility\DateTimeCheck.cs" />
-    <Compile Include="DataExtractor\ExcelFileManagement.cs" />
+    <Compile Include="DataLogViewer\ExcelFileManagement.cs" />
     <Compile Include="Error_messageView.xaml.cs">
       <DependentUpon>Error_messageView.xaml</DependentUpon>
     </Compile>
@@ -151,14 +235,11 @@
       <DependentUpon>FileView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalSharedData.cs" />
-    <Compile Include="GPRSView.xaml.cs">
-      <DependentUpon>GPRSView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DataExtractor\LPDEntry.cs" />
+    <Compile Include="DataLogViewer\LPDEntry.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MapView.xaml.cs">
+    <Compile Include="DataLogViewer\MapView.xaml.cs">
       <DependentUpon>MapView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Parameters.cs" />
@@ -188,19 +269,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CustomMarker\CustomMarkerEllipse.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="CustomMarker\CustomMarkerIndicator.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="CustomMarker\CustomMarkerPoint.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="DataExtractor\DataExtractorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerEllipse.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerPoint.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataLogViewer\DataLogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataLogViewer\HMIDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -216,10 +305,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GPRSView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -228,7 +313,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MapView.xaml">
+    <Page Include="DataLogViewer\MapView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -329,6 +414,7 @@
     <WCFMetadata Include="Connected Services\" />
     <Content Include="Resources\Documents\MernokAssetList.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\Documents\MernokClientList.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -340,9 +426,7 @@
   <ItemGroup>
     <Resource Include="Images\icon2.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PDSMap\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

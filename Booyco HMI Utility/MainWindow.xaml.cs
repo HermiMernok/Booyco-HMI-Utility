@@ -53,60 +53,68 @@ namespace Booyco_HMI_Utility
 
             if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Startup)
             {
-                BootView.Visibility = DataExtractorView.Visibility = ConfigView.Visibility = WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataExtractorView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                BootView.Visibility = DataLogView.Visibility = ConfigView.Visibility = WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.WiFi)
             {
-                USBView.Visibility = BluetoothView.Visibility = DataExtractorView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 WiFiView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.WiFi;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.USB)
             {
-                WiFiView.Visibility = BluetoothView.Visibility = DataExtractorView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                WiFiView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 USBView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.USB;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.File)
             {
-                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataExtractorView.Visibility = Visibility.Collapsed;
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = Visibility.Collapsed;
                 FileView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Bluetooth)
             {
-                WiFiView.Visibility = USBView.Visibility = DataExtractorView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                WiFiView.Visibility = USBView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 BluetoothView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Bluetooth;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.GPRS)
             {
-                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataExtractorView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 //GPRSView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.GPRS;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Bootload)
             {
-                DataExtractorView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
+                DataLogView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
                 BootView.Visibility = Visibility.Visible;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Confiure)
             {
-                DataExtractorView.Visibility = BootView.Visibility = Visibility.Collapsed;
+                DataLogView.Visibility = BootView.Visibility = Visibility.Collapsed;
                 ConfigView.Visibility = Visibility.Visible;
             }
-            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Dataview)
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.DataExtractorView)
+            {                             
+                DataExtractorView.Visibility = Visibility.Visible;
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.DataLogView)
             {
-                DataExtractorView.DisplayWindowMap();
+                DataLogView.DisplayWindowMap();
                 BootView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
                 MapView.Visibility = Visibility.Collapsed;
-                DataExtractorView.Visibility = Visibility.Visible;
+                HMIDisplayView.Visibility = Visibility.Collapsed;
+                DataLogView.Visibility = Visibility.Visible;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Mapview)
             {
-                MapView.Visibility = Visibility.Visible;
-                
+                MapView.Visibility = Visibility.Visible;                
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.HMIDisplayView)
+            {
+                HMIDisplayView.Visibility = Visibility.Visible;
             }
             else
             {

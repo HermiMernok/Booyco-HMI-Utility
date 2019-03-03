@@ -59,13 +59,15 @@
             <local:FileView x:Name="FileView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:USBView x:Name="USBView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:WiFiView x:Name="WiFiView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-            <local:GPRSView x:Name="GPRSView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+          
             <local:Bootloader x:Name="BootView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
+            <local:DataLogView x:Name="DataLogView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:DataExtractorView x:Name="DataExtractorView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ConfigView x:Name="ConfigView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ProgrammingDone x:Name="ProgrammingDone"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:Error_messageView x:Name="Error_messageView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:MapView x:Name="MapView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+            <local:HMIDisplayView x:Name="HMIDisplayView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>
             <Label Content="Booyco HMI Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
             <Label Content="{Binding HeartbeatCount}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Top" />

@@ -100,7 +100,7 @@ namespace Booyco_HMI_Utility
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             
-             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+             ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
             CloseRequest = true;
 
         }
@@ -108,7 +108,7 @@ namespace Booyco_HMI_Utility
         {
 
             GlobalSharedData.ViewMode = true;
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
         }
 
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

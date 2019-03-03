@@ -248,7 +248,7 @@ namespace Booyco_HMI_Utility
                     if (message[4] == 'a' && message[9] == ']')
                     {
                         bootContinue = true;
-                        BootAckIndex = BitConverter.ToUInt16(message, 5);
+                    
                         BootStatus = "Device bootloading packet " + BootAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
                         GlobalSharedData.ServerStatus = "Boot acknowledgment message recieved";
 

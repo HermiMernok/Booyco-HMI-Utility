@@ -24,7 +24,7 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class FileView : UserControl
     {
-        string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Saved Files";
+        string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
         private RangeObservableCollection<FileEntry> FileList;
 
         public FileView()
@@ -37,7 +37,7 @@ namespace Booyco_HMI_Utility
 
         private void ButtonDataViewer_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Dataview;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
         }
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
@@ -51,12 +51,14 @@ namespace Booyco_HMI_Utility
 
         private void ReadSavedFolder()
         {
-
+            FileList.Clear();
             if (Directory.Exists(_savedFilesPath))
             {
                 DirectoryInfo d = new DirectoryInfo(_savedFilesPath);
 
-                FileInfo[] Files = d.GetFiles("*.txt");
+                FileInfo[] FilesTxt = d.GetFiles("*.txt");
+                FileInfo[] FilesMer = d.GetFiles("*.mer");
+                FileInfo[] Files = FilesTxt.Union(FilesMer).ToArray();
                 string str = "";
                 uint count = 0;
                 foreach (FileInfo file in Files)
@@ -77,7 +79,6 @@ namespace Booyco_HMI_Utility
 
                     });
 
-
                 }
             }
             else
@@ -90,16 +91,18 @@ namespace Booyco_HMI_Utility
         private void DataGridFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DataGrid _dataGrid = (DataGrid)sender;
-            if(FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
+            try
+                { 
+            if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
             {
                 ButtonDataViewer.IsEnabled = true;
                 ButtonConfigViewer.IsEnabled = false;
                 GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
-         
+
             }
             else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "Parameter")
             {
-                ButtonDataViewer.IsEnabled = false ;
+                ButtonDataViewer.IsEnabled = false;
                 ButtonConfigViewer.IsEnabled = true;
                 GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
             }
@@ -107,6 +110,40 @@ namespace Booyco_HMI_Utility
             {
                 ButtonDataViewer.IsEnabled = false;
                 ButtonConfigViewer.IsEnabled = true;
+            }
+            }
+            catch
+            {
+                ButtonDataViewer.IsEnabled = false;
+                ButtonConfigViewer.IsEnabled = false;
+            }
+        }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+
+            openFileDialog.InitialDirectory = "c:\\";
+            openFileDialog.Filter = "Mer files (*.mer)|*.mer|txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 3;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                System.IO.File.Copy(openFileDialog.FileName, _savedFilesPath+"\\"+ openFileDialog.SafeFileName, true);
+            }
+
+            ReadSavedFolder();
+
+
+        }
+
+        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataGridFiles.SelectedIndex >= 0)
+            {
+                System.IO.File.Delete(_savedFilesPath + "\\" + FileList.ElementAt(DataGridFiles.SelectedIndex).Name);
+                ReadSavedFolder();
             }
         }
     }

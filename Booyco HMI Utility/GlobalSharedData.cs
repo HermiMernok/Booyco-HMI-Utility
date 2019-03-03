@@ -20,8 +20,10 @@ namespace Booyco_HMI_Utility
         GPRS,
         Bootload,
         Confiure,
-        Dataview,
-        Mapview
+        DataLogView,
+        DataExtractorView,
+        Mapview,
+        HMIDisplayView
     }
 
 
@@ -42,7 +44,7 @@ namespace Booyco_HMI_Utility
         public static bool  ViewMode = false;
         public static string FilePath = "";
         public static List<MarkerEntry> PDSMapMarkers = new List<MarkerEntry>();
-
+        public static List<HMIDisplayEntry> HMIDisplayList = new List<HMIDisplayEntry>();
     }
 
     public class GeneralFunctions
