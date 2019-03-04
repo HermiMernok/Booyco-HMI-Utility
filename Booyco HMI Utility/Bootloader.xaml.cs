@@ -248,7 +248,7 @@ namespace Booyco_HMI_Utility
                     if (message[4] == 'a' && message[9] == ']')
                     {
                         bootContinue = true;
-                    
+                        BootAckIndex = BitConverter.ToUInt16(message, 5);
                         BootStatus = "Device bootloading packet " + BootAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
                         GlobalSharedData.ServerStatus = "Boot acknowledgment message recieved";
 
@@ -325,7 +325,7 @@ namespace Booyco_HMI_Utility
 
                 if (bootfile.Contains("M-PFW-") && bootfile.Contains(".binary"))
                 {
-                    int start = bootfile.IndexOf("M-PFW");
+                    int start = bootfile.LastIndexOf("M-PFW");
                     start += 6;
                     string firm = bootfile.Substring(start, 3);
                     SelectedFirm = Int16.Parse(firm);

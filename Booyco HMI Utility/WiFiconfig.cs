@@ -20,8 +20,8 @@ namespace Booyco_HMI_Utility
     {
         //get status of the wifi hotspot created by the device
         #region WiFi hotspot
-        public string WiFiHotspotSSID = "HermiWifi";
-        public string WiFiKey = "Mp123456";
+        public string WiFiHotspotSSID = "BooycoHMIUtility";
+        public string WiFiKey = "BC123456";
 
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
@@ -425,7 +425,7 @@ namespace Booyco_HMI_Utility
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
                         Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
-                        Console.WriteLine("Recieved: " + string.Concat(data2.Select(b => b.ToString("X2"))) );
+                        //Console.WriteLine("Recieved: " + string.Concat(data2.Select(b => b.ToString("X2"))) );
                         #region Message Paresers
                         if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'B' && data2[3] == 'h' /*&& Buffer[521] == ']'*/)
                         {
@@ -440,6 +440,7 @@ namespace Booyco_HMI_Utility
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).ApplicationState = Buffer[25];
                                 }
                                 catch
                                 {
@@ -460,10 +461,10 @@ namespace Booyco_HMI_Utility
                         {
                             ConfigView.ConfigSendParse(data2, clientnumr);
                         }
-                        else if(Buffer[2] == 'L')
-                        {
-                            DataExtractorView.DataExtractorSendParse(data2, clientnumr);
-                        }
+                        //else if(Buffer[2] == 'L')
+                        //{
+                        //    DataExtractorView.DataExtractorSendParse(data2, clientnumr);
+                        //}
 
                         #endregion
 
@@ -864,6 +865,16 @@ namespace Booyco_HMI_Utility
             get { return _PacketLoss; }
             set { _PacketLoss = value; OnPropertyChanged("PacketLoss"); }
         }
+
+        private int _ApplicationState;
+
+        public int ApplicationState
+        {
+            get { return _ApplicationState; }
+            set { _ApplicationState = value; OnPropertyChanged("ApplicationState"); }
+        }
+
+
 
 
 
