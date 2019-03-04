@@ -35,7 +35,7 @@
                 <DataGridTextColumn Width="1.2*" Header="IP adress" Binding="{Binding IP}" />
                 <DataGridTextColumn Width="1.2*" Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn Width="0.8*" Header="VID" Binding="{Binding VID}" />
-                <DataGridTextColumn Width="0.5*" Header="Firmware revision" Binding="{Binding FirmRev}" />
+                <DataGridTextColumn Width="0.5*" Header="Firmware revision" Binding="{Binding FirmwareString}" />
                 <!--<DataGridTextColumn Width="0.3*" Header="Loss" Binding="{Binding PacketLoss}" />-->
                 <DataGridTextColumn Width="0.6*" Header="Application" Binding="{Binding ApplicationState}" />
             </DataGrid.Columns>

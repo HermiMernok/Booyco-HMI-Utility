@@ -41,16 +41,7 @@ namespace Booyco_HMI_Utility
         {
             InitializeComponent();           
             DataContext = this;
-//<<<<<<< HEAD
-            WiFiconfig = new WiFiconfig();
-//=======
-//            WiFiconfig = new WiFiconfig();
-
-//            //WiFiconfig.WirelessHotspot(null, null, false);
-//            string ssid = "HermiWifi", key = "Mp123456";
-//            WiFiconfig.WirelessHotspot(ssid, key, true);
-//            WiFiconfig.IpWatcherStart();
-//>>>>>>> 4e9fa38dc97a533416222b3696e8f24d89b7ed01
+            //WiFiconfig = new WiFiconfig();
         }
 
         private void ClientListUpdater(object sender, EventArgs e)

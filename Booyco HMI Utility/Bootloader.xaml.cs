@@ -116,7 +116,11 @@ namespace Booyco_HMI_Utility
 
         private void InfoUpdater(object sender, EventArgs e)
         {
-            if(Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t=> t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
+            if(BootDone && Visibility == Visibility.Visible)
+            {
+                BtnBack_Click(null, null);
+            }
+            else if(Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t=> t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
             {
                 WiFiconfig.ConnectionError = true;
                 BtnBack_Click(null, null);
@@ -185,7 +189,19 @@ namespace Booyco_HMI_Utility
             }
 
             BootStatus = "Asking device to boot...";
-            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+            //GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+            byte[] BoottMessage;
+            BoottMessage = Enumerable.Repeat((byte)0, 522).ToArray();
+            BoottMessage[0] = (byte)'[';
+            BoottMessage[1] = (byte)'&';
+            BoottMessage[2] = (byte)'B';
+            BoottMessage[3] = (byte)'B';
+            BoottMessage[4] = (byte)SelectedFirmRev;
+            BoottMessage[5] = (byte)SelectedFirmSubRev;
+            BoottMessage[6] = 0;
+            BoottMessage[7] = 0;
+            BoottMessage[8] = (byte)']';
+            GlobalSharedData.ServerMessageSend = BoottMessage;
         }
 
         private void BootloaderDo()
@@ -293,10 +309,10 @@ namespace Booyco_HMI_Utility
                 if (message[3] == 'f' && message[7] == ']')
                 {
                     BootFlashPersentage = message[4];
-                    if (BootFlashPersentage != 100)
-                        BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
-                    else
-                        BootFlashPersentage = 1;
+                    //if (BootFlashPersentage != 100)
+                    //    BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
+                    //else
+                    //    BootFlashPersentage = 1;
 
                     BootStatus = "Device bootloading flash erase... " + BootFlashPersentage.ToString() + "%";
                 }

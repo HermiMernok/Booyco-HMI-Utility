@@ -22,7 +22,6 @@ namespace Booyco_HMI_Utility
         #region WiFi hotspot
         public string WiFiHotspotSSID = "BooycoHMIUtility";
         public string WiFiKey = "BC123456";
-
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
@@ -425,7 +424,6 @@ namespace Booyco_HMI_Utility
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
                         Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
-                        //Console.WriteLine("Recieved: " + string.Concat(data2.Select(b => b.ToString("X2"))) );
                         #region Message Paresers
                         if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'B' && data2[3] == 'h' /*&& Buffer[521] == ']'*/)
                         {
@@ -441,6 +439,7 @@ namespace Booyco_HMI_Utility
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).ApplicationState = Buffer[25];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmwareString = Buffer[23].ToString() + "." + Buffer[24].ToString();
                                 }
                                 catch
                                 {
@@ -461,17 +460,10 @@ namespace Booyco_HMI_Utility
                         {
                             ConfigView.ConfigSendParse(data2, clientnumr);
                         }
-                        //else if(Buffer[2] == 'L')
-                        //{
-                        //    DataExtractorView.DataExtractorSendParse(data2, clientnumr);
-                        //}
 
                         #endregion
 
-                        Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
-                        
-                        //WiFimessages.Parse(data2, clientnumr);
-
+                        Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();                      
                         data2 = new byte[522];
                     }
                     
@@ -484,10 +476,6 @@ namespace Booyco_HMI_Utility
                 }
             }
             Console.WriteLine("-------------- {0} closed recieve", clientnumr);
-            //clientR[0].Close();
-            //clients.Remove(clientR[0]);
-            //ClientLsitChanged(TCPclients);
-            //clientnum--;
 
         }
 
@@ -849,6 +837,15 @@ namespace Booyco_HMI_Utility
             get { return _FirmRev; }
             set { _FirmRev = value; OnPropertyChanged("FirmRev"); }
         }
+
+        private string _FirmwareString;
+
+        public string FirmwareString
+        {
+            get { return _FirmwareString; }
+            set { _FirmwareString = value; OnPropertyChanged("FirmwareString"); }
+        }
+
 
         private int _FirmSubRev;
 
