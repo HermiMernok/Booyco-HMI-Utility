@@ -20,9 +20,8 @@ namespace Booyco_HMI_Utility
     {
         //get status of the wifi hotspot created by the device
         #region WiFi hotspot
-        public string WiFiHotspotSSID = "HermiWifi";
-        public string WiFiKey = "Mp123456";
-
+        public string WiFiHotspotSSID = "BooycoHMIUtility";
+        public string WiFiKey = "BC123456";
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
@@ -43,7 +42,7 @@ namespace Booyco_HMI_Utility
             }
             return ipAddrList;
         }
-        public void WirelessHotspot(string ssid, string key, bool status)
+        public static void WirelessHotspot(string ssid, string key, bool status)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe")
             {
@@ -69,6 +68,7 @@ namespace Booyco_HMI_Utility
                 }
             }
         }
+
         int prevCount = 0;
         public void IpWatcherStart()
         {
@@ -77,7 +77,7 @@ namespace Booyco_HMI_Utility
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
             dispatcherTimer.Start();
         }
-        int retry = 0;
+
         private void IPWatch(object sender, EventArgs e)
         {
 
@@ -93,26 +93,12 @@ namespace Booyco_HMI_Utility
             }
             else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() == 0)
             {                
-                if(retry++<5)
-                {
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create, retrying...";
-                    //WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
-                    //dispatcherTimer.Stop();
-                }
-                else
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
 
             }
             else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() > 0 && GlobalSharedData.NetworkDevices.Where(t => t.DeviceIP == "192.168.137.1").ToList().Count < 1)
             {
-                if (retry++ < 5)
-                {
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create, retrying...";
-                    //WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
-                    //dispatcherTimer.Stop();
-                }
-                else
-                    GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
             }
 
         }
@@ -125,6 +111,9 @@ namespace Booyco_HMI_Utility
         #region TCP server
         public void ServerRun()
         {
+            WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
+            IpWatcherStart();
+
             #region HeartbeatCreation
             HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
             HeartbeatMessage[0] = (byte)'[';
@@ -245,7 +234,6 @@ namespace Booyco_HMI_Utility
         {
 
             endAll = false;
-            IpWatcherStart();
             SelectedIP = "";
             clients = new List<TcpClient>();
             try
@@ -436,7 +424,6 @@ namespace Booyco_HMI_Utility
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
                         Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
-                        Console.WriteLine("Recieved: " + string.Concat(data2.Select(b => b.ToString("X2"))) );
                         #region Message Paresers
                         if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'B' && data2[3] == 'h' /*&& Buffer[521] == ']'*/)
                         {
@@ -451,6 +438,8 @@ namespace Booyco_HMI_Utility
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).ApplicationState = Buffer[25];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmwareString = Buffer[23].ToString() + "." + Buffer[24].ToString();
                                 }
                                 catch
                                 {
@@ -471,17 +460,10 @@ namespace Booyco_HMI_Utility
                         {
                             ConfigView.ConfigSendParse(data2, clientnumr);
                         }
-                        else if(Buffer[2] == 'L')
-                        {
-                            DataExtractorView.DataExtractorSendParse(data2, clientnumr);
-                        }
 
                         #endregion
 
-                        Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
-                        
-                        //WiFimessages.Parse(data2, clientnumr);
-
+                        Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();                      
                         data2 = new byte[522];
                     }
                     
@@ -494,10 +476,6 @@ namespace Booyco_HMI_Utility
                 }
             }
             Console.WriteLine("-------------- {0} closed recieve", clientnumr);
-            //clientR[0].Close();
-            //clients.Remove(clientR[0]);
-            //ClientLsitChanged(TCPclients);
-            //clientnum--;
 
         }
 
@@ -623,6 +601,7 @@ namespace Booyco_HMI_Utility
             endAll = true;
             try
             {
+
                 foreach (TcpClient item in clients)
                 {
                     try
@@ -646,6 +625,7 @@ namespace Booyco_HMI_Utility
                 try
                 {
                     server.Stop();
+                    WirelessHotspot(null, null, false);
                 }
                 catch
                 {
@@ -858,6 +838,15 @@ namespace Booyco_HMI_Utility
             set { _FirmRev = value; OnPropertyChanged("FirmRev"); }
         }
 
+        private string _FirmwareString;
+
+        public string FirmwareString
+        {
+            get { return _FirmwareString; }
+            set { _FirmwareString = value; OnPropertyChanged("FirmwareString"); }
+        }
+
+
         private int _FirmSubRev;
 
         public int FirmSubRev
@@ -873,6 +862,16 @@ namespace Booyco_HMI_Utility
             get { return _PacketLoss; }
             set { _PacketLoss = value; OnPropertyChanged("PacketLoss"); }
         }
+
+        private int _ApplicationState;
+
+        public int ApplicationState
+        {
+            get { return _ApplicationState; }
+            set { _ApplicationState = value; OnPropertyChanged("ApplicationState"); }
+        }
+
+
 
 
 

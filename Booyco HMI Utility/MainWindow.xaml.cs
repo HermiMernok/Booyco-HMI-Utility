@@ -162,7 +162,7 @@ namespace Booyco_HMI_Utility
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             WiFiconfig.endAll = true;
-
+            WiFiconfig.WirelessHotspot(null, null, false);
             var prc = new ProcManager();
             prc.KillByPort(13000);
             
