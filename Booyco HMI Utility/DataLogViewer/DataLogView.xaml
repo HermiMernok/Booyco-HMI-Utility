@@ -101,6 +101,6 @@
         <Button x:Name="ButtonMap" Content="Map" Margin="10"  Click="ButtonMap_Click" Grid.Column="5" Grid.Row="3" IsEnabled="False"/>
         <Button x:Name="ButtonDisplay" Content="Display" Margin="10"  Click="ButtonDisplay_Click" Grid.Column="5" Grid.Row="4" IsEnabled="False" />
         <Button  Margin="10,110,230,0"  Click="ButtonToggleExpanded_Click" Grid.Column="1" Grid.Row="5" RenderTransformOrigin="0.6,1.545"/>
-
+       
     </Grid>
 </UserControl>
