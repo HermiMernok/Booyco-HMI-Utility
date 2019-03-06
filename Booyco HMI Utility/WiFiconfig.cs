@@ -425,7 +425,7 @@ namespace Booyco_HMI_Utility
                         #endregion
 
                         //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
-                        Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
+                        Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "..." + Encoding.UTF8.GetString(data2, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
                         #region Message Paresers
                         if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'B' && data2[3] == 'h' /*&& Buffer[521] == ']'*/)
                         {
