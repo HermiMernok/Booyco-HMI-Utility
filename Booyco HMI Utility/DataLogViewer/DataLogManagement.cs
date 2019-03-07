@@ -31,14 +31,14 @@ namespace Booyco_HMI_Utility
 
         #endregion
 
+      
         public bool ReadFile(string Log_Filename)
-
         {
             ExcelFilemanager.StoreLogProtocolInfo();
             byte[] _logBytes = { 0 };
       
-            byte[] _logTimeStamp = { 0, 0, 0, 0, 0, 0 };
-          
+            byte[] _logTimeStamp = { 0, 0, 0, 0, };
+            byte[] _logMiliseconds = {  0, 0 };
             UInt16 _logID = 0;
             string _logGroup = "";
             string _logInfoRaw = System.IO.File.ReadAllText(Log_Filename, Encoding.Default);
@@ -70,14 +70,18 @@ namespace Booyco_HMI_Utility
                 }
 
                 // ---- Copy from the 16 byte logChunk the DateTimeStamp ----
-                Buffer.BlockCopy(_logChuncks, 0, _logTimeStamp, 0, 6);
+                Buffer.BlockCopy(_logChuncks, 0, _logTimeStamp, 0, 4);
+                Buffer.BlockCopy(_logChuncks, 4, _logMiliseconds, 0, 2);
                 // ---- Copy from the 16 byte logChunk the Data ----
                 Buffer.BlockCopy(_logChuncks, 8, _logData, 0, 8);
 
                 DateTime _eventDateTime;
-                uint _dateTimeStatus = DateTimeCheck.CheckDateTimeStamp(_logTimeStamp, out _eventDateTime);
-            
 
+                //byte[] unixvaluebyte = { 0x0B, 0x62, 0x7F, 0x5C };
+
+                uint _dateTimeStatus = DateTimeCheck.CheckDateTimeStampUnix(BitConverter.ToUInt32(_logTimeStamp, 0), out _eventDateTime);
+
+                _eventDateTime.AddMilliseconds(BitConverter.ToInt16(_logMiliseconds,0));
                 if (_dateTimeStatus == (uint)DateTimeCheck.Status.Ok)
                 {
                     UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);

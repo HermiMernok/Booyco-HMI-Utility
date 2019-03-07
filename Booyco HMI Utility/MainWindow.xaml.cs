@@ -107,6 +107,7 @@ namespace Booyco_HMI_Utility
                 MapView.Visibility = Visibility.Collapsed;
                 HMIDisplayView.Visibility = Visibility.Collapsed;
                 DataLogView.Visibility = Visibility.Visible;
+                DataExtractorView.Visibility = Visibility.Collapsed;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Mapview)
             {

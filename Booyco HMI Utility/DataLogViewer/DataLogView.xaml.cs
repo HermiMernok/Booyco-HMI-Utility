@@ -35,7 +35,9 @@ namespace Booyco_HMI_Utility
         private DataLogManagement dataLogManager = new DataLogManagement();
         private bool _dataLogIsExpanded = false;
 
-      
+
+
+       
 
         public bool DataLogIsExpanded
         {       
@@ -76,10 +78,12 @@ namespace Booyco_HMI_Utility
             DataGridLogs.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, SelectAll_Executed));
 
             DataLogIsExpanded = new bool();
-      
-         
+
+            
+                          
                  
         }
+
 
         int counter;
         private void SelectAll_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -101,9 +105,7 @@ namespace Booyco_HMI_Utility
         }
         private void ProcessLogFile(object sender, DoWorkEventArgs e)
         {
-            dataLogManager.ReadFile(logFilename);
-            
-           
+            dataLogManager.ReadFile(logFilename);  
         }
 
 

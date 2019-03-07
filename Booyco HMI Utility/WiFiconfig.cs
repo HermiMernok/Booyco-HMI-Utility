@@ -20,10 +20,14 @@ namespace Booyco_HMI_Utility
     {
         //get status of the wifi hotspot created by the device
         #region WiFi hotspot
-        public string WiFiHotspotSSID = "BooycoHMIUtility";
-        public string WiFiKey = "BC123456";
-        //public string WiFiHotspotSSID = "HermiWifi";
-        //public string WiFiKey = "Mp123456";
+        //public string WiFiHotspotSSID = "BooycoHMIUtility";
+        //public string WiFiKey = "BC123456";
+        public string WiFiHotspotSSID = "HermiWifi";
+        public string WiFiKey = "Mp123456";
+        static DateTime timestamp;
+
+        static bool FailFlag = false;
+   
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
@@ -153,6 +157,7 @@ namespace Booyco_HMI_Utility
         public static List<TCPclientR> TCPclients = new List<TCPclientR>();
         private int clientnum = 0;
         private static int pretCount = 0;
+        private static bool overflow = false;
         #endregion
 
         static void ConfigureTcpSocket(Socket tcpSocket)
@@ -273,6 +278,7 @@ namespace Booyco_HMI_Utility
 
             while (clientnum < 10 && !endAll)
             {
+
                 Console.WriteLine("Waiting for a client...");
                 try
                 {
@@ -342,14 +348,28 @@ namespace Booyco_HMI_Utility
                     clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
                     try
                     {
-                        if (!clientR[0].Client.Poll(10, SelectMode.SelectRead))
+
+
+                        if (!clientR[0].Client.Poll(0, SelectMode.SelectRead) && clientR[0].Client.Connected)
                         {
-                            Thread.Sleep(1000);
-                            //                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
+                            byte[] buff = new byte[1];
+                            if (clientR[0].Client.Receive(buff, SocketFlags.Peek) == 0)
+                            {
+                                Console.WriteLine("Polling failed, no error 1");
+                                clientR[0].Close();
+                                clients.Remove(clientR[0]);
+                                ClientLsitChanged(TCPclients);
+                                clientnum--;
+                                break;
+                            }
+                            else
+                            {
+                                Thread.Sleep(1000);                                //                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
+                            }
                         }
                         else
                         {
-                            Console.WriteLine("Polling failed, no error");
+                            Console.WriteLine("Polling failed, no error 2");
                             clientR[0].Close();
                             clients.Remove(clientR[0]);
                             ClientLsitChanged(TCPclients);
@@ -357,7 +377,7 @@ namespace Booyco_HMI_Utility
                             break;
                         }
                     }
-                    catch(Exception f)
+                    catch (Exception f)
                     {
                         Console.WriteLine("Polling failed, error");
                         clientR[0].Close();
@@ -370,6 +390,7 @@ namespace Booyco_HMI_Utility
                 catch
                 {
                     Console.WriteLine("Polling failed, client not found!");
+                    break;
                 }
 
             }
@@ -380,12 +401,14 @@ namespace Booyco_HMI_Utility
         {
             int messagecount = 0;
             int ValidMessages = 0;
+            bool messageReceived = false;
 
             List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
-            byte[] data2 = new byte[522];
-            byte[] Buffer = new byte[522];
+            byte[] data2 = new byte[DataExtractorView.DATALOG_RX_SIZE+10];
+            byte[] Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
             int i;
             int count = 0;
+            int totalCount = 0;
             int heartbeatCounter = 0;
             clientR[0].ReceiveTimeout = 20000;
             clientR[0].NoDelay = true;
@@ -398,22 +421,98 @@ namespace Booyco_HMI_Utility
                 {
                     if ((i = stream.Read(data2, 0, data2.Length)) != 0)
                     {
+                      
                         #region bufferCreator
-                        if (i==522)
+                        if (i== DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                         {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                            Array.Copy(data2, Buffer, DataExtractorView.DATALOG_RX_SIZE + 10);
+                            messagecount++;
+                            messageReceived = true;
+                        }
+                        else if (i == 522 && data2[0] == '[' && data2[521] == ']')
+                        {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, Buffer, 522);
                             messagecount++;
+                            messageReceived = true;
                         }
-                        else if(count == 0)
-                        {                           
+                        else if (i == 10 && data2[0] == '[' && data2[9] == ']')
+                        {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                            Array.Copy(data2, Buffer, 10);
+                            messagecount++;
+                            messageReceived = true;
+                        }
+                        else if (i == 9 && data2[0] == '[' && data2[8] == ']')
+                        {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                            Array.Copy(data2, Buffer, 9);
+                            messagecount++;
+                            messageReceived = true;
+                        }
+                        else if (i ==7 && data2[0] == '[' && data2[6] == ']')
+                        {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                            Array.Copy(data2, Buffer, 7);
+                            messagecount++;
+                            messageReceived = true;
+                        }
+                        else if (data2[0] == '[' && data2[1] == '&')
+                        {
+                            Console.WriteLine( " First: " +i.ToString());
+
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, 0, Buffer, count, i);
                             count = i;
+                            totalCount = count;
                         }
+                      
                         else if(count>0)
                         {
-                            Array.Copy(data2, 0, Buffer, count, 522 - count);
-                            count = 0;
-                            messagecount++;
+
+                            if (totalCount + i > DataExtractorView.DATALOG_RX_SIZE + 10)
+                            {
+                                //Console.WriteLine(" Second: " + i.ToString());
+
+                                Array.Copy(data2, 0, Buffer, totalCount, (DataExtractorView.DATALOG_RX_SIZE + 10)- totalCount );
+                                overflow = true;
+
+                            }
+                            else
+                            {
+                              //  Console.WriteLine(" Second: " + i.ToString());
+
+                                Array.Copy(data2, 0, Buffer, totalCount, i);
+                            }
+                               
+                                totalCount += i;
+                                if (totalCount >= DataExtractorView.DATALOG_RX_SIZE + 10)
+                                {
+
+                                   // totalCount = 0;
+                                    count = 0;
+                                }
+
+                                
+
+                                //count = 0;
+                         
+                                if (totalCount == DataExtractorView.DATALOG_RX_SIZE + 10 && Buffer[0] == '[' && Buffer[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
+                                {
+                                    //Buffer = new byte[2058];
+                                  //  Array.Copy(data2, Buffer, 2058);
+                                    messagecount++;
+                                    messageReceived = true;
+                                }
+                                else if (totalCount == 522 && Buffer[0] == '[' && Buffer[521] == ']')
+                                {
+                                   // Buffer = new byte[2058];
+                                   // Array.Copy(data2, Buffer, 522);
+                                    messagecount++;
+                                    messageReceived = true;
+                                }
+                            
                         }
 
                         #endregion
@@ -423,59 +522,81 @@ namespace Booyco_HMI_Utility
                         //Console.WriteLine("Recieved message: =======: " + messagecount.ToString() + " ============= length: " + i.ToString());
                         //Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10));
                         #endregion
-
-                        //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
-                        Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
-                        #region Message Paresers
-                        if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'B' && data2[3] == 'h' /*&& Buffer[521] == ']'*/)
+                        if (messageReceived)
                         {
-                            ValidMessages++;
-                            #region heartbeatmessage
-                            if (!Bootloader.BootReady)
+                            messageReceived = false;
+                            //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
+                            Console.WriteLine(" Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 20) + "       Time: " + DateTime.Now.ToLongTimeString());
+                            #region Message Paresers
+                            if (Buffer[0] == '[' && Buffer[1] == '&' && Buffer[2] == 'B' && Buffer[3] == 'h' /*&& Buffer[521] == ']'*/)
                             {
-                                GlobalSharedData.ServerStatus = "Heartbeat message recieved: " + heartbeatCounter++.ToString();
-                                try
+                                ValidMessages++;
+                                #region heartbeatmessage
+                                if (!Bootloader.BootReady)
                                 {
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).ApplicationState = Buffer[25];
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmwareString = Buffer[23].ToString() + "." + Buffer[24].ToString();
+                                    GlobalSharedData.ServerStatus = "Heartbeat message recieved: " + heartbeatCounter++.ToString();
+                                    try
+                                    {
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).ApplicationState = Buffer[25];
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmwareString = Buffer[23].ToString() + "." + Buffer[24].ToString();
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Heartbeat not parsed!");
+                                    }
+
+                                    stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client                         
+                                                                                                //Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
                                 }
-                                catch
-                                {
-                                    Console.WriteLine("Heartbeat not parsed!");
-                                }
-                                
-                                stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client                         
-                                //Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
+                                #endregion
                             }
+                            else if (Buffer[2] == 'B')
+                            {
+                                ValidMessages++;
+                                Bootloader.BootloaderParse(Buffer, clientnumr);
+                            }
+                            else if (Buffer[2] == 'P')
+                            {
+                                ConfigView.ConfigSendParse(Buffer, clientnumr);
+                            }
+                            else if (Buffer[2] == 'L')
+                            {
+                                DataExtractorView.DataExtractorSendParse(Buffer, clientnumr);
+                            }
+
                             #endregion
-                        }
-                        else if(Buffer[2] == 'B')
-                        {
-                            ValidMessages++;
-                            Bootloader.BootloaderParse(data2, clientnumr);
-                        }
-                        else if(Buffer[2] == 'P')
-                        {
-                            ConfigView.ConfigSendParse(data2, clientnumr);
-                        }
-                        else if(Buffer[2] == 'L')
-                        {
-                            DataExtractorView. DataExtractorSendParse(data2, clientnumr);
+
+                            Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
+                           
                         }
 
-                        #endregion
-
-                        Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();                      
-                        data2 = new byte[522];
+                        if(overflow)
+                        {
+                            try
+                            {
+                                count =  totalCount - (DataExtractorView.DATALOG_RX_SIZE + 10);
+                                Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                                Console.WriteLine(" LAST: " + i.ToString());
+                                totalCount = count;
+                                Array.Copy(data2, i- count, Buffer, 0, count);
+                                overflow = false;
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Last Failed", clientnumr);
+                            }
+                        }
+                        data2 = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                     }
                     
                 }
                 catch (Exception e)
                 {
+
                     Console.WriteLine("-------------- {0} recieve broke", clientnumr);
                     //Console.WriteLine(e.ToString());
                     break;
