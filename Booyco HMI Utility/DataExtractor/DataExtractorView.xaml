@@ -7,72 +7,72 @@
              mc:Ignorable="d" 
                 d:DesignHeight="800" d:DesignWidth="1200" Background="White" IsVisibleChanged="UserControl_IsVisibleChanged">
     <Grid>
-    <Grid.RowDefinitions>
-        <RowDefinition Height="5"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="70"/>
-        <RowDefinition Height="5"/>
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="5"/>
-        <ColumnDefinition Width="4*"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="5"/>
-    </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
 
-    <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-        <Label Content="Data Extractor" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-    </Viewbox>
-    <Border BorderBrush="Black" BorderThickness="2" Grid.Row="2" Grid.Column="1" Grid.RowSpan="4">
-        <Grid >
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+            <Label Content="Data Extractor" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        </Viewbox>
+        <Border BorderBrush="Black" BorderThickness="2" Grid.Row="2" Grid.Column="1" Grid.RowSpan="4">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.8*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!--Heading-->
+                <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
+                <!--Device info-->
+                <Label Content="Name:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Foreground="Gray"/>
+                <Label Content="VID:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Foreground="Gray"/>
+                <Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
+                <Label x:Name="Label_DeviceName" Grid.Column="1" Foreground="DarkRed" Grid.Row="1"/>
+                <Label x:Name="Label_DeviceVID" Grid.Column="1" Foreground="DarkRed" Grid.Row="2" />
+                <Label x:Name="Label_LicenseBool" Grid.Column="1" Foreground="DarkRed" Grid.Row="3" />
+
+                <Label Content="Firmware Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
+                <!--Firmware info-->
+                <Label Content="firmware:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
+                <Label x:Name="Label_Firmware" Grid.Column="1" Foreground="DarkRed" Grid.Row="5" />
+
+
+
+            </Grid>
+        </Border>
+        <Grid Grid.Column="1" Grid.Row="6"  Grid.ColumnSpan="2" Background="Gray">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.8*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!--Heading-->
-            <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
-            <!--Device info-->
-            <Label Content="Name:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Foreground="Gray"/>
-            <Label Content="VID:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Foreground="Gray"/>
-            <Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
-            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="1" Content="{Binding DeviceName}"/>
-            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="2" Content="{Binding DeviceVID}"/>
-            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="3" Content="{Binding LicenseBool}"/>
+            <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
+            <Label x:Name="BootStatusLbl" Content="{Binding BootStatusView}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
+            <Label x:Name="BootStatus2Lbl" Content="{Binding BootStatuspersentage}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
 
-            <Label Content="Firmware Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
-            <!--Firmware info-->
-            <Label Content="Current device firmware:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
-            <Label Content="Selected firmware revision:" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="Gray"/>
-            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="5" Content="{Binding FirmwareString}"/>
-            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="6" Content="{Binding SelectedFirmwareString}"/>
-
+            <Label x:Name="Label_Index" Content="{Binding DataIndex}" HorizontalAlignment="Left" Margin="496,-695,0,0" VerticalAlignment="Top" Width="386" Height="70"/>
 
         </Grid>
-    </Border>
-    <Grid Grid.Column="1" Grid.Row="6"  Grid.ColumnSpan="2" Background="Gray">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
-        <Label x:Name="BootStatusLbl" Content="{Binding BootStatusView}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
-        <Label x:Name="BootStatus2Lbl" Content="{Binding BootStatuspersentage}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
-
-
-    </Grid>
-    <!---->
+        <!---->
         <Button x:Name="Button_Back" Content="Back" Grid.Column="2" Grid.Row="5" Margin="10" Click="Button_Back_Click"/>
         <Button x:Name="Button_Extract" Content="Extract" Grid.Column="2"  Margin="10" Grid.Row="2" Click="Button_Extract_Click"/>
 

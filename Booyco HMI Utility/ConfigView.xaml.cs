@@ -31,6 +31,7 @@ namespace Booyco_HMI_Utility
         PropertyGroupDescription SubgroupDescription = new PropertyGroupDescription("SubGroup");
         ParametersDisplay ParametersDisplay = new ParametersDisplay();
         CollectionView parametrsGroup;
+        public CollectionViewSource parametersGroup = new CollectionViewSource();
         GeneralFunctions generalFunctions;
         private static bool backBtner = false;
 
@@ -112,6 +113,12 @@ namespace Booyco_HMI_Utility
 
             Disp_Parameters = new ObservableCollection<ParametersDisplay>();
             Disp_Parameters = ParametersToDisplay(parameters);
+
+            parametrsGroup = (CollectionView) CollectionViewSource.GetDefaultView(Disp_Parameters);
+            parametersGroup.Source = Disp_Parameters;
+                       
+            parametersGroup.GroupDescriptions.Add(groupDescription);
+            parametersGroup.GroupDescriptions.Add(SubgroupDescription);
 
             parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
             parametrsGroup.GroupDescriptions.Add(groupDescription);
@@ -370,38 +377,64 @@ namespace Booyco_HMI_Utility
         {
             if (DGparameters.SelectedIndex != -1)
             {
-                int temp = DGparameters.SelectedIndex;
-                if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue > parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
+                var sortedParameterList = parametersGroup.View.OfType<ParametersDisplay>().ToList();
+
+                int DisplayIndex = DGparameters.SelectedIndex;
+
+                var SortedIndex = sortedParameterList[DisplayIndex].OriginIndx;
+
+                if (parameters[SortedIndex].CurrentValue > parameters[SortedIndex].MinimumValue)
                 {
-                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue--;
+                    parameters[SortedIndex].CurrentValue--;
                 }
-                else if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue == parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue)
+                else if (parameters[SortedIndex].CurrentValue == parameters[SortedIndex].MinimumValue)
                 {
-                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue;
+                    parameters[SortedIndex].CurrentValue = parameters[SortedIndex].MaximumValue;
                 }
-                
-                Disp_Parameters[DGparameters.SelectedIndex] = DisplayParameterUpdate(parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx], Disp_Parameters[DGparameters.SelectedIndex].OriginIndx);
-                //Disp_Parameters = ParametersToDisplay(parameters);
-                DGparameters.SelectedIndex = temp;
+
+                Disp_Parameters = ParametersToDisplay(parameters);
+
+                parametrsGroup.GroupDescriptions.Remove(groupDescription);
+                parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+
+                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+
+                parametrsGroup.GroupDescriptions.Add(groupDescription);
+                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
             }
         }
 
         private void max_Button_Click(object sender, RoutedEventArgs e)
         {
+
             if (DGparameters.SelectedIndex != -1)
             {
-                int temp = DGparameters.SelectedIndex;
-                if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue < parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue)
+                var sortedParameterList = parametersGroup.View.OfType<ParametersDisplay>().ToList();
+
+                int DisplayIndex = DGparameters.SelectedIndex;
+
+                var SortedIndex = sortedParameterList[DisplayIndex].OriginIndx;
+
+                if (parameters[SortedIndex].CurrentValue < parameters[SortedIndex].MaximumValue)
                 {
-                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue++;
+                    parameters[SortedIndex].CurrentValue++;
                 }
-                else if (parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue == parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MaximumValue)
+                else if (parameters[SortedIndex].CurrentValue == parameters[SortedIndex].MaximumValue)
                 {
-                    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].MinimumValue;
+                    parameters[SortedIndex].CurrentValue = parameters[SortedIndex].MinimumValue;
                 }
-                Disp_Parameters[DGparameters.SelectedIndex] = DisplayParameterUpdate(parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx], Disp_Parameters[DGparameters.SelectedIndex].OriginIndx);
-                //Disp_Parameters = ParametersToDisplay(parameters);
-                DGparameters.SelectedIndex = temp;
+                //Disp_Parameters[DisplayIndex] = DisplayParameterUpdate(parameters[SortedIndex], DisplayIndex);
+                Disp_Parameters = ParametersToDisplay(parameters);
+
+                parametrsGroup.GroupDescriptions.Remove(groupDescription);
+                parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+
+                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+
+                parametrsGroup.GroupDescriptions.Add(groupDescription);
+                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+
+                //DGparameters.SelectedIndex = DisplayIndex;
             }
         }
 
