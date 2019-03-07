@@ -132,8 +132,7 @@ namespace Booyco_HMI_Utility
             }
 
             string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
-            string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files" + "\\" + "Parameters.mer";
-            File.WriteAllText(_savedFilesPath, hex);
+            File.WriteAllText("Parameters.mer", hex);
 
             int fileChunck = 512;
             int bytesleft = 0;

@@ -72,7 +72,7 @@
             <Label Content="Booyco HMI Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
             <Label Content="{Binding HeartbeatCount}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Top" />
             <Label Content="{Binding WiFiApStatus}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Center" />
-            <Label Content="Test 29" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Bottom" />
+            <Label Content="Test 23" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Bottom" />
            
         </Grid>
     </Viewbox>
