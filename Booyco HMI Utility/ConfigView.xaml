@@ -51,7 +51,7 @@
                                         <Expander IsExpanded="True" >
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#8c0909" FontSize="30"  Margin="5"/>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#8c0909" FontSize="30"  Margin="5" VerticalAlignment="Center" />
                                                     <!--<TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic"   />
                                                     <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic"  />-->
                                                 </StackPanel>
@@ -73,9 +73,9 @@
                                         <Expander IsExpanded="true">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="18" Margin="5"/>
-                                                    <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />
-                                                    <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="18" Margin="5" VerticalAlignment="Bottom" />
+                                                    <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Center" />
                                                 </StackPanel>
                                             </Expander.Header>
                                             <ItemsPresenter />
@@ -119,7 +119,6 @@
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.RowStyle>
