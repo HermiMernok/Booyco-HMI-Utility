@@ -439,7 +439,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 3000;
+            clientR[0].ReceiveTimeout = 20000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -517,7 +517,7 @@ namespace Booyco_HMI_Utility
                             }
                             else
                             {
-                                //  Console.WriteLine(" Second: " + i.ToString());
+                                 // Console.WriteLine(" Second: " + i.ToString());
 
                                 Array.Copy(data2, 0, Buffer, totalCount, i);
                             }
@@ -564,7 +564,7 @@ namespace Booyco_HMI_Utility
                             messageReceived = false;
 
                             //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
-                            Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
+                            Console.WriteLine(totalCount.ToString()+ "-Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 8192, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
                             #region Message Paresers
                             if (Buffer[0] == '[' && Buffer[1] == '&' && Buffer[2] == 'B' && Buffer[3] == 'h' /*&& Buffer[521] == ']'*/)
                             {
@@ -638,8 +638,9 @@ namespace Booyco_HMI_Utility
                             {
                                 count = totalCount - (DataExtractorView.DATALOG_RX_SIZE + 10);
                                 Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
-                                Console.WriteLine(" LAST: " + i.ToString());
+                         
                                 totalCount = count;
+                                Console.WriteLine(" LAST: " + totalCount.ToString());
                                 Array.Copy(data2, i - count, Buffer, 0, count);
                                 overflow = false;
                             }
