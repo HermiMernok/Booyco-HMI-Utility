@@ -142,7 +142,7 @@ namespace Booyco_HMI_Utility
             {
                 int test = 0;
             }
-                if ((message.Length >= DATALOG_RX_SIZE) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'D'))
+                if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'D'))
             {
                 DataIndex =  BitConverter.ToUInt16(message, 4);               
                 TotalCount= BitConverter.ToUInt16(message, 6);

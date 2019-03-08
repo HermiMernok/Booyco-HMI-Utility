@@ -139,7 +139,7 @@
                         <Rectangle x:Name="Critical22" Fill="Red" HorizontalAlignment="Left" Height="87.57" Margin="273,196.61,0,0" Stroke="Black" VerticalAlignment="Top" Width="80.927" Clip="M50.750112,72.092988 C50.74948,72.083883 58.608066,64.398307 64.646163,61.144571 L39.17198,17.702071 C39.17198,17.702071 24.871257,25.574598 14.805529,36.56389"/>
                         <Rectangle x:Name="Critical23" Fill="Red" HorizontalAlignment="Left" Height="87.57" Margin="290.511,184.903,0,0" Stroke="Black" VerticalAlignment="Top" Width="80.927" Clip="M47.051509,72.86784 C47.053255,72.858881 56.657797,67.176866 63.332533,65.596615 L50.551755,17.378172 C50.551755,17.378172 34.187988,21.377631 21.620415,29.387605"/>
                         <Rectangle x:Name="Critical24" Fill="Red" HorizontalAlignment="Left" Height="87.57" Margin="318.854,178.458,0,0" Stroke="Black" VerticalAlignment="Top" Width="80.927" Clip="M35.003156,72.169487 C35.007162,72.161286 46.102119,69.374277 52.958358,69.575425 L53.333978,19.932981 C53.333978,19.932981 36.394679,19.373419 22.182333,23.857694"/>
-  <!--<Path  Data="M219.27101,440.5 L219.27101,0.50000001 M162.25001,431.77099 L276.021,7.5629998 M109.166,409.188 L329.00001,29.271 M64.677,374.657 L374.395,63.844 M30.416002,329.27099 L409.083,108.938 M8.7910018,277.063 L432.10402,162.126 M0.5,220.02101 L438.66701,220.02101 M6.4640098,162.526 L430.67197,276.505 M30.416007,110.407 L410.083,329.813 M64.563004,65.447 L375.281,374.926 M109.958,31.188 L330.00001,410.188 M162.25001,7.5629998 L276.333,432" Fill="#00000000" HorizontalAlignment="Left" Height="441" Margin="152.667,97.312,0,0" Stretch="Fill" Stroke="White" VerticalAlignment="Top" Width="439.167" Grid.RowSpan="2"/>-->
+                        <!--<Path  Data="M219.27101,440.5 L219.27101,0.50000001 M162.25001,431.77099 L276.021,7.5629998 M109.166,409.188 L329.00001,29.271 M64.677,374.657 L374.395,63.844 M30.416002,329.27099 L409.083,108.938 M8.7910018,277.063 L432.10402,162.126 M0.5,220.02101 L438.66701,220.02101 M6.4640098,162.526 L430.67197,276.505 M30.416007,110.407 L410.083,329.813 M64.563004,65.447 L375.281,374.926 M109.958,31.188 L330.00001,410.188 M162.25001,7.5629998 L276.333,432" Fill="#00000000" HorizontalAlignment="Left" Height="441" Margin="152.667,97.312,0,0" Stretch="Fill" Stroke="White" VerticalAlignment="Top" Width="439.167" Grid.RowSpan="2"/>-->
                     </Grid>
                 </Viewbox>
                 <Path Grid.Column="1" Data="M100,0 L100,569" Fill="#00000000" HorizontalAlignment="Left" Height="101" Grid.RowSpan="3" Stretch="Fill" Stroke="#FF808080" VerticalAlignment="Top" Width="2"/>
@@ -157,7 +157,7 @@
 
 
         <Button x:Name="ButtonBack" Content="Back" Margin="10" Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
-        <Button x:Name="ButtonWindow" Content="Window" Margin="10,10,10,10" Click="ButtonNewWindow_Click" Grid.Column="5" Grid.Row="2"/>
+        <Button x:Name="ButtonWindow" Visibility="Hidden" Content="Window" Margin="10" Click="ButtonNewWindow_Click" Grid.Column="5" Grid.Row="3"/>
 
         <Grid x:Name="GridFooter" Grid.ColumnSpan="5" Margin="0,30,0,-35" Grid.RowSpan="2" Grid.Column="1" Grid.Row="6" Visibility="Hidden">
             <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>
@@ -167,10 +167,9 @@
         <TextBlock x:Name="TextBlock_SelectDateTime" HorizontalAlignment="Center" Text="Selected DateTime" TextAlignment="Center" FontSize="10" Grid.Column="2"  Margin="10,30,0,0" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Top" Grid.ColumnSpan="2" Width="488"/>
         <TextBlock x:Name="TextBlock_StartDateTime" FontSize="10" Grid.Column="1" Text="Start DateTime" HorizontalAlignment="Left" Margin="10,30,0,0" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Top" Width="204"/>
         <TextBlock x:Name="TextBlock_EndDateTime" FontSize="10" Grid.Column="4"  Text="End DateTime"  TextAlignment="Right" HorizontalAlignment="Right" Margin="0,30,10,0" Grid.Row="6" TextWrapping="Wrap"  VerticalAlignment="Top" Width="204"/>
-        <Button x:Name="Button_Play" Content="Play" Grid.Column="2" HorizontalAlignment="Left" Margin="219,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="74" Click="Button_Play_Click" Grid.ColumnSpan="2" Height="27" Grid.RowSpan="2"/>
-        <Button x:Name="Button_Backward" Content="&lt;" Grid.Column="2" HorizontalAlignment="Left" Margin="179,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="35" Height="27" Grid.RowSpan="2"/>
-        <Button x:Name="Button_Forward" Content="&gt;" Grid.Column="3" HorizontalAlignment="Left" Margin="44,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="35" Height="27" Grid.RowSpan="2"/>
-        <Label x:Name="Label_Count" Foreground="Black" Content="Label" Grid.Column="5" HorizontalAlignment="Left" Margin="24,55,0,0" Grid.Row="3" VerticalAlignment="Top" Height="46" Width="101"/>
+        <Button x:Name="Button_Play" Content="Play" Grid.Column="5" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Width="234" Click="Button_Play_Click" Height="106"/>
+        <Button x:Name="Button_Backward" Visibility="Hidden" Content="&lt;" Grid.Column="2" HorizontalAlignment="Left" Margin="179,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="35" Height="27" Grid.RowSpan="2"/>
+        <Button x:Name="Button_Forward" Visibility="Hidden" Content="&gt;" Grid.Column="3" HorizontalAlignment="Left" Margin="44,48,0,0" Grid.Row="6" VerticalAlignment="Top" Width="35" Height="27" Grid.RowSpan="2"/>
 
     </Grid>
 </UserControl>
