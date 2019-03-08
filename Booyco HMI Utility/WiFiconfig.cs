@@ -22,8 +22,6 @@ namespace Booyco_HMI_Utility
         #region WiFi hotspot
         public string WiFiHotspotSSID = "BooycoHMIUtility";
         public string WiFiKey = "BC123456";
-        //public string WiFiHotspotSSID = "HermiWifi";
-        //public string WiFiKey = "Mp123456";
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
@@ -345,7 +343,7 @@ namespace Booyco_HMI_Utility
                         if (!clientR[0].Client.Poll(10, SelectMode.SelectRead))
                         {
                             Thread.Sleep(1000);
-                            //                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
+//                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
                         }
                         else
                         {
@@ -462,10 +460,6 @@ namespace Booyco_HMI_Utility
                         {
                             ConfigView.ConfigSendParse(data2, clientnumr);
                         }
-                        else if(Buffer[2] == 'L')
-                        {
-                            DataExtractorView. DataExtractorSendParse(data2, clientnumr);
-                        }
 
                         #endregion
 
@@ -538,7 +532,6 @@ namespace Booyco_HMI_Utility
                             //Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
                             Console.WriteLine("Sent: " +  Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend,0,5) + "       Time: " + DateTime.Now.ToLongTimeString());
                             GlobalSharedData.ServerMessageSend = null;
-
                         }
                     }
                     catch (Exception e)
