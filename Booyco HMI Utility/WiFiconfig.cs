@@ -435,11 +435,16 @@ namespace Booyco_HMI_Utility
                                 try
                                 {
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToInt32(Buffer, 4);
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = BitConverter.ToUInt32(Buffer, 4);
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = Buffer[23];
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmSubRev = Buffer[24];
-                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).ApplicationState = Buffer[25];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0]))._ApplicationState = Buffer[25];
                                     TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmwareString = Buffer[23].ToString() + "." + Buffer[24].ToString();
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).BootloaderFirmRev = Buffer[26];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).BootloaderFirmSubRev = Buffer[27];
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).BootloaderrevString = Buffer[26].ToString() + "." + Buffer[27].ToString();
+                                    TCPclients.ElementAt(clients.IndexOf(clientR[0])).HeartCount++;
+
                                 }
                                 catch
                                 {
@@ -807,7 +812,6 @@ namespace Booyco_HMI_Utility
         #endregion
 
         private string _IP;
-
         public string IP
         {
             get { return _IP; }
@@ -815,23 +819,20 @@ namespace Booyco_HMI_Utility
         }
 
         private string _Name;
-
         public string Name
         {
             get { return _Name; }
             set { _Name = value; OnPropertyChanged("Name"); }
         }
 
-        private int _VID;
-
-        public int VID
+        private uint _VID;
+        public uint VID
         {
             get { return _VID; }
             set { _VID = value; OnPropertyChanged("VID"); }
         }
 
         private int _FirmRev;
-
         public int FirmRev
         {
             get { return _FirmRev; }
@@ -839,16 +840,13 @@ namespace Booyco_HMI_Utility
         }
 
         private string _FirmwareString;
-
         public string FirmwareString
         {
             get { return _FirmwareString; }
             set { _FirmwareString = value; OnPropertyChanged("FirmwareString"); }
         }
 
-
         private int _FirmSubRev;
-
         public int FirmSubRev
         {
             get { return _FirmSubRev; }
@@ -856,23 +854,63 @@ namespace Booyco_HMI_Utility
         }
 
         private double _PacketLoss;
-
         public double PacketLoss
         {
             get { return _PacketLoss; }
             set { _PacketLoss = value; OnPropertyChanged("PacketLoss"); }
         }
 
-        private int _ApplicationState;
-
-        public int ApplicationState
+        public int _ApplicationState;
+        public string ApplicationState
         {
-            get { return _ApplicationState; }
-            set { _ApplicationState = value; OnPropertyChanged("ApplicationState"); }
+            get
+            {
+                if (_ApplicationState > 0)
+                    return "Application";
+                else
+                    return "Bootloader";
+            }
+            set
+            {
+
+                if (value == "Application")
+                    _ApplicationState = 1;
+                else
+                    _ApplicationState = 0;
+
+                OnPropertyChanged("ApplicationState");
+            }
         }
 
+        private int _BootloaderFirmRev;
+        public int BootloaderFirmRev
+        {
+            get { return _BootloaderFirmRev; }
+            set { _BootloaderFirmRev = value; OnPropertyChanged("BootloaderFirmRev"); }
+        }
 
+        private int _BootloaderFirmSubRev;
+        public int BootloaderFirmSubRev
+        {
+            get { return _BootloaderFirmSubRev; }
+            set { _BootloaderFirmSubRev = value; OnPropertyChanged("BootloaderFirmSubRev"); }
+        }
 
+        private string _BootloaderrevString;
+
+        public string BootloaderrevString
+        {
+            get { return _BootloaderrevString; }
+            set { _BootloaderrevString = value; OnPropertyChanged("BootloaderrevString"); }
+        }
+
+        private int _HeartCount;
+
+        public int HeartCount
+        {
+            get { return _HeartCount; }
+            set { _HeartCount = value; OnPropertyChanged("HeartCount"); }
+        }
 
 
 

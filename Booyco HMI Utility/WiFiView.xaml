@@ -7,6 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200" IsVisibleChanged="UserControl_IsVisibleChanged">
 
+    <UserControl.Resources>
+        <Storyboard x:Key="sb_com_activity">
+            <DoubleAnimation Storyboard.TargetName="ComActivity" 
+          Storyboard.TargetProperty="Opacity" From="1" To="0.5" 
+          Duration="0:0:0.2" BeginTime="0:0:0"/>
+        </Storyboard>
+    </UserControl.Resources>
+
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="5"/>
@@ -30,14 +38,16 @@
             <Label Content="WiFi Interface" Foreground="Black"/>
         </Viewbox>
         
-        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="20" AutoGenerateColumns="False" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B"  RowBackground="#FFB68181" Margin="5,15">
+        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="18" AutoGenerateColumns="False" Background="DarkRed" AlternatingRowBackground="#FF4B4B4B"  RowBackground="#FFB68181" Margin="5,15">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="1.2*" Header="IP adress" Binding="{Binding IP}" />
-                <DataGridTextColumn Width="1.2*" Header="Name" Binding="{Binding Name}" />
-                <DataGridTextColumn Width="0.8*" Header="VID" Binding="{Binding VID}" />
-                <DataGridTextColumn Width="0.5*" Header="Firmware revision" Binding="{Binding FirmwareString}" />
+                <DataGridTextColumn Width="240" Header="IP adress" Binding="{Binding IP}" />
+                <DataGridTextColumn Width="180" Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Width="130" Header="VID" Binding="{Binding VID}" />
+                <DataGridTextColumn Width="110" Header="Firmware revision" Binding="{Binding FirmwareString}" />
+                <DataGridTextColumn Width="120" Header="Bootloader revision" Binding="{Binding BootloaderrevString}" />
                 <!--<DataGridTextColumn Width="0.3*" Header="Loss" Binding="{Binding PacketLoss}" />-->
-                <DataGridTextColumn Width="0.6*" Header="Application" Binding="{Binding ApplicationState}" />
+                <DataGridTextColumn Width="0.6*" Header="Mode" Binding="{Binding ApplicationState}" />
+                <DataGridTextColumn Width="50" Header="HB" Binding="{Binding HeartCount}" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">

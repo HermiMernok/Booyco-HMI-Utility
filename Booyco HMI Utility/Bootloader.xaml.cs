@@ -148,6 +148,12 @@ namespace Booyco_HMI_Utility
             else
                 BootloadingProgress.Value = 0;
 
+            if(!BootDone && BootFlashPersentage > 0 && BootloadingProgress.Value != BootloadingProgress.Maximum)
+            {
+                SelectFilebtnEnab = BootBtnEnabled = false;
+                BackbtnText = "Cancel";
+            }
+
             
 
             BootStatuspersentage = "Overall progress: " + (Math.Round(BootloadingProgress.Value/10 , 1)).ToString() + "%";
@@ -206,8 +212,7 @@ namespace Booyco_HMI_Utility
 
         private void BootloaderDo()
         {
-            SelectFilebtnEnab = BootBtnEnabled = false;
-            BackbtnText = "Cancel";
+            
             while (!WiFiconfig.endAll && !BootStop)
             {
                 //Thread.Sleep(100);
@@ -358,13 +363,13 @@ namespace Booyco_HMI_Utility
 
                     if (SelectedFirm == 56)
                     {
-                        if(SelectedFirmRev == FirmwareRev)
+                        if(SelectedFirmRev == FirmwareRev && SelectedFirmSubRev == FirmSub)
                         {
                             //show that the fimware selected is the same as that of the device
                             FileErrorMessage = "Selected firmware is the same as device firmware, no need to update.";
                             FileError = true;
                         }
-                        else
+                        //else
                         {
                             //enable bootloading
                             int bytesleft = 0;
@@ -529,10 +534,10 @@ namespace Booyco_HMI_Utility
             set { _FirmSub = value; OnPropertyChanged("FirmSub"); }
         }
 
-        private int _VID;
+        private uint _VID;
         private string bootfile;
 
-        public int DeviceVID
+        public uint DeviceVID
         {
             get { return _VID; }
             set { _VID = value; OnPropertyChanged("DeviceVID"); }
