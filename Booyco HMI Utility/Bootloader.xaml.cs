@@ -40,6 +40,7 @@ namespace Booyco_HMI_Utility
 
         List<byte[]> BootFileList = new List<byte[]>();
 
+        #region Bootloader static dependants
         public static bool BootStart { get; set; }
 
         public static int BootFlashPersentage { get; set; }
@@ -61,10 +62,13 @@ namespace Booyco_HMI_Utility
         public static string FileErrorMessage { get; set; }
 
         public static bool FileError { get; set; }
-        
-       
+              
         static int bootchunks = 0;
-       
+
+        private static Thread BootloaderThread;
+
+        #endregion
+
         public Bootloader()
         {
             DataContext = this;
@@ -89,6 +93,7 @@ namespace Booyco_HMI_Utility
                 DeviceVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
                 FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
                 FirmSub = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmSubRev;
+                LicenseBool = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Licensed;
                 FirmwareApp = 56;
 
                 FirmwareString = "M-PFW-" + ((FirmwareApp < 100)?"0"+ FirmwareApp.ToString() : FirmwareApp.ToString()) + "-" + 
@@ -166,8 +171,7 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
             this.Visibility = Visibility.Collapsed;
         }
-
-        private static Thread BootloaderThread;
+        
         private void Bootload_Click(object sender, RoutedEventArgs e)
         {
             SureMessageVis = Visibility.Visible;
@@ -330,6 +334,7 @@ namespace Booyco_HMI_Utility
             byte[] bootfilebytes;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "binary files (*.binary)|*.binary|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
                 bootfilebytes = File.ReadAllBytes(openFileDialog.FileName);
             else
@@ -447,6 +452,11 @@ namespace Booyco_HMI_Utility
             }
 
 
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            SureMessageVis = Visibility.Collapsed;
         }
 
         #region Properties
@@ -603,11 +613,6 @@ namespace Booyco_HMI_Utility
 
 
         #endregion
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            SureMessageVis = Visibility.Collapsed;
-        }
 
     }
 }

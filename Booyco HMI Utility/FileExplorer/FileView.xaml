@@ -27,11 +27,21 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="DataGridFiles" FontSize="20" CanUserAddRows="False" CanUserReorderColumns="True"  IsReadOnly="True"  Grid.ColumnSpan="4" Margin="5,0,10,0" Grid.RowSpan="4" Grid.Column="1" Grid.Row="2" AutoGenerateColumns="False" SelectionChanged="DataGridFiles_SelectionChanged">
+        <DataGrid x:Name="DataGridFiles" RowHeaderWidth="0" FontSize="20" CanUserAddRows="False" RowHeight="30" CanUserReorderColumns="True"  IsReadOnly="True"  Grid.ColumnSpan="4" Margin="5,0,10,0" Grid.RowSpan="4" Grid.Column="1" Grid.Row="2" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" SelectionChanged="DataGridFiles_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Header="No." Binding="{Binding Number}" MinWidth="60" MaxWidth="60"/>
                 <DataGridTextColumn Width="8*" Binding="{Binding Name}" Header="Name"/>
             </DataGrid.Columns>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="DarkRed"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Height" Value="50"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
 
         </DataGrid>
         <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
