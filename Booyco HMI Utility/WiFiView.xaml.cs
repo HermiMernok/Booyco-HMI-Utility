@@ -69,25 +69,21 @@ namespace Booyco_HMI_Utility
         private void BtnMain_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
-        
         }
 
         private void BtnBootload_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Bootload;
-           
         }
 
         private void BtnDatView_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataExtractorView;
-           
-    }
+        }
 
         private void BtnConfig_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Confiure;
-
         }
         #endregion
 
@@ -158,7 +154,6 @@ namespace Booyco_HMI_Utility
                 dispatcherTimer.Tick += new EventHandler(ClientListUpdater);
                 dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
                 dispatcherTimer.Start();
-               
             }
             else
             {

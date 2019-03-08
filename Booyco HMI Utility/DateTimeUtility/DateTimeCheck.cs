@@ -71,30 +71,6 @@ namespace Booyco_HMI_Utility
             }
             catch (Exception ex) { return (uint)Status.Error_1; }
         }
-
-        public static DateTime UnixTimeStampToDateTime(UInt32 unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-        public static uint CheckDateTimeStampUnix(UInt32 UnixValue ,out DateTime DateTimeStamp)
-        {
-            DateTimeStamp = UnixTimeStampToDateTime(UnixValue);
-            if (UnixValue == 4294967295)
-                return (uint)Status.Error_3;
-            else if (UnixValue == 0)
-                return (uint)Status.Error_4;
-
-            DateTime ValidDate = new DateTime(2019, 03, 06);
-            if (DateTimeStamp.Ticks < ValidDate.Ticks)
-            {
-                return (uint)Status.Error_2;
-            }
-            return (uint)Status.Ok;
-        }
     }
     
 }

@@ -65,9 +65,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar x:Name="ProgressBar_DataLogExtract" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
-            <Label x:Name="Label_StatusView" Content="StatusView" Grid.Row="1" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
-            <Label x:Name="Label_ProgressStatusPercentage" Content="ProgressStatus" Grid.Row="1" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
+            <ProgressBar x:Name="BootloadingProgress" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="1000" Margin="5"/>
+            <Label x:Name="BootStatusLbl" Content="{Binding BootStatusView}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
+            <Label x:Name="BootStatus2Lbl" Content="{Binding BootStatuspersentage}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
 
             <Label x:Name="Label_Index" Content="{Binding DataIndex}" HorizontalAlignment="Left" Margin="496,-695,0,0" VerticalAlignment="Top" Width="386" Height="70"/>
 

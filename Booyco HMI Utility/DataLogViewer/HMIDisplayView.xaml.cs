@@ -278,22 +278,5 @@ namespace Booyco_HMI_Utility
                 DisplpayPlay = true;
             }
         }
-
-
-     
-        private void Rectangle_Background_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            //try
-            //{
-            //    Rectangle _rectangle = (Rectangle)sender;
-            //    Label_Count.Content = ((_rectangle.Opacity-0.1) / 0.2).ToString();
-            //}
-            //catch
-            //{
-
-            //}
-
-
-        }
     }
 }
