@@ -126,64 +126,76 @@ namespace Booyco_HMI_Utility
 
             DataRowCollection _data = ReadExcelFile(fileName, 0);
 
-            foreach (DataRow _row in _data)
+            if (_data != null)
             {
-                try
+                foreach (DataRow _row in _data)
                 {
-                    parameters.Add(new Parameters
+                    try
                     {
-                        Name = Convert.ToString(_row.ItemArray[0]),
-                        CurrentValue = Convert.ToInt32(_row.ItemArray[1]),
-                        MaximumValue = Convert.ToInt32(_row.ItemArray[2]),
-                        MinimumValue = Convert.ToInt32(_row.ItemArray[3]),
-                        DefaultValue = Convert.ToInt32(_row.ItemArray[4]),
-                        Ptype = Convert.ToInt16(_row.ItemArray[5]),
-                        enumVal = Convert.ToInt16(_row.ItemArray[6]),
-                        Group = Convert.ToString(_row.ItemArray[7]),
-                        SubGroup = Convert.ToString(_row.ItemArray[8]),
-                        Description = Convert.ToString(_row.ItemArray[9])
-
-                    });
-
-                    if(_row.ItemArray[12].ToString() != "")
-                    {
-                        enums.Add(new ParameterEnum
+                        parameters.Add(new Parameters
                         {
-                            enumVal = Convert.ToInt16(_row.ItemArray[12]),
-                            enumName = Convert.ToString(_row.ItemArray[13])
+                            Name = Convert.ToString(_row.ItemArray[0]),
+                            CurrentValue = Convert.ToInt32(_row.ItemArray[1]),
+                            MaximumValue = Convert.ToInt32(_row.ItemArray[2]),
+                            MinimumValue = Convert.ToInt32(_row.ItemArray[3]),
+                            DefaultValue = Convert.ToInt32(_row.ItemArray[4]),
+                            Ptype = Convert.ToInt16(_row.ItemArray[5]),
+                            enumVal = Convert.ToInt16(_row.ItemArray[6]),
+                            Group = Convert.ToString(_row.ItemArray[7]),
+                            SubGroup = Convert.ToString(_row.ItemArray[8]),
+                            Description = Convert.ToString(_row.ItemArray[9])
+
                         });
-                    }                   
+
+                        if (_row.ItemArray[12].ToString() != "")
+                        {
+                            enums.Add(new ParameterEnum
+                            {
+                                enumVal = Convert.ToInt16(_row.ItemArray[12]),
+                                enumName = Convert.ToString(_row.ItemArray[13])
+                            });
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Parametr from excel error: " + e.ToString());
+                    }
 
                 }
-                catch (Exception e)
+
+                foreach (var item in parameters)
                 {
-                    Console.WriteLine("Parametr from excel error: " + e.ToString());
-                }
+                    if (item.enumVal != 3)
+                        item.parameterEnums = enums.Where(t => t.enumVal == item.enumVal).Select(t => t.enumName).ToList();
+                    else
+                    {
+                        item.parameterEnums = AssetType;
+                        item.MaximumValue = AssetType.Count - 1;
+                    }
 
+                }
+            }
+            else
+            {
+                //if this point is reached then there was no parameters to display.
+                Console.WriteLine("No parameters to display. Please view error logs");
             }
 
-            foreach (var item in parameters)
-            {
-                if (item.enumVal != 3)
-                    item.parameterEnums = enums.Where(t => t.enumVal == item.enumVal).Select(t => t.enumName).ToList();
-                else
-                {
-                    item.parameterEnums = AssetType;
-                    item.MaximumValue = AssetType.Count - 1;
-                }
-                    
-            }           
-
             return parameters;
+
+
         }
 
 
         public DataRowCollection ReadExcelFile(string _fileName, int TableNumber)
         {
             System.Data.DataSet ds;
+
             var extension = System.IO.Path.GetExtension(_fileName).ToLower();
             using (var stream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
+
                 IExcelDataReader reader = null;
                 if (extension == ".xls")
                 {
@@ -204,6 +216,7 @@ namespace Booyco_HMI_Utility
                 //reader.IsFirstRowAsColumnNames = firstRowNamesCheckBox.Checked;
                 using (reader)
                 {
+
                     ds = reader.AsDataSet(new ExcelDataSetConfiguration()
                     {
                         UseColumnDataType = false,
@@ -214,8 +227,16 @@ namespace Booyco_HMI_Utility
                     });
                 }
 
-                return ds.Tables[TableNumber].DefaultView.ToTable().Rows; 
+                try
+                {
+                    return ds.Tables[TableNumber].DefaultView.ToTable().Rows;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Parameter from excel error: " + e.ToString());
+                }
 
+                return null;
             }
 
         }
