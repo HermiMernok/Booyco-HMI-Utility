@@ -33,6 +33,8 @@ namespace Booyco_HMI_Utility
             FileList = new RangeObservableCollection<FileEntry>();
             DataGridFiles.ItemsSource = FileList;
             ReadSavedFolder();
+            Button_Delete.IsEnabled = false;
+            Button_Save.IsEnabled = false;
         }
 
         private void ButtonDataViewer_Click(object sender, RoutedEventArgs e)
@@ -93,6 +95,18 @@ namespace Booyco_HMI_Utility
             DataGrid _dataGrid = (DataGrid)sender;
             try
                 { 
+                if(_dataGrid.SelectedIndex > 0 )
+                {
+                    Button_Delete.IsEnabled = true;
+                    Button_Save.IsEnabled = true;
+                }
+                else
+                {
+                    Button_Delete.IsEnabled = false;
+                    Button_Save.IsEnabled = true;
+                }
+
+
             if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
             {
                 ButtonDataViewer.IsEnabled = true;
@@ -145,6 +159,11 @@ namespace Booyco_HMI_Utility
                 System.IO.File.Delete(_savedFilesPath + "\\" + FileList.ElementAt(DataGridFiles.SelectedIndex).Name);
                 ReadSavedFolder();
             }
+        }
+
+        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -20,6 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Booyco_HMI_Utility.CustomMarker;
+using OfficeOpenXml;
 
 namespace Booyco_HMI_Utility
 {
@@ -130,9 +131,100 @@ namespace Booyco_HMI_Utility
 
         private void ButtonSaveFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog openFileDialog = new Microsoft.Win32.SaveFileDialog();
+            Microsoft.Win32.SaveFileDialog _saveFileDialog = new Microsoft.Win32.SaveFileDialog();
 
-           
+            // == Default extension ===
+            _saveFileDialog.DefaultExt = ".xlsx";
+            // == filter types ===
+            _saveFileDialog.Filter = "Excel File (*.xlsx)|*.xlsx| csv File (*.csv)|*.csv";
+            _saveFileDialog.FileName = logFilename.Remove(logFilename.Length-4,4);
+            _saveFileDialog.FilterIndex = 1;
+            _saveFileDialog.RestoreDirectory = true;
+
+            if (_saveFileDialog.ShowDialog() == true)
+            {
+                if (_saveFileDialog.FileName.Contains(".csv"))
+                {
+                    //if (!File.Exists(_saveFileDialog.FileName))
+                    //{
+                    //    File.Create(_saveFileDialog.FileName);
+                    //}
+                    // === open streamwrite to save file ===
+                    StreamWriter writer = new StreamWriter(_saveFileDialog.FileName);
+                    int counter = 0;
+
+                    
+
+                    // === write each entry from data log in to .csv file ===
+                    foreach (LogEntry _logEntry in DataLogs)
+                    {
+                        counter++;
+
+                        writer.WriteLine(_logEntry.DateTime.Date + ";" +
+                            _logEntry.DateTime.TimeOfDay + ";" +
+                            _logEntry.EventID + ";" +
+                            _logEntry.EventName + ";" +
+                            _logEntry.RawEntry
+                           //Single_Log_Data._EventInformation.ToString()
+                           );
+
+                        // === dispose streamwrite ===
+                        writer.Dispose();
+                        // === close stramwrite ===
+                        writer.Close();
+                    }
+
+                }
+                    if (_saveFileDialog.FileName.Contains(".xlsx"))
+                    {
+                        using (var p = new ExcelPackage())
+                        {
+
+
+                            //A workbook must have at least on cell, so lets add one... 
+                            var ws = p.Workbook.Worksheets.Add("MySheet");
+
+                            var dataRange = ws.Cells["A1"].LoadFromCollection
+                           (
+                           from s in DataLogs
+                           orderby s.Number, s.EventName
+                           select s,
+                          true, OfficeOpenXml.Table.TableStyles.Medium2);
+                         
+                            //To set values in the spreadsheet use the Cells indexer.
+
+                            // === Header ===
+                            ws.Cells[1, 1].Value = "No.";
+                            ws.Cells[1, 2].Value = "Date";
+                            ws.Cells[1, 3].Value = "Time ";
+                            ws.Cells[1, 4].Value = "Event ID";
+                            ws.Cells[1, 5].Value = "Event Name";
+                            ws.Cells[1, 6].Value = "Event Description";
+                            ws.Cells[1, 7].Value = "Raw Data Display";
+                            ws.Cells[1, 8].Value = "Event Information";
+
+                            int count = 2;
+                            foreach (LogEntry _logEntry in DataLogs)
+                            {
+                                ws.Cells[count, 1].Value = _logEntry.Number;
+                                ws.Cells[count, 2].Value = _logEntry.DateTime.Date.ToString();
+                                ws.Cells[count, 3].Value = _logEntry.DateTime.TimeOfDay.ToString();
+                                ws.Cells[count, 4].Value = _logEntry.EventID;
+                                ws.Cells[count, 5].Value = _logEntry.EventName;
+                                ws.Cells[count, 6].Value = _logEntry.EventInfo;
+                                ws.Cells[count, 7].Value = _logEntry.RawEntry;                
+                                count++;
+                            }
+                        dataRange.AutoFitColumns();
+
+                        //Save the new workbook. We haven't specified the filename so use the Save as method.
+                        p.SaveAs(new FileInfo(_saveFileDialog.FileName));
+                        }
+                    }
+                
+
+              
+            }
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)

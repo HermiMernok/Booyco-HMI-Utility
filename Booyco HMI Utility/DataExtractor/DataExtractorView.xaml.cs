@@ -138,7 +138,7 @@ namespace Booyco_HMI_Utility
         static bool DataExtractorComplete = false;
         public static void DataExtractorSendParse(byte[] message, EndPoint endPoint)
         {
-            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[2] == 'a'))
+            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'a'))
             {
                 int test = 0;
             }
@@ -183,15 +183,17 @@ namespace Booyco_HMI_Utility
                     GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
                 }
 
-                else if (DataIndex < TotalCount)
+                else if (DataIndex < TotalCount && DataIndex > StoredIndex)
                 {
-
-                    using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
-                    {
-                        stream.Write(message, 8, DATALOG_RX_SIZE);
-                    }
-                    byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
-
+                  
+                    
+                        using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
+                        {
+                            stream.Write(message, 8, DATALOG_RX_SIZE);
+                        }
+                    
+                        byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+                    
                     Logchunk[0] = (byte)'[';
                     Logchunk[1] = (byte)'&';
                     Logchunk[2] = (byte)'L';
