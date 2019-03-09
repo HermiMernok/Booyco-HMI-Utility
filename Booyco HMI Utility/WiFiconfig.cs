@@ -26,6 +26,8 @@ namespace Booyco_HMI_Utility
         static DateTime timestamp;
         static bool FailFlag = false;
 
+        //ConfigView Config = new ConfigView(); 
+
         //get status of the wifi hotspot created by the device
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
@@ -622,6 +624,10 @@ namespace Booyco_HMI_Utility
                             {
                                 ConfigView.ConfigSendParse(Buffer, clientnumr);
                             }
+                            else if (Buffer[2] == 'p')
+                            {
+                                ConfigView.ConfigReceiveParamsParse(Buffer, clientnumr);
+                            }
                             else if (Buffer[2] == 'L')
                             {
                                 DataExtractorView.DataExtractorSendParse(Buffer, clientnumr);
@@ -1016,7 +1022,15 @@ namespace Booyco_HMI_Utility
         {
             get
             {
-                char[] NameCahr = _Name.ToCharArray();
+                char[] NameCahr;
+                try
+                {
+                    NameCahr = _Name.ToCharArray();
+                }
+                catch
+                {
+                   return "NO NAME";
+                }
                 int c = 0;
                 foreach (var item in NameCahr)
                 {

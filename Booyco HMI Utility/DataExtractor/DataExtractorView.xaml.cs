@@ -113,9 +113,7 @@ namespace Booyco_HMI_Utility
                 this.Visibility = Visibility.Collapsed;
                 ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
             }
-        }
-
-    
+        }    
 
         private static Thread DataExtractorThread;
         private void Button_Extract_Click(object sender, RoutedEventArgs e)
