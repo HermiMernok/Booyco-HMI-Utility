@@ -136,8 +136,9 @@ namespace Booyco_HMI_Utility
             // == Default extension ===
             _saveFileDialog.DefaultExt = ".xlsx";
             // == filter types ===
-            _saveFileDialog.Filter = "Excel File (*.xlsx)|*.xlsx| csv File (*.csv)|*.csv";
-            _saveFileDialog.FileName = logFilename.Remove(logFilename.Length-4,4);
+            _saveFileDialog.Filter = "Excel File (*.xlsx)|*.xlsx";
+            string _filename = logFilename.Split('\\').Last();
+            _saveFileDialog.FileName = _filename.Remove(_filename.Length-4,4);
             _saveFileDialog.FilterIndex = 1;
             _saveFileDialog.RestoreDirectory = true;
 
@@ -579,6 +580,7 @@ namespace Booyco_HMI_Utility
                     {
                         backgroundWorkerReadFile.RunWorkerAsync();
                     }
+                   
                 }
             }
            

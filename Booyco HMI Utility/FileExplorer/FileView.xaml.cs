@@ -94,8 +94,9 @@ namespace Booyco_HMI_Utility
         {
             DataGrid _dataGrid = (DataGrid)sender;
             try
-                { 
-                if(_dataGrid.SelectedIndex > 0 )
+                {
+              
+                if (_dataGrid.SelectedIndex >= 0 )
                 {
                     Button_Delete.IsEnabled = true;
                     Button_Save.IsEnabled = true;
@@ -103,33 +104,40 @@ namespace Booyco_HMI_Utility
                 else
                 {
                     Button_Delete.IsEnabled = false;
-                    Button_Save.IsEnabled = true;
+                    Button_Save.IsEnabled = false;
                 }
 
+                var _selectedItems = DataGridFiles.SelectedItems;
+            
+                if (_selectedItems.Count > 1)
+                {
+                    ButtonDataViewer.IsEnabled = false;
+                }
 
-            if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
-            {
-                ButtonDataViewer.IsEnabled = true;
-                ButtonConfigViewer.IsEnabled = false;
-                GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
+                else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
+                {
+                    ButtonDataViewer.IsEnabled = true;
+                    ButtonConfigViewer.IsEnabled = true;
+                    GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
 
-            }
-            else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "Parameter")
-            {
-                ButtonDataViewer.IsEnabled = false;
-                ButtonConfigViewer.IsEnabled = true;
-                GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
-            }
-            else
-            {
-                ButtonDataViewer.IsEnabled = false;
-                ButtonConfigViewer.IsEnabled = true;
-            }
+                }
+                else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "Parameter")
+                {
+                    ButtonDataViewer.IsEnabled = false;
+                    ButtonConfigViewer.IsEnabled = true;
+                    GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
+                }
+                else
+                {
+                    ButtonDataViewer.IsEnabled = false;
+                    ButtonConfigViewer.IsEnabled = true;
+                }
+
             }
             catch
             {
                 ButtonDataViewer.IsEnabled = false;
-                ButtonConfigViewer.IsEnabled = false;
+                ButtonConfigViewer.IsEnabled = true;
             }
         }
 
@@ -137,9 +145,9 @@ namespace Booyco_HMI_Utility
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
 
-            openFileDialog.InitialDirectory = "c:\\";
+          
             openFileDialog.Filter = "Mer files (*.mer)|*.mer|txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog.FilterIndex = 3;
+            openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == true)
@@ -154,16 +162,71 @@ namespace Booyco_HMI_Utility
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (DataGridFiles.SelectedIndex >= 0)
+            var _selectedItems = DataGridFiles.SelectedItems;
+
+            foreach (FileEntry item in _selectedItems)
             {
-                System.IO.File.Delete(_savedFilesPath + "\\" + FileList.ElementAt(DataGridFiles.SelectedIndex).Name);
-                ReadSavedFolder();
+                try
+                {                             
+
+                    if (DataGridFiles.SelectedIndex >= 0)
+                    {
+                        System.IO.File.Delete(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number-1).Name);
+                       
+                    }
+                }
+                catch
+                {
+                
+                }
             }
+            ReadSavedFolder();
+
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
+            Microsoft.Win32.SaveFileDialog _saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            string _filename = GlobalSharedData.FilePath.Split('\\').Last();
+            _saveFileDialog.FileName = _filename.Remove(_filename.Length - 4, 4);
+            //openFileDialog.InitialDirectory = "c:\\";
+            _saveFileDialog.Filter = "Mer files (*.mer)|*.mer";
+            //openFileDialog.FilterIndex = 1;
+            //openFileDialog.RestoreDirectory = true;
+            var _selectedItems = DataGridFiles.SelectedItems;
+          
+            if (_saveFileDialog.ShowDialog() == true)
+            {
+                foreach (FileEntry item in _selectedItems)
+                {
 
+                    try
+                    {
+                        if (_selectedItems.Count == 1)
+                        {
+                            System.IO.File.Copy(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number - 1).Name, _saveFileDialog.FileName, true);
+                        }
+                        else
+                        {
+                            System.IO.File.Copy(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number - 1).Name, System.IO.Path.GetDirectoryName(_saveFileDialog.FileName) + "\\" + FileList.ElementAt((int)item.Number - 1).Name, true);
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                    
+                }
+            }
+                    
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible)
+            {
+                ReadSavedFolder();
+            }
         }
     }
 }

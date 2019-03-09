@@ -28,6 +28,8 @@ namespace Booyco_HMI_Utility
     {
         public const int DATALOG_RX_SIZE = 8192;
         static bool _fileCreated = false;
+
+        public static bool Heartbeat = false;
         static string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
         private DispatcherTimer updateDispatcherTimer;
         static string _newLogFilePath = "";
@@ -40,6 +42,8 @@ namespace Booyco_HMI_Utility
 
         public static int DataIndex { get; set; }
         public static int TotalCount { get; set; }
+
+        private int _heartBeatDelay = 0;
 
         static bool CancelCheck = false;
 
@@ -55,48 +59,64 @@ namespace Booyco_HMI_Utility
             DataLogProgress = 0;
             DataIndex = 0;
             TotalCount = 0;
+            Button_ViewLogs.Visibility = Visibility.Hidden;
 
         }
 
         private void InfoUpdater(object sender, EventArgs e)
         {
             ProgressBar_DataLogExtract.Value = DataLogProgress;
-            Label_ProgressStatusPercentage.Content = "Overall progress: " + (DataLogProgress/10).ToString() + "%";
+            Label_ProgressStatusPercentage.Content = "Overall progress: " + (DataLogProgress / 10).ToString() + "%";
             Label_StatusView.Content = "Datalog packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
 
             if (CancelCheck)
             {
-                Button_Extract.IsEnabled = false;
-                Button_Back.Content = "Cancel";
-
+                if (Heartbeat)
+                {
+                    _heartBeatDelay++;
+                    if (_heartBeatDelay > 15)
+                    {
+                        Heartbeat = false;
+                        _heartBeatDelay = 0;
+                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LL00]");
+                    }
+                }
             }
             else
             {
                 if (!DataExtractorComplete)
-                {                   
-                   
-                    Label_ProgressStatusPercentage.Content = "Process Cancelled...";                 
-                  
+                {
+
+
+                    Label_ProgressStatusPercentage.Content = "Process Cancelled...";
+
                     if (File.Exists(_newLogFilePath))
                     {
                         File.Delete(_newLogFilePath);
                     }
                 }
                 else
-                {                    
+                {
                     Label_ProgressStatusPercentage.Content = "File Completed...";
-                    Button_Extract.Content = "View Logs";
+                    Button_ViewLogs.Visibility = Visibility.Visible;
                     GlobalSharedData.FilePath = _newLogFilePath;
-         
+
+
                 }
+                DataLogProgress = 0;
+                DataIndex = 0;
                 Button_Extract.IsEnabled = true;
                 Button_Back.Content = "Back";
                 _fileCreated = false;
                 ProgressBar_DataLogExtract.Value = 0;
                 Label_StatusView.Content = "Waiting instructions..";
             }
-          
+           
         }
+         
+
+
+        
 
         private void Button_Back_Click(object sender, RoutedEventArgs e)
         {
@@ -105,7 +125,19 @@ namespace Booyco_HMI_Utility
             {
                 CancelCheck = false;
                 Button_Back.Content = "Back";
-      
+                StoredIndex = -1;
+                //if (!DataExtractorComplete)
+                //{
+
+
+                //    Label_ProgressStatusPercentage.Content = "Process Cancelled...";
+
+                //    if (File.Exists(_newLogFilePath))
+                //    {
+                //        File.Delete(_newLogFilePath);
+                //    }
+                //}
+
             }
             else
             {
@@ -114,24 +146,20 @@ namespace Booyco_HMI_Utility
                 ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
             }
         }
-
-    
+           
 
         private static Thread DataExtractorThread;
         private void Button_Extract_Click(object sender, RoutedEventArgs e)
         {
-            if (DataExtractorComplete)
-            {
-                ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
-            }
-            else
-            {
-                updateDispatcherTimer.Start();
-                //BootStatus = "Asking device to boot...";
-                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LL00]");
-            }
+            Button_Extract.IsEnabled = false;
+            Button_Back.Content = "Cancel";
+            CancelCheck = true;
+            Button_ViewLogs.Visibility = Visibility.Hidden;           
+            updateDispatcherTimer.Start();      
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LL00]");
+            Heartbeat = false;
+            _heartBeatDelay = 0;
 
-          
         }
 
         static int  StoredIndex = -1;
@@ -148,13 +176,10 @@ namespace Booyco_HMI_Utility
                 TotalCount= BitConverter.ToUInt16(message, 6);
 
                 DataLogProgress = (DataIndex * 1000) / TotalCount ;
-
            
-                if (DataIndex == 1 && !_fileCreated)
+                if (!_fileCreated)
                 {
-                    CancelCheck = true;
-                 
-
+                                 
                     _newLogFilePath = _savedFilesPath + "\\DataLog_BooycoPDS_"+ WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID.ToString() +"_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".Mer";
                     int Filecount = 1;
                     while (File.Exists(_newLogFilePath))
@@ -179,7 +204,7 @@ namespace Booyco_HMI_Utility
                     _fileCreated = true;
                 }
                 if(!CancelCheck)
-                {                    
+                {                   
                     GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
                 }
 
@@ -207,7 +232,26 @@ namespace Booyco_HMI_Utility
 
                     GlobalSharedData.ServerMessageSend = Logchunk;
                     Console.WriteLine("DataIndex: " + DataIndex.ToString());
+                    StoredIndex = DataIndex;
 
+                }
+                else if(DataIndex == StoredIndex)
+                {
+                    byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+                    Logchunk[0] = (byte)'[';
+                    Logchunk[1] = (byte)'&';
+                    Logchunk[2] = (byte)'L';
+                    Logchunk[3] = (byte)'D';
+                    Logchunk[4] = (byte)'a';
+                    Logchunk[5] = message[4];
+                    Logchunk[6] = message[5];
+                    Logchunk[7] = 0;
+                    Logchunk[8] = 0;
+                    Logchunk[9] = (byte)']';
+
+                    GlobalSharedData.ServerMessageSend = Logchunk;
+                    Console.WriteLine("DataIndex: " + DataIndex.ToString());
+                    StoredIndex = -1;
                 }
                 else if (DataIndex == TotalCount)
                 {
@@ -222,7 +266,7 @@ namespace Booyco_HMI_Utility
                     _fileCreated = false;
                 
                 }                   
-                    StoredIndex = DataIndex;                
+                           
             }
             else
             {
@@ -241,12 +285,29 @@ namespace Booyco_HMI_Utility
                 Label_StatusView.Content = "Waiting instructions..";
                 ProgressBar_DataLogExtract.Value = 0 ;
                 Label_ProgressStatusPercentage.Content = "";
+                StoredIndex = -1;
+                _heartBeatDelay = 0;
+                DataExtractorComplete = false;
             }
             else
             {
                 updateDispatcherTimer.Stop();
                 DataExtractorComplete = false;
+                Button_ViewLogs.Visibility = Visibility.Hidden;
                 Button_Extract.Content = "Extract";
+            }
+            DataLogProgress = 0;
+            DataIndex = 0;
+        }
+
+        private void Button_ViewLogs_Click(object sender, RoutedEventArgs e)
+        {
+            DataLogProgress = 0;
+            DataIndex = 0;
+            if (DataExtractorComplete)
+            {
+                
+                ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
             }
         }
     }
