@@ -46,7 +46,7 @@ namespace Booyco_HMI_Utility
         private int _heartBeatDelay = 0;
 
         static bool CancelCheck = false;
-
+        static bool MovingLogs = false;
 
         public DataExtractorView()
         {
@@ -65,10 +65,29 @@ namespace Booyco_HMI_Utility
 
         private void InfoUpdater(object sender, EventArgs e)
         {
-            ProgressBar_DataLogExtract.Value = DataLogProgress;
-            Label_ProgressStatusPercentage.Content = "Overall progress: " + (DataLogProgress / 10).ToString() + "%";
-            Label_StatusView.Content = "Datalog packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
+            if (Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
+            {
+                WiFiconfig.ConnectionError = true;
+                if (File.Exists(_newLogFilePath))
+                {
+                    File.Delete(_newLogFilePath);
+                }
+                Button_Back_Click(null, null);
+               
+            }
+            if (MovingLogs)
+            {
+                Label_StatusView.Content = "Moving Logs to Flash";
+             
+            }
+            else
+            {
+                ProgressBar_DataLogExtract.Value = DataLogProgress;
 
+                Label_ProgressStatusPercentage.Content = "Overall progress: " + (DataLogProgress / 10).ToString() + "%";
+                Label_StatusView.Content = "Datalog packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
+            }
+         
             if (CancelCheck)
             {
                 if (Heartbeat)
@@ -154,24 +173,32 @@ namespace Booyco_HMI_Utility
             Button_Extract.IsEnabled = false;
             Button_Back.Content = "Cancel";
             CancelCheck = true;
+            MovingLogs = false;
             Button_ViewLogs.Visibility = Visibility.Hidden;           
-            updateDispatcherTimer.Start();      
+          
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LL00]");
             Heartbeat = false;
             _heartBeatDelay = 0;
+            StoredIndex = 0;
 
         }
 
-        static int  StoredIndex = -1;
+        static int  StoredIndex = 0;
         static bool DataExtractorComplete = false;
         public static void DataExtractorSendParse(byte[] message, EndPoint endPoint)
         {
+            if((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'k'))
+            {            
+                MovingLogs = true;
+            }
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'a'))
             {
+                MovingLogs = false;
                 int test = 0;
             }
                 if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'D'))
             {
+                MovingLogs = false;
                 DataIndex =  BitConverter.ToUInt16(message, 4);               
                 TotalCount= BitConverter.ToUInt16(message, 6);
 
@@ -288,6 +315,7 @@ namespace Booyco_HMI_Utility
                 StoredIndex = -1;
                 _heartBeatDelay = 0;
                 DataExtractorComplete = false;
+                updateDispatcherTimer.Start();
             }
             else
             {
@@ -295,6 +323,7 @@ namespace Booyco_HMI_Utility
                 DataExtractorComplete = false;
                 Button_ViewLogs.Visibility = Visibility.Hidden;
                 Button_Extract.Content = "Extract";
+                updateDispatcherTimer.Stop();
             }
             DataLogProgress = 0;
             DataIndex = 0;

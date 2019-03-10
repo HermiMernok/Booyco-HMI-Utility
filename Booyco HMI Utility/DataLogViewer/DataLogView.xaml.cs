@@ -366,52 +366,107 @@ namespace Booyco_HMI_Utility
                         TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[7] * 10);
 
                         Event_Count++;
-                    }
-                    else if (item.EventID == 151 || item.EventID == 158)
-                    {
-                        TempEvent.ThreatDisplaySector = item.RawData[0];
-                        TempEvent.ThreatDisplayZone = item.RawData[1];
-                        TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 2)) / 10.0;
-                        TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 4);
-                        TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 6);
+                
+                        TempEvent.ThreatDisplaySector = item.RawData[8];
+                        TempEvent.ThreatDisplayZone = item.RawData[9];
+                        TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 10)) / 10.0;
+                        TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 12);
+                        TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 14);
                         Event_Count++;
-                    }
-                    else if (item.EventID == 152 || item.EventID == 159)
-                    {
-                        TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                        TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                  
+                        TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 16) * Math.Pow(10, -7));
+                        TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 20) * Math.Pow(10, -7));
 
                         Event_Count++;
-
-                    }
-                    else if (item.EventID == 153 || item.EventID == 160)
-                    {
-                        TempEvent.ThreatHorizontalAccuracy = item.RawData[0];
-                        TempEvent.ThreatPriority = item.RawData[4];
+                                            
+                        TempEvent.ThreatHorizontalAccuracy = item.RawData[24];
+                        TempEvent.ThreatPriority = item.RawData[28];
 
                         Event_Count++;
-                    }
-                    else if (item.EventID == 154 || item.EventID == 161)
-                    {
-                        TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 0)) / 10.0;
-                        TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 2)) / 100.00;
-                        TempEvent.UnitHorizontalAccuracy = item.RawData[4];
+                  
+                        TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 32)) / 10.0;
+                        TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 34)) / 100.00;
+                        TempEvent.UnitHorizontalAccuracy = item.RawData[36];
 
                         Event_Count++;
-                    }
-                    else if (item.EventID == 155 || item.EventID == 162)
-                    {
-                        TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                        TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                   
+                        TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 40) * Math.Pow(10, -7));
+                        TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 44) * Math.Pow(10, -7));
                         Event_Count++;
-                    }
-                    else if (item.EventID == 156 || item.EventID == 163)
-                    {
-                        TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                        TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                    
+                   
+                        TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 48) * Math.Pow(10, -7));
+                        TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 52) * Math.Pow(10, -7));
 
                         Event_Count++;
                     }
+                    //if (item.EventID == 150 || item.EventID == 157)
+                    //{
+                    //    // TODO: Fix this two variables
+                    //    TempEvent.DateTimeStamp = item.DateTime;
+                    //    TempEvent.ThreatNumberStart = item.Number;
+                    //    TempEvent.ThreatNumberStop = item.Number + 6;
+                    //    TempEvent.PrimaryID = BitConverter.ToUInt32(item.RawData, 0);
+                    //    TempEvent.ThreatTechnology = item.RawData[4];
+                    //    //uint PDS_01_Group = Map_Information1.RawDataEntry[5];
+                    //    TempEvent.ThreatType = item.RawData[6];
+                    //    TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[7] * 10);
+
+                    //    Event_Count++;
+                    //}
+                    //else if (item.EventID == 151 || item.EventID == 158)
+                    //{
+                    //    TempEvent.ThreatDisplaySector = item.RawData[0];
+                    //    TempEvent.ThreatDisplayZone = item.RawData[1];
+                    //    TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 2)) / 10.0;
+                    //    TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 4);
+                    //    TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 6);
+                    //    Event_Count++;
+                    //}
+                    //else if (item.EventID == 152 || item.EventID == 159)
+                    //{
+                    //    TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                    //    TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+
+                    //    Event_Count++;
+
+                    //}
+                    //else if (item.EventID == 153 || item.EventID == 160)
+                    //{
+                    //    TempEvent.ThreatHorizontalAccuracy = item.RawData[0];
+                    //    TempEvent.ThreatPriority = item.RawData[4];
+
+                    //    Event_Count++;
+                    //}
+                    //else if (item.EventID == 154 || item.EventID == 161)
+                    //{
+                    //    TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 0)) / 10.0;
+                    //    TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 2)) / 100.00;
+                    //    TempEvent.UnitHorizontalAccuracy = item.RawData[4];
+
+                    //    Event_Count++;
+                    //}
+                    //else if (item.EventID == 155 || item.EventID == 162)
+                    //{
+                    //    TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                    //    TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                    //    Event_Count++;
+                    //}
+                    //else if (item.EventID == 156 || item.EventID == 163)
+                    //{
+                    //    TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                    //    TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+
+                    //    Event_Count++;
+                    //}
+
+                    //if (Event_Count == 7)
+                    //{
+                    //    Event_Count = 0;
+                    //    ProximityDetectionEventList.Add(TempEvent);
+                    //    TempEvent = new ProximityDetectionEvent();
+
+                    //}
 
                     if (Event_Count == 7)
                     {

@@ -20,7 +20,7 @@ namespace Booyco_HMI_Utility
     {
         
         #region WiFi hotspot
-        public string WiFiHotspotSSID = "BooycoHMIUtility";
+        public string WiFiHotspotSSID = "HermiWifi";
         public string WiFiKey = "BC123456";
 
         static DateTime timestamp;
@@ -439,7 +439,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 7000;
+            clientR[0].ReceiveTimeout = 60000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -450,7 +450,7 @@ namespace Booyco_HMI_Utility
                 {
                     if ((i = stream.Read(data2, 0, data2.Length)) != 0)
                     {
-
+                        Console.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0]+ "-" + Buffer[8201]);
                         #region bufferCreator
                         if (i == DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                         {
@@ -502,7 +502,7 @@ namespace Booyco_HMI_Utility
                         }
                         else if (data2[0] == '[' && data2[1] == '&')
                         {
-                            Console.WriteLine(" First: " + i.ToString());
+                            Console.WriteLine(Buffer[0] + " First: " + i.ToString());
 
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, 0, Buffer, count, i);
@@ -510,10 +510,15 @@ namespace Booyco_HMI_Utility
                             totalCount = count;
                         }
 
+                       
                         else if (count > 0)
                         {
+                            if(totalCount > 6300)
+                            {
+                                int breakpoint = 0;
+                            }
 
-                            if (totalCount + i > DataExtractorView.DATALOG_RX_SIZE + 10)
+                            if ((totalCount + i) > (DataExtractorView.DATALOG_RX_SIZE + 10))
                             {
                                 //Console.WriteLine(" Second: " + i.ToString());
 
@@ -531,7 +536,8 @@ namespace Booyco_HMI_Utility
                             totalCount += i;
                             if (totalCount >= DataExtractorView.DATALOG_RX_SIZE + 10)
                             {
-
+                                Console.WriteLine(Buffer[0] +" **** " + Buffer[8201]);
+                             
                                 // totalCount = 0;
                                 count = 0;
                             }
@@ -540,7 +546,7 @@ namespace Booyco_HMI_Utility
 
                             //count = 0;
 
-                            if (totalCount == DataExtractorView.DATALOG_RX_SIZE + 10 && Buffer[0] == '[' && Buffer[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
+                            if ( Buffer[0] == '[' && Buffer[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                             {
                                 //Buffer = new byte[2058];
                                 //  Array.Copy(data2, Buffer, 2058);

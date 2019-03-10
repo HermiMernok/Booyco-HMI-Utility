@@ -34,14 +34,14 @@
 
         <gmaps:GMapControl x:Name="MainMap" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="5" Loaded="mapView_Loaded" Margin="0,0,0,0" MouseWheel="MainMap_MouseWheel" />
         <Button x:Name="ButtonBack" Content="Back" Margin="10" Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
-        <Button x:Name="ButtonWindow" Content="Window" Margin="10,10,10,10" Click="ButtonNewWindow_Click" Grid.Column="5" Grid.Row="2"/>
+        <Button x:Name="ButtonWindow" Content="Window" Margin="10,10,10,10" Click="ButtonNewWindow_Click" Grid.Column="5" Grid.Row="2" Visibility="Hidden"/>
 
         <Grid x:Name="GridFooter" Grid.ColumnSpan="5" Margin="0,30,0,-35" Grid.RowSpan="2" Grid.Column="1" Grid.Row="6" Visibility="Hidden">
             <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>
             <Label Content="Booyco HMI Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
         </Grid>
         <Button x:Name="ButtonMapType" Content="Map" Grid.Column="1" HorizontalAlignment="Left" Margin="0,25,0,0" Grid.Row="6" VerticalAlignment="Top" Width="162" Click="ButtonMapType_Click" Height="45"/>
-        <Button x:Name="ButtonClear" Content="Clear" Margin="10" Click="ButtonClear_Click" Grid.Column="5" Grid.Row="3"/>
+        <Button x:Name="ButtonClear" Content="Clear" Margin="10" Click="ButtonClear_Click" Grid.Column="5" Grid.Row="2"/>
         <Button x:Name="ButtonPrintMap" Content="Print" Grid.Column="1" HorizontalAlignment="Left" Margin="183,25,0,0" Grid.Row="6" VerticalAlignment="Top" Width="162" Click="ButtonPrintMap_Click" Height="45" Grid.ColumnSpan="2"/>
     </Grid>
 </UserControl>
