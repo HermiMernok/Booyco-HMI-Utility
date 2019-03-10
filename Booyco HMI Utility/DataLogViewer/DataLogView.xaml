@@ -35,7 +35,7 @@
         <Button x:Name="ButtonSave" Content="Export"  Click="ButtonSaveFile_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="True"/>
 
 
-        <DataGrid x:Name="DataGridLogs" RowHeaderWidth="0" CanUserAddRows="False"  CanUserReorderColumns="True"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,0,0,0" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
+        <DataGrid x:Name="DataGridLogs" RowHeaderWidth="0" CanUserAddRows="False"  CanUserReorderColumns="True"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,10,0,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
                     <EventSetter Event="MouseDoubleClick" Handler="RowDoubleClick"/>

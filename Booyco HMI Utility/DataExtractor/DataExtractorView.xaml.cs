@@ -27,6 +27,7 @@ namespace Booyco_HMI_Utility
     public partial class DataExtractorView : UserControl
     {
         public const int DATALOG_RX_SIZE = 8192;
+        //public const int DATALOG_RX_SIZE = 4096;
         static bool _fileCreated = false;
 
         public static bool Heartbeat = false;

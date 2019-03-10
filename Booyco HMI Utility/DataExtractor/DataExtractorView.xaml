@@ -43,7 +43,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!--Heading-->
-                <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
+                <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
                 <!--Device info-->
                 <Label Content="Name:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Foreground="Gray"/>
                 <Label Content="VID:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Foreground="Gray"/>
