@@ -181,6 +181,7 @@ namespace Booyco_HMI_Utility
             {
                 Bootloader.BootReady = Bootloader.BootDone = false;
                 dispatcherTimer.Stop();
+                TCPclients = new List<TCPclientR>();
                 WiFiconfig.ServerStop();
             }
         }

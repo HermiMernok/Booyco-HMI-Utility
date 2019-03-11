@@ -16,6 +16,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Security.Principal;
+using System.Management;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace Booyco_HMI_Utility
 {
@@ -28,17 +32,49 @@ namespace Booyco_HMI_Utility
       
         public MainWindow()
         {
+            // Check if user is NOT admin
+            if (!IsRunningAsAdministrator())
+            {
+                // Setting up start info of the new process of the same application
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(Assembly.GetEntryAssembly().CodeBase);
+
+                // Using operating shell and setting the ProcessStartInfo.Verb to “runas” will let it run as admin
+                processStartInfo.UseShellExecute = true;
+                processStartInfo.Verb = "runas";
+
+                // Start the application as new process
+                Process.Start(processStartInfo);
+
+                // Shut down the current (old) process
+                Environment.Exit(Environment.ExitCode);
+            }
             InitializeComponent();
-            DataContext = this;
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
-            ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
+                DataContext = this;
+                ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
+                ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
 
-            Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+                Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(WindowUpdateTimer);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
-            dispatcherTimer.Start();
+                dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(WindowUpdateTimer);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+                dispatcherTimer.Start();
+            
+        }
+        /// <summary>
+        /// Function that check's if current user is in Aministrator role
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsRunningAsAdministrator()
+        {
+            // Get current Windows user
+            WindowsIdentity windowsIdentity = WindowsIdentity.GetCurrent();
+
+            // Get current Windows user principal
+            WindowsPrincipal windowsPrincipal = new WindowsPrincipal(windowsIdentity);
+
+            // Return TRUE if user is in role "Administrator"
+            return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -143,6 +179,18 @@ namespace Booyco_HMI_Utility
                 ErrorView = true;
             }
 
+            if(ProgramFlow.ProgramWindow != (int)ProgramFlowE.DataExtractorView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.WiFi && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Confiure && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Bootload)
+            {
+                HeartbeatCount = "";
+                WiFiApStatus = "";
+            }
+            else
+            {
+                #endregion
+                HeartbeatCount = GlobalSharedData.ServerStatus;
+                WiFiApStatus = GlobalSharedData.WiFiApStatus;
+            }
+
             if(ErrorView)
             {
                 ErrorView = false;
@@ -155,9 +203,7 @@ namespace Booyco_HMI_Utility
             //    ProgrammingDone.Visibility = Visibility.Collapsed;
 
 
-            #endregion
-            HeartbeatCount = GlobalSharedData.ServerStatus;
-            WiFiApStatus = GlobalSharedData.WiFiApStatus;
+            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
