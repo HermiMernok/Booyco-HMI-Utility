@@ -49,8 +49,6 @@ namespace Booyco_HMI_Utility
         public static int DataIndex { get; set; }
         public static int TotalCount { get; set; }
 
- 
-
         #region OnProperty Changed
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
@@ -60,6 +58,7 @@ namespace Booyco_HMI_Utility
         }
         /////////////////////////////////////////////////////////////
         #endregion
+
         public ConfigView()
         {
             DataContext = this;
@@ -82,7 +81,7 @@ namespace Booyco_HMI_Utility
                 Label_StatusView.Content = "Loading parameters from device: Packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
                 if (ParamsReceiveComplete)
                 {
-                    //  UpdateParametersFromDevice();
+                    UpdateParametersFromDevice();
                     updateDispatcherTimer.Stop();
                     ParamsReceiveComplete = false;
                 }
@@ -93,7 +92,7 @@ namespace Booyco_HMI_Utility
                 ParamsReceiveComplete = false;
                 ProgressBar_Params.Value = ParamTransmitProgress;
                 Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamTransmitProgress).ToString() + "%";
-                Label_StatusView.Content = "Loading parameters from device: Packet " + ConfigSentIndex.ToString() + " of " + Configchunks.ToString() + "...";
+                Label_StatusView.Content = "Loading parameters to device: Packet " + ConfigSentIndex.ToString() + " of " + Configchunks.ToString() + "...";
 
                 if (ConfigSendDone)
                 {
@@ -164,15 +163,13 @@ namespace Booyco_HMI_Utility
             Disp_Parameters = new ObservableCollection<ParametersDisplay>();
             Disp_Parameters = ParametersToDisplay(parameters);
 
-            parametrsGroup = (CollectionView) CollectionViewSource.GetDefaultView(Disp_Parameters);
-            parametersGroup.Source = Disp_Parameters;
-                       
-            parametersGroup.GroupDescriptions.Add(groupDescription);
-            parametersGroup.GroupDescriptions.Add(SubgroupDescription);
-
             parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
             parametrsGroup.GroupDescriptions.Add(groupDescription);
             parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+            
+            //parametersGroup.Source = Disp_Parameters;                     
+            //parametersGroup.GroupDescriptions.Add(groupDescription);
+            //parametersGroup.GroupDescriptions.Add(SubgroupDescription);
 
             Save_ParaMetersToFile();
         }
@@ -431,11 +428,13 @@ namespace Booyco_HMI_Utility
         {
             if (DGparameters.SelectedIndex != -1)
             {
-                var sortedParameterList = parametersGroup.View.OfType<ParametersDisplay>().ToList();
+                ParametersDisplay tempPar = (ParametersDisplay)DGparameters.SelectedItem;
 
+                var SortedIndex = tempPar.OriginIndx;
+                               
                 int DisplayIndex = DGparameters.SelectedIndex;
-
-                var SortedIndex = sortedParameterList[DisplayIndex].OriginIndx;
+                //var sortedParameterList = parametersGroup.View.OfType<ParametersDisplay>().ToList();
+                //var SortedIndex = sortedParameterList[DisplayIndex].OriginIndx;
 
                 if (parameters[SortedIndex].CurrentValue > parameters[SortedIndex].MinimumValue)
                 {
@@ -448,13 +447,13 @@ namespace Booyco_HMI_Utility
 
                 Disp_Parameters = ParametersToDisplay(parameters);
 
-                parametrsGroup.GroupDescriptions.Remove(groupDescription);
-                parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+                //parametrsGroup.GroupDescriptions.Remove(groupDescription);
+                //parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
 
-                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+                //parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
 
-                parametrsGroup.GroupDescriptions.Add(groupDescription);
-                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+                //parametrsGroup.GroupDescriptions.Add(groupDescription);
+                //parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
             }
         }
 
@@ -463,12 +462,14 @@ namespace Booyco_HMI_Utility
 
             if (DGparameters.SelectedIndex != -1)
             {
-                var sortedParameterList = parametersGroup.View.OfType<ParametersDisplay>().ToList();
+                ParametersDisplay tempPar = (ParametersDisplay)DGparameters.SelectedItem;
+                var SortedIndex = tempPar.OriginIndx;
+
+                //var sortedParameterList = parametersGroup.View.OfType<ParametersDisplay>().ToList();
+                //var SortedIndex = sortedParameterList[DisplayIndex].OriginIndx;
 
                 int DisplayIndex = DGparameters.SelectedIndex;
-
-                var SortedIndex = sortedParameterList[DisplayIndex].OriginIndx;
-
+                               
                 if (parameters[SortedIndex].CurrentValue < parameters[SortedIndex].MaximumValue)
                 {
                     parameters[SortedIndex].CurrentValue++;
@@ -477,16 +478,18 @@ namespace Booyco_HMI_Utility
                 {
                     parameters[SortedIndex].CurrentValue = parameters[SortedIndex].MinimumValue;
                 }
-                //Disp_Parameters[DisplayIndex] = DisplayParameterUpdate(parameters[SortedIndex], DisplayIndex);
-                Disp_Parameters = ParametersToDisplay(parameters);
 
-                parametrsGroup.GroupDescriptions.Remove(groupDescription);
-                parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+                Disp_Parameters[SortedIndex] = DisplayParameterUpdate(parameters[SortedIndex], SortedIndex);
 
-                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+                ////Disp_Parameters = ParametersToDisplay(parameters);
 
-                parametrsGroup.GroupDescriptions.Add(groupDescription);
-                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+                //parametrsGroup.GroupDescriptions.Remove(groupDescription);
+                //parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+
+                //parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+
+                //parametrsGroup.GroupDescriptions.Add(groupDescription);
+                //parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
 
                 //DGparameters.SelectedIndex = DisplayIndex;
             }
@@ -533,31 +536,32 @@ namespace Booyco_HMI_Utility
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 4)
-            {
-                TextBox textBox = (TextBox)sender;
-                textBox.Text = generalFunctions.StringConditioner(textBox.Text);
-                textBox.SelectionStart = textBox.Text.Length;
-                String str = textBox.Text;
-                byte[] NameBytes = new byte[20];
+            //Maak die reg
+            //if (DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 4)
+            //{
+            //    TextBox textBox = (TextBox)sender;
+            //    textBox.Text = generalFunctions.StringConditioner(textBox.Text);
+            //    textBox.SelectionStart = textBox.Text.Length;
+            //    String str = textBox.Text;
+            //    byte[] NameBytes = new byte[20];
 
-                NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
-                for (int i = 19; i > 0; i--)
-                {
-                    if((19-i) < NameBytes.Length)
-                        parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx-i].CurrentValue = NameBytes[19-i];
-                    else
-                        parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx - i].CurrentValue = (byte)' ';
-                }
+            //    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
+            //    for (int i = 19; i > 0; i--)
+            //    {
+            //        if((19-i) < NameBytes.Length)
+            //            parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx-i].CurrentValue = NameBytes[19-i];
+            //        else
+            //            parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx - i].CurrentValue = (byte)' ';
+            //    }
 
-            }
-            else if(DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 0)
-            {
-                TextBox textBox = (TextBox)sender;
-                textBox.Text = generalFunctions.StringNumConditioner(textBox.Text);
-                textBox.SelectionStart = textBox.Text.Length;
-                parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = Convert.ToInt32(Disp_Parameters[DGparameters.SelectedIndex].Value);
-            }
+            //}
+            //else if(DGparameters.SelectedIndex != -1 && parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].Ptype == 0)
+            //{
+            //    TextBox textBox = (TextBox)sender;
+            //    textBox.Text = generalFunctions.StringNumConditioner(textBox.Text);
+            //    textBox.SelectionStart = textBox.Text.Length;
+            //    parameters[Disp_Parameters[DGparameters.SelectedIndex].OriginIndx].CurrentValue = Convert.ToInt32(Disp_Parameters[DGparameters.SelectedIndex].Value);
+            //}
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -745,8 +749,17 @@ namespace Booyco_HMI_Utility
                     parameters[i].CurrentValue = parameters[i].DefaultValue;
                 }
             }
+  
 
             Disp_Parameters = ParametersToDisplay(parameters);
+
+            parametrsGroup.GroupDescriptions.Remove(groupDescription);
+            parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+
+            parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+
+            parametrsGroup.GroupDescriptions.Add(groupDescription);
+            parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
             return true;
         }
 

@@ -20,7 +20,7 @@ namespace Booyco_HMI_Utility
     {
         
         #region WiFi hotspot
-        public string WiFiHotspotSSID = "HermiWifi";
+        public string WiFiHotspotSSID = "BooycoHMIUtility";
         public string WiFiKey = "BC123456";
 
         static DateTime timestamp;

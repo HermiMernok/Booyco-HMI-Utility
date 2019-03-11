@@ -108,6 +108,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
                     <DataGridTemplateColumn Header="Value" Width="*" MinWidth="430">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -150,7 +151,7 @@
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
 
-        <Grid Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray"> <!--Margin="0,5,0,0"-->
+        <Grid Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray" Margin="0,5,0,0"> <!--Margin="0,5,0,0"-->
             <!--<Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>-->
