@@ -35,7 +35,21 @@ namespace Booyco_HMI_Utility
         GeneralFunctions generalFunctions;
         private static bool backBtner = false;
 
+        private DispatcherTimer updateDispatcherTimer;
+
         private DispatcherTimer dispatcherTimer;
+
+        static int StoredIndex = -1;
+        static bool ParamsReceiveComplete = false;
+        static bool ParamsRequestStarted = false;
+        static bool ParamsTransmitComplete = false;
+        static bool ParamsSendStarted = false;
+        private static int ParamReceiveProgress = 0;
+        private static int ParamTransmitProgress = 0;
+        public static int DataIndex { get; set; }
+        public static int TotalCount { get; set; }
+
+ 
 
         #region OnProperty Changed
         /////////////////////////////////////////////////////////////
@@ -51,7 +65,43 @@ namespace Booyco_HMI_Utility
             DataContext = this;
             generalFunctions = new GeneralFunctions();
             InitializeComponent();
-           
+
+            updateDispatcherTimer = new DispatcherTimer();
+            updateDispatcherTimer.Tick += new EventHandler(ConfigReceiveParams);
+            updateDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        }
+
+        private void ConfigReceiveParams(object sender, EventArgs e)
+        {
+            if (ParamsRequestStarted)
+            {
+                ConfigSendReady = false;
+                ConfigSendDone = false;
+                ProgressBar_Params.Value = ParamReceiveProgress;
+                Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamReceiveProgress).ToString() + "%";
+                Label_StatusView.Content = "Loading parameters from device: Packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
+                if (ParamsReceiveComplete)
+                {
+                    //  UpdateParametersFromDevice();
+                    updateDispatcherTimer.Stop();
+                    ParamsReceiveComplete = false;
+                }
+            }
+            else if (ConfigSendReady)
+            {
+                ParamsRequestStarted = false;
+                ParamsReceiveComplete = false;
+                ProgressBar_Params.Value = ParamTransmitProgress;
+                Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamTransmitProgress).ToString() + "%";
+                Label_StatusView.Content = "Loading parameters from device: Packet " + ConfigSentIndex.ToString() + " of " + Configchunks.ToString() + "...";
+
+                if (ConfigSendDone)
+                {
+                    ConfigSendDone = false;
+                    updateDispatcherTimer.Stop();
+                }
+
+            }
         }
 
         private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -217,7 +267,11 @@ namespace Booyco_HMI_Utility
             ConfigStatus = "Asking device to configure parameters...";
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
 
-
+            updateDispatcherTimer.Start();
+            ConfigSendReady = true;
+            ConfigSendDone = false;
+            ParamsRequestStarted = false;
+            ParamsReceiveComplete = false;
         }
 
         public ObservableCollection<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
@@ -555,9 +609,9 @@ namespace Booyco_HMI_Utility
                     ConfigSentAckIndex = -1;
                     Thread.Sleep(2);
                     ConfigStatus = "Device ready to configure...";
-                    //GlobalSharedData.ServerStatus = "Config ready message recieved";
-                    //GlobalSharedData.BroadCast = false;
-                    //WiFiconfig.SelectedIP = endPoint.ToString();
+                    GlobalSharedData.ServerStatus = "Config ready message recieved";
+                    GlobalSharedData.BroadCast = false;
+                    WiFiconfig.SelectedIP = endPoint.ToString();
                 }
                 #endregion
 
@@ -568,7 +622,7 @@ namespace Booyco_HMI_Utility
                     {
                         bootContinue = true;
                         ConfigSentAckIndex = BitConverter.ToUInt16(message, 5);
-                        //ConfigStatus = "Device bootloading packet " + ConfigSentAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
+                        //ConfigStatus = "Device receiving packet " + ConfigSentAckIndex.ToString() + " of " + bootchunks.ToString() + "...";
                         GlobalSharedData.ServerStatus = "Config acknowledgment message recieved";
 
                     }
@@ -599,8 +653,11 @@ namespace Booyco_HMI_Utility
                     }
                     else
                     {
-                        ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
+                        //ConfigSentIndex = BitConverter.ToUInt16(message, 4);
+                        ConfigSentIndex--;
+                        //ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
                         ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
+                        Console.WriteLine("Error at Index" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
                     }
 
                 }
@@ -612,11 +669,85 @@ namespace Booyco_HMI_Utility
                     backBtner = true;
                 }
                 #endregion
+
+                ParamTransmitProgress = (ConfigSentIndex * 100) / Configchunks;
+
             }
             else
             {
                 
             }
+        }
+
+        public static byte[] ParamReceiveBytes = new byte[800 * 4];
+
+        public static void ConfigReceiveParamsParse(byte[] message, EndPoint endPoint)
+        {        
+            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'a'))
+            {
+                int test = 0;
+            }
+            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'D'))
+            {
+                DataIndex = BitConverter.ToUInt16(message, 4);
+                TotalCount = BitConverter.ToUInt16(message, 6);
+
+                Array.Copy(message, 8, ParamReceiveBytes, (DataIndex-1) * 512, 512);
+
+                ParamReceiveProgress = (DataIndex * 100) / TotalCount;
+                               
+                if (DataIndex < TotalCount && DataIndex > StoredIndex)
+                {
+                    byte[] ParamsReceivechunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+
+                    ParamsReceivechunk[0] = (byte)'[';
+                    ParamsReceivechunk[1] = (byte)'&';
+                    ParamsReceivechunk[2] = (byte)'p';
+                    ParamsReceivechunk[3] = (byte)'D';
+                    ParamsReceivechunk[4] = (byte)'a';
+                    ParamsReceivechunk[5] = message[4];
+                    ParamsReceivechunk[6] = message[5];
+                    ParamsReceivechunk[7] = 0;
+                    ParamsReceivechunk[8] = 0;
+                    ParamsReceivechunk[9] = (byte)']';
+
+                    GlobalSharedData.ServerMessageSend = ParamsReceivechunk;
+                    Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+
+                }
+                else if (DataIndex == TotalCount)
+                {
+                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&ps00]");
+                    Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+                    ParamsReceiveComplete = true;
+                }
+
+                StoredIndex = DataIndex;
+            }
+            else
+            {
+
+            }
+        }
+
+        private bool UpdateParametersFromDevice()
+        {
+            Int32 Value = 0;
+            for (int i = 0; i < Parameters.Count; i++)
+            {                
+                Value = ParamReceiveBytes[i * 4] | ParamReceiveBytes[(i * 4) + 1] << 8 | ParamReceiveBytes[(i * 4) + 2] << 16 | ParamReceiveBytes[(i * 4) + 3] << 24;
+                if ((Value < parameters[i].MaximumValue) && (Value > parameters[i].MinimumValue))
+                {
+                    parameters[i].CurrentValue = Value;
+                }
+                else
+                {
+                    parameters[i].CurrentValue = parameters[i].DefaultValue;
+                }
+            }
+
+            Disp_Parameters = ParametersToDisplay(parameters);
+            return true;
         }
 
         private void ConfigSendDo()
@@ -654,6 +785,35 @@ namespace Booyco_HMI_Utility
             ConfigSendStop = false;
         }
 
+        private void ConfigRefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            ConfigSendReady = false;
+            ConfigSendDone = false;
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
+            StoredIndex = -1;
+            ParamsRequestStarted = true;
+            ParamsReceiveComplete = false;
+            updateDispatcherTimer.Start();
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible)
+            {
+                ParamsRequestStarted = false;
+                ParamsReceiveComplete = false;
+                ConfigSendReady = false;
+                ConfigSendDone = false;
+                Label_StatusView.Content = "Waiting for user command..";
+                ProgressBar_Params.Value = 0;
+                Label_ProgressStatusPercentage.Content = "";
+            }
+            else
+            {
+                updateDispatcherTimer.Stop();
+
+            }
+        }
     }
 }
 

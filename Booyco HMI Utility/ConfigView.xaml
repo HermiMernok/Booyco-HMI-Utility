@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
-             d:DesignHeight="710" d:DesignWidth="1280">
+             d:DesignHeight="710" d:DesignWidth="1280" IsVisibleChanged="UserControl_IsVisibleChanged">
     
     <Grid Background="White" IsVisibleChanged="Grid_IsVisibleChanged">
         <Grid.RowDefinitions>
@@ -26,14 +26,15 @@
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
         <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-            <Label Content="Configure" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            <Label Content="Configuration" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         </Viewbox>
 
-        <Button Content="Refresh" Grid.Column="2" Grid.Row="3" Margin="10"/>
+        <Button x:Name="ConfigRefreshButton" Content="Refresh" Grid.Column="2" Grid.Row="3" Margin="10" Click="ConfigRefreshButton_Click" />
         <Button Content="Open File" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="4" Margin="10"/>
         <Button Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10" Click="Button_Click"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
 
+        
 
         <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" RowDetailsVisibilityMode="Collapsed"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" HorizontalScrollBarVisibility="Disabled" Margin="0,10">
             <DataGrid.Resources>
@@ -73,9 +74,9 @@
                                         <Expander IsExpanded="true">
                                             <Expander.Header>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="18" Margin="5" VerticalAlignment="Bottom" />
-                                                    <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" />
-                                                    <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Black"  FontSize="22" Margin="5" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding ItemCount}" FontSize="18" Foreground="Gray"  FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text=" item(s)" FontSize="18" Foreground="Gray" FontStyle="Italic" VerticalAlignment="Center" />
                                                 </StackPanel>
                                             </Expander.Header>
                                             <ItemsPresenter />
@@ -98,8 +99,16 @@
             </DataGrid.GroupStyle>
                
             <DataGrid.Columns>
-                <DataGridTextColumn Width="450" MinWidth="450" Header="Parameter" Binding="{Binding Name}" IsReadOnly="True"/>
-                <DataGridTemplateColumn Header="Value" Width="*" MinWidth="430">
+                <DataGridTemplateColumn Width="450" MinWidth="450" Header="Parameter">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock Grid.Row="3" Grid.Column="1"  Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Value" Width="*" MinWidth="430">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -141,5 +150,16 @@
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
 
+        <Grid Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray"> <!--Margin="0,5,0,0"-->
+            <!--<Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>-->
+            <ProgressBar x:Name="ProgressBar_Params" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="100" Margin="5"/>
+            <Label x:Name="Label_StatusView" Content="StatusView" Grid.Row="1" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
+            <Label x:Name="Label_ProgressStatusPercentage" Content="ProgressStatus" Grid.Row="1" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
+
+            <Label x:Name="Label_Index" Content="{Binding DataIndex}" HorizontalAlignment="Left" Margin="496,-695,0,0" VerticalAlignment="Top" Width="386" Height="70"/>
+
+        </Grid>
     </Grid>
 </UserControl>
