@@ -143,9 +143,26 @@ namespace Booyco_HMI_Utility
         private void DGTCPclientList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DGTCPclientList.SelectedIndex != -1)
+            {
+                TCPclientR _selectedItem = (TCPclientR)DGTCPclientList.SelectedItem;
                 GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
+                if (_selectedItem.ApplicationState == "Bootloader")
+                {
+                    BtnConfig.IsEnabled = false;
+                    BtnDatView.IsEnabled = false;
+                }
+                else if ((_selectedItem.ApplicationState == "Application"))
+                {
+                    BtnConfig.IsEnabled = true;
+                    BtnDatView.IsEnabled = true;
+                }
+            }
             else if (DGTCPclientList.Items.Count == 1)
                 GlobalSharedData.SelectedDevice = 0;
+
+           
+              
+           
         }
 
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

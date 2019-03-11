@@ -179,16 +179,46 @@ namespace Booyco_HMI_Utility
                             {
                                 TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                 TempList.Last().DataList.AddRange(_tempDataList);
+                                                        
+                                Buffer.BlockCopy(_logData, 0, TempList.Last().RawData,(_tempEventID-150)*8, 8);
+
+
                             }
 
                         }
                         else if(_tempEventID > 157 && _tempEventID < 164)
                         {
-                            if (TempList.Last().EventID == 157)
+                           if (TempList.Last().EventID == 157)
                             {
                                 TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                 TempList.Last().DataList.AddRange(_tempDataList);
-                            }
+                              }
+                            Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - 157) * 8, 8);
+                        }
+                        else if(_tempEventID==150 || _tempEventID == 157)
+                        {
+                            byte[] byteArray = new byte[58];
+                            byteArray[0] = _logData[0];
+                            byteArray[1] = _logData[1];
+                            byteArray[2] = _logData[2];
+                            byteArray[3] = _logData[3];
+                            byteArray[4] = _logData[4];
+                            byteArray[5] = _logData[5];
+                            byteArray[6] = _logData[6];
+                            byteArray[7] = _logData[7];
+     
+                            TempList.Add(new LogEntry
+                            {
+                                Number = i,
+                                EventID = _tempEventID,
+                                EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
+                                RawEntry = _logChuncks,
+                                RawData = byteArray,
+                                EventInfo = _tempEventInfo,
+                                DateTime = _eventDateTime,
+                                DataList = _tempDataList,
+
+                            });
                         }
                         else
                         {

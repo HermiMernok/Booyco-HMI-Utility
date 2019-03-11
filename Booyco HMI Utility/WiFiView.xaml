@@ -38,7 +38,7 @@
             <Label Content="WiFi Interface" Foreground="Black"/>
         </Viewbox>
 
-        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" RowHeaderWidth="0" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="16" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA68288"  RowBackground="#FFB68181" Margin="5,15">
+        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" RowHeaderWidth="0" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="16" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA68288"  RowBackground="#FFB68181" Margin="5,10">
             <DataGrid.Columns>
                 
                 <DataGridTextColumn Width="170" Header="Name" Binding="{Binding Name}"/>
