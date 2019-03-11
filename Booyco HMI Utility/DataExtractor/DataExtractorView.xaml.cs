@@ -183,6 +183,33 @@ namespace Booyco_HMI_Utility
             _heartBeatDelay = 0;
             StoredIndex = 0;
 
+            if (!_fileCreated)
+            {
+
+                _newLogFilePath = _savedFilesPath + "\\DataLog_BooycoPDS_" + WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID.ToString() + "_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".Mer";
+                int Filecount = 1;
+                while (File.Exists(_newLogFilePath))
+                {
+                    if (Filecount > 1)
+                    {
+                        _newLogFilePath.Remove(_newLogFilePath.Length - 1);
+                        _newLogFilePath += Filecount;
+                    }
+                    else
+                    {
+                        _newLogFilePath += Filecount;
+                    }
+
+                    if (Filecount >= 10)
+                    {
+                        break;
+                    }
+
+                }
+                File.Create(_newLogFilePath).Dispose();
+                _fileCreated = true;
+            }
+
         }
 
         static int  StoredIndex = 0;
@@ -206,32 +233,7 @@ namespace Booyco_HMI_Utility
 
                 DataLogProgress = (DataIndex * 1000) / TotalCount ;
            
-                if (!_fileCreated)
-                {
-                                 
-                    _newLogFilePath = _savedFilesPath + "\\DataLog_BooycoPDS_"+ WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID.ToString() +"_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".Mer";
-                    int Filecount = 1;
-                    while (File.Exists(_newLogFilePath))
-                    {
-                        if (Filecount > 1)
-                        {
-                            _newLogFilePath.Remove(_newLogFilePath.Length - 1);
-                            _newLogFilePath += Filecount;
-                        }
-                        else
-                        {
-                            _newLogFilePath += Filecount;
-                        }
-
-                        if(Filecount >= 10)
-                        {
-                            break;
-                        }
-
-                    }        
-                        File.Create(_newLogFilePath).Dispose();
-                    _fileCreated = true;
-                }
+               
                 if(!CancelCheck)
                 {                   
                     GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");

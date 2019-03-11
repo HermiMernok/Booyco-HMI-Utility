@@ -270,11 +270,14 @@ namespace Booyco_HMI_Utility
             if (DisplpayPlay)
             {
                 dispatcherPlayTimer.Stop();
+                Button_Play.Content = "Play";
+             
                 DisplpayPlay = false;
             }
             else
             {
                 dispatcherPlayTimer.Start();
+                Button_Play.Content = "Pause";
                 DisplpayPlay = true;
             }
         }

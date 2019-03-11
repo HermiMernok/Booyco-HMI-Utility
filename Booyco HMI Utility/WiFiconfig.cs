@@ -105,16 +105,16 @@ namespace Booyco_HMI_Utility
 
             if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() > 0 && GlobalSharedData.NetworkDevices.Where(t => t.DeviceIP == "192.168.137.1").ToList().Count >= 1)
             {
-                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint created";
+                GlobalSharedData.WiFiApStatus = "Wifi Access point created - " + WiFiHotspotSSID;
             }
             else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() == 0)
             {                
-                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+                GlobalSharedData.WiFiApStatus = "Wifi Access point failed to create...";
 
             }
             else if (GlobalSharedData.NetworkDevices.Where(t => t.DeviceTipe.Contains("Wireless")).Count() > 0 && GlobalSharedData.NetworkDevices.Where(t => t.DeviceIP == "192.168.137.1").ToList().Count < 1)
             {
-                GlobalSharedData.WiFiApStatus = "Wifi Accesspoint failed to create...";
+                GlobalSharedData.WiFiApStatus = "Wifi Access point failed to create...";
             }
 
         }
@@ -253,9 +253,10 @@ namespace Booyco_HMI_Utility
             SelectedIP = "";
             clients = new List<TcpClient>();
             try
-            {
+            {             
                 server = new TcpListener(IPAddress.Any, 13000);
                 server.Start();
+              
                 //                ip = new IPEndPoint(IPAddress.Any, 13000); //Any IPAddress that connects to the server on any port
                 //                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); //Initialize a new Socket
                 //                ConfigureTcpSocket(socket);
@@ -322,19 +323,28 @@ namespace Booyco_HMI_Utility
                     GlobalSharedData.ServerStatus = "Connected with " + clientep.Address + " at port " + clientep.Port;
                     ClientLsitChanged(TCPclients);
 
-                    Thread readThread = new Thread(() => RecieveBytes(client.Client.RemoteEndPoint))
+                    if (!endAll)
                     {
-                        IsBackground = true,
-                        Name = "ServerRecieve:" + clientnum.ToString()
-                    };
-                    readThread.Start();
-                    clientslot = clientnum;
-                    Thread sendThread = new Thread(() => ClientSendBytes(client.Client.RemoteEndPoint, clientslot))
+                        Thread readThread = new Thread(() => RecieveBytes(client.Client.RemoteEndPoint))
+                        {
+                            IsBackground = true,
+                            Name = "ServerRecieve:" + clientnum.ToString()
+                        };
+
+                        readThread.Start();
+                        clientslot = clientnum;
+                    }
+
+                    if (!endAll)
                     {
-                        IsBackground = true,
-                        Name = "ServerSend:" + clientnum.ToString()
-                    };
-                    sendThread.Start();
+                        Thread sendThread = new Thread(() => ClientSendBytes(client.Client.RemoteEndPoint, clientslot))
+                        {
+                            IsBackground = true,
+                            Name = "ServerSend:" + clientnum.ToString()
+                        };
+                        sendThread.Start();
+                    }
+                    
 
                     //Thread PollThread = new Thread(() => ClientsPoll(client.Client.RemoteEndPoint))
                     //{
@@ -588,7 +598,7 @@ namespace Booyco_HMI_Utility
 
                                 {
 
-                                    GlobalSharedData.ServerStatus = "Heartbeat message recieved: " + heartbeatCounter++.ToString();
+                                  //  GlobalSharedData.ServerStatus = "Heartbeat message recieved: " + heartbeatCounter++.ToString();
                                     try
                                     {
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = Encoding.ASCII.GetString(Buffer, 8, 15);

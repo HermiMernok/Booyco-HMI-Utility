@@ -43,12 +43,12 @@
                 
                 <DataGridTextColumn Width="170" Header="Name" Binding="{Binding Name}"/>
                 <DataGridTextColumn Width="120" Header="VID" Binding="{Binding VID}" />
-                <DataGridTextColumn Width="110" Header="Firmware" Binding="{Binding FirmwareString}" />
-                <DataGridTextColumn Width="120" Header="Bootloader" Binding="{Binding BootloaderrevString}" />
-                <DataGridTextColumn Width="100" Header="Licensed" Binding="{Binding Licensed}" />
+                <DataGridTextColumn Width="100" Header="Firmware" Binding="{Binding FirmwareString}" />
+                <DataGridTextColumn Width="110" Header="Bootloader" Binding="{Binding BootloaderrevString}" />
+                <DataGridTextColumn Width="90" Header="Licensed" Binding="{Binding Licensed}" />
                 <!--<DataGridTextColumn Width="0.3*" Header="Loss" Binding="{Binding PacketLoss}" />-->
                 <DataGridTextColumn Width="130" Header="Mode" Binding="{Binding ApplicationState}" />
-                <DataGridTextColumn Width="190" Header="IP address" Binding="{Binding IP}" />
+                <DataGridTextColumn Width="220" Header="IP address" Binding="{Binding IP}" />
                 <DataGridTextColumn Width="*" Header="HB" Binding="{Binding HeartCount}" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
