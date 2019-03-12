@@ -82,7 +82,7 @@ namespace Booyco_HMI_Utility
 
         public static uint CheckDateTimeStampUnix(UInt32 UnixValue ,out DateTime DateTimeStamp)
         {
-            DateTimeStamp = UnixTimeStampToDateTime(UnixValue);
+            DateTimeStamp = UnixTimeStampToDateTime(UnixValue-2*60*60);
             if (UnixValue == 4294967295)
                 return (uint)Status.Error_3;
             else if (UnixValue == 0)
@@ -93,6 +93,7 @@ namespace Booyco_HMI_Utility
             {
                 return (uint)Status.Error_2;
             }
+           
             return (uint)Status.Ok;
         }
     }

@@ -120,7 +120,11 @@ namespace Booyco_HMI_Utility
                 DataLogs.AddRange(dataLogManager.TempList);
                 dataLogManager.TempList.Clear();
                 ButtonSave.IsEnabled = true;
-               
+                ProgressbarDataLogs.Visibility = Visibility.Collapsed;
+                this.ButtonSelectAll.Visibility = Visibility.Visible;
+                this.ButtonToggleExpand.Visibility = Visibility.Visible;
+
+
             }
             else
             {
@@ -241,16 +245,25 @@ namespace Booyco_HMI_Utility
 
         private void Datagrid_Logs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
-            if(ThreadsIsSelected())
+            if (DataGridLogs.SelectedItems.Count >= 1)
             {
-                ButtonMap.IsEnabled = true;
+               // ButtonMap.IsEnabled = true;
                 ButtonDisplay.IsEnabled = true;
             }
             else
             {
-                ButtonMap.IsEnabled = false;
+               // ButtonMap.IsEnabled = false;
                 ButtonDisplay.IsEnabled = false;
+            }
+            if (ThreadsIsSelected())
+            {
+                ButtonMap.IsEnabled = true;
+               // ButtonDisplay.IsEnabled = true;
+            }
+            else
+            {
+                ButtonMap.IsEnabled = false;
+               // ButtonDisplay.IsEnabled = false;
             }
         }
         private void ButtonMap_Click(object sender, RoutedEventArgs e)
@@ -627,6 +640,9 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
+                this.ButtonSelectAll.Visibility = Visibility.Collapsed;
+                this.ButtonToggleExpand.Visibility = Visibility.Collapsed;
+                ProgressbarDataLogs.Visibility = Visibility.Visible;
                 dataLogManager.AbortRequest = false;
                 if (GlobalSharedData.FilePath != "" && File.Exists(GlobalSharedData.FilePath))
                 {
@@ -655,11 +671,14 @@ namespace Booyco_HMI_Utility
 
             if (DataGridLogs.Columns[5].Visibility == Visibility.Visible)
             {
-                DataGridLogs.Columns[5].Visibility = Visibility.Hidden;
+                DataGridLogs.Columns[5].Visibility = Visibility.Collapsed;
+      
+                ButtonToggleExpand.Content = "Expand";
             }
             else
             {
                 DataGridLogs.Columns[5].Visibility = Visibility.Visible;
+                ButtonToggleExpand.Content = "Collapse";
             }
            
 
@@ -757,13 +776,33 @@ namespace Booyco_HMI_Utility
             GlobalSharedData.HMIDisplayList.Clear();
             DateTime _clearTime = new DateTime();
 
-            List<LogEntry> _tempList = new List<LogEntry>();
+            // List<LogEntry> _tempList = new List<LogEntry>();
+            // foreach (LogEntry item in DataGridLogs.SelectedItems)
+            // {
+            //     _tempList.Add(item);
+            // }
+
+            //GlobalSharedData.
+
+            DateTime StartSelectedDateTime =new DateTime(2100,01,01);
+            DateTime EndSelectedDateTime = new DateTime(1700, 01, 01);
+
             foreach (LogEntry item in DataGridLogs.SelectedItems)
-            {
-                _tempList.Add(item);
+           {                     
+                if(item.DateTime < StartSelectedDateTime )
+                {
+                    StartSelectedDateTime = item.DateTime;
+                }
+                if(item.DateTime >EndSelectedDateTime)
+                {
+                    EndSelectedDateTime = item.DateTime;
+                }
             }
 
-            List<LogEntry> _sortedList = _tempList.OrderBy(a => a.Number).ToList();
+            GlobalSharedData.EndDateTimeDatalog = EndSelectedDateTime;
+            GlobalSharedData.StartDateTimeDatalog = StartSelectedDateTime;
+
+               List<LogEntry> _sortedList = DataLogs.OrderBy(a => a.Number).ToList();
 
                 foreach (LogEntry item in _sortedList)
             {
@@ -773,7 +812,7 @@ namespace Booyco_HMI_Utility
                 if (item.EventID == 150)
                 {
                     _tempPDSThreatEvent.ThreatBID = item.DataList.ElementAt(0);
-                     _tempPDSThreatEvent.ThreatGroup = item.DataList.ElementAt(2);
+                    _tempPDSThreatEvent.ThreatGroup = item.DataList.ElementAt(2);
                     _tempPDSThreatEvent.ThreatType = item.DataList.ElementAt(3);
                     _tempPDSThreatEvent.ThreatWidth = item.DataList.ElementAt(4);
                     _tempPDSThreatEvent.ThreatSector = item.DataList.ElementAt(5);
@@ -819,5 +858,59 @@ namespace Booyco_HMI_Utility
             }
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.HMIDisplayView;
         }
+
+        bool SelectAll = false;
+        private void ButtonSelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectAll)
+            {
+                ButtonSelectAll.Content = "Select All";
+                DataGridLogs.UnselectAll();
+                SelectAll = false;               
+            }
+            else
+            {
+                ButtonSelectAll.Content = "Unselect All";
+                DataGridLogs.SelectAll();
+                SelectAll = true;
+            }
+        }
+
+        bool touchActive = false;
+        // private void DataGridRow_TouchDown(object sender, TouchEventArgs e)
+        private void DataGridRow_TouchDown(object sender, TouchEventArgs e)
+        {
+           
+            DataGridRow row = (DataGridRow)sender;
+            if (row.IsSelected)
+            {
+                touchActive = false;
+            }
+            else
+            {
+                touchActive = true;
+            }
+        }
+
+        private void DataGridRow_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (touchActive)
+            {
+                DataGridRow row = (DataGridRow)sender;
+                if (row.IsSelected)
+                {
+                    row.IsSelected = true;
+                }
+            }
+        }
+
+        private void DataGridRow_TouchMove(object sender, TouchEventArgs e)
+        {
+          
+                
+         
+        }
+
+
     }
 }

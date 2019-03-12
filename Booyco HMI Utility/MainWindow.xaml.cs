@@ -244,5 +244,10 @@ namespace Booyco_HMI_Utility
         }
 
         public bool ErrorView { get; private set; }
+
+        private void StartUpView_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

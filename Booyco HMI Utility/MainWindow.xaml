@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Booyco_HMI_Utility"
         mc:Ignorable="d"
-        Title="Booyco HMI Utility" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
+        Title="Booyco HMI Utility V1.02" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
 
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
@@ -54,7 +54,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
             </Grid.ColumnDefinitions>
-            <local:StartUp x:Name="StartUpView"  Grid.Row="1" Grid.Column="1"/>
+            <local:StartUp x:Name="StartUpView"  Grid.Row="1" Grid.Column="1" Loaded="StartUpView_Loaded"/>
             <local:BluetoothView x:Name="BluetoothView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
             <local:FileView x:Name="FileView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:USBView x:Name="USBView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
