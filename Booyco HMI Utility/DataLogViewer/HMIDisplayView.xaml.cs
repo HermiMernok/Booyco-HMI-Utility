@@ -70,62 +70,7 @@ namespace Booyco_HMI_Utility
 
             private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-              if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.HMIDisplayView)
-            {
-                //GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone;
-                if (GlobalSharedData.HMIDisplayList.Count() != 0)
-                {
-
-                    PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
-
-                    DateTime _startTime = new DateTime(2100, 1, 1);
-                    DateTime _endTime = new DateTime();
-                    DateTime _clearTime = new DateTime();
-
-                    foreach (HMIDisplayEntry item in GlobalSharedData.HMIDisplayList)
-                    {
-
-
-                        if (_clearTime == item.EndDateTime)
-                        {
-
-                            foreach (PDSThreatEvent tempPDSThreat in item.PDSThreat)
-                            {
-                                if (item.EndDateTime < tempPDSThreat.DateTime)
-                                {
-                                    item.EndDateTime = tempPDSThreat.DateTime;
-                                }
-                            }
-
-                        }
-                        if (_startTime.Ticks > item.StartDateTime.Ticks)
-                        {
-                            _startTime = item.StartDateTime;
-                        }
-
-                        if (_endTime.Ticks < item.EndDateTime.Ticks)
-                        {
-                            _endTime = item.EndDateTime;
-                        }
-
-
-                    }
-
-                    Slider_DateTime.Minimum = _startTime.Ticks + 1;
-                    TextBlock_StartDateTime.Text = _startTime.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-
-
-                    Slider_DateTime.Maximum = _endTime.Ticks + 1;
-                    TextBlock_EndDateTime.Text = _endTime.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-                }
-                
-
-            }
-
-            else
-            {
-                ClearClusters();
-            }
+          
         }
 
         void ClearClusters()
@@ -297,6 +242,35 @@ namespace Booyco_HMI_Utility
             //}
 
 
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.HMIDisplayView)
+            {
+                //GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone;
+                if (GlobalSharedData.HMIDisplayList.Count() != 0)
+                {
+
+                    PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
+                 
+
+                    Slider_DateTime.Minimum = GlobalSharedData.StartDateTimeDatalog.Ticks + 1;
+                    TextBlock_StartDateTime.Text = GlobalSharedData.StartDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
+
+
+                    Slider_DateTime.Maximum = GlobalSharedData.EndDateTimeDatalog.Ticks + 1;
+                    TextBlock_EndDateTime.Text = GlobalSharedData.EndDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
+                   // Slider_DateTime.Value = Slider_DateTime.Minimum;
+                }
+
+
+            }
+
+            else
+            {
+                ClearClusters();
+            }
         }
     }
 }
