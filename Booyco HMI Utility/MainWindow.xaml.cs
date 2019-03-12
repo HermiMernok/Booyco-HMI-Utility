@@ -49,6 +49,7 @@ namespace Booyco_HMI_Utility
                 Environment.Exit(Environment.ExitCode);
             }
             InitializeComponent();
+
                 DataContext = this;
                 ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
@@ -59,7 +60,8 @@ namespace Booyco_HMI_Utility
                 dispatcherTimer.Tick += new EventHandler(WindowUpdateTimer);
                 dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
                 dispatcherTimer.Start();
-            
+              
+
         }
         /// <summary>
         /// Function that check's if current user is in Aministrator role
