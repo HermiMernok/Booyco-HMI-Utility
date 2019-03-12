@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
-             d:DesignHeight="710" d:DesignWidth="1280" IsVisibleChanged="UserControl_IsVisibleChanged">
-    
+             d:DesignHeight="800" d:DesignWidth="1200" IsVisibleChanged="UserControl_IsVisibleChanged">
+
     <Grid Background="White" IsVisibleChanged="Grid_IsVisibleChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="5"/>
@@ -30,11 +30,11 @@
         </Viewbox>
 
         <Button x:Name="ConfigRefreshButton" Content="Refresh" Grid.Column="2" Grid.Row="3" Margin="10" Click="ConfigRefreshButton_Click" />
-        <Button Content="Open File" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="4" Margin="10"/>
-        <Button Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10" Click="Button_Click"/>
+        <Button x:Name="OpenFileButton" Content="Open / Save" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="4" Margin="10"/>
+        <Button x:Name="SendFileButton" Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10" Click="Button_Click"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
 
-        
+
 
         <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" RowDetailsVisibilityMode="Collapsed"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" HorizontalScrollBarVisibility="Disabled" Margin="0,10">
             <DataGrid.Resources>
@@ -90,16 +90,18 @@
                         <DataTemplate>
                             <DockPanel Background="Gray">
                                 <TextBlock Text="{Binding Name}" Foreground="DarkGray" Margin="30,0,0,0" Width="100"/>
-                                --><!--<TextBlock Text="{Binding ItemCount}" Foreground="Blue"/>--><!--
+                                -->
+                    <!--<TextBlock Text="{Binding ItemCount}" Foreground="Blue"/>-->
+                    <!--
                             </DockPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>-->
                 </GroupStyle>
 
             </DataGrid.GroupStyle>
-               
+
             <DataGrid.Columns>
-                <DataGridTemplateColumn Width="450" MinWidth="450" Header="Parameter">
+                <DataGridTemplateColumn Width="400" MinWidth="400" Header="Parameter">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -109,7 +111,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Value" Width="*" MinWidth="430">
+                <DataGridTemplateColumn Header="Value" Width="*" MinWidth="480">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -123,7 +125,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Button x:Name="BtnMinDatagrid"  Grid.Row="3" Grid.Column="0" Content="&lt;" Click="min_Button_Click" Visibility="{Binding BtnVisibility}">
                                 </Button>
-                                <TextBox Grid.Row="3" Grid.Column="1"  Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="{Binding LablEdit}"  TextChanged="TextBox_TextChanged" />
+                                <TextBox Grid.Row="3" Grid.Column="1"  Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="{Binding LablEdit}" LostFocus="TextBox_LostFocus"/>
                                 <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding parameterEnums}" Visibility="{Binding dropDownVisibility}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectedIndex="{Binding EnumIndx}" SelectionChanged="ComboBox_SelectionChanged" DropDownClosed="ComboBox_DropDownClosed" />
                                 <Button  Grid.Row="3" Grid.Column="2"  Content="&gt;" Click="max_Button_Click" Visibility="{Binding BtnVisibility}"></Button>
                             </Grid>
@@ -151,7 +153,8 @@
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
 
-        <Grid Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray" Margin="0,5,0,0"> <!--Margin="0,5,0,0"-->
+        <Grid Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray" Margin="0,5,0,0">
+            <!--Margin="0,5,0,0"-->
             <!--<Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>-->
@@ -161,6 +164,43 @@
 
             <Label x:Name="Label_Index" Content="{Binding DataIndex}" HorizontalAlignment="Left" Margin="496,-695,0,0" VerticalAlignment="Top" Width="386" Height="70"/>
 
+        </Grid>
+
+        <Grid Grid.Row="0" Grid.RowSpan="8" Grid.ColumnSpan="4" Visibility="{Binding SureMessageVis}" >
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.2"/>
+            </Grid.Background>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="White" Grid.Column="1" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Open / Save File:" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
+                <TextBlock x:Name="RequestMessageLabel" Text="Do you want to save or open a parameter file" Foreground="Black" Grid.Column="0"  Grid.Row="2" Grid.ColumnSpan="4" FontSize="30" TextWrapping="Wrap" Margin="5" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                <Button x:Name="ButtonSave" Content="Save" Grid.Column="2" Grid.Row="3" Margin="15" Click="ButtonSave_Click" />
+                <Button x:Name="ButtonOpen" Content="Open" Grid.Column="1" Grid.Row="3" Margin="15" Click="ButtonOpen_Click" />
+                <Button x:Name="ButtonClose" Content="X" Grid.Column="4" Grid.Row="0" Margin="100,0,0,30" Click="ButtonClose_Click" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

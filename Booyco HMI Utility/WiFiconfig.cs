@@ -451,7 +451,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 6000;
+            clientR[0].ReceiveTimeout = 50000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -462,7 +462,7 @@ namespace Booyco_HMI_Utility
                 {
                     if ((i = stream.Read(data2, 0, data2.Length)) != 0)
                     {
-                        Console.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0]+ "-" + Buffer[DataExtractorView.DATALOG_RX_SIZE + 9]);
+                        Console.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0].ToString()+ "-" + Buffer[512 + 9].ToString());
                         #region bufferCreator
                         if (i == DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                         {
@@ -588,7 +588,7 @@ namespace Booyco_HMI_Utility
                             messageReceived = false;
 
                             //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
-                          //  Console.WriteLine(totalCount.ToString()+ "-Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, DataExtractorView.DATALOG_RX_SIZE, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
+                            Console.WriteLine(totalCount.ToString()+ "-Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
                             #region Message Paresers
                             if (Buffer[0] == '[' && Buffer[1] == '&' && Buffer[2] == 'B' && Buffer[3] == 'h' /*&& Buffer[521] == ']'*/)
                             {

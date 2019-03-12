@@ -94,9 +94,9 @@ namespace Booyco_HMI_Utility
         {
             DataGrid _dataGrid = (DataGrid)sender;
             try
-                {
-              
-                if (_dataGrid.SelectedIndex >= 0 )
+            {
+
+                if (_dataGrid.SelectedIndex >= 0)
                 {
                     Button_Delete.IsEnabled = true;
                     Button_Save.IsEnabled = true;
@@ -108,12 +108,12 @@ namespace Booyco_HMI_Utility
                 }
 
                 var _selectedItems = DataGridFiles.SelectedItems;
-            
+              
+                               
                 if (_selectedItems.Count > 1)
                 {
                     ButtonDataViewer.IsEnabled = false;
                 }
-
                 else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
                 {
                     ButtonDataViewer.IsEnabled = true;
