@@ -254,15 +254,15 @@ namespace Booyco_HMI_Utility
 
                     PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
                  
-
-                    Slider_DateTime.Minimum = GlobalSharedData.StartDateTimeDatalog.Ticks + 1;
-                    TextBlock_StartDateTime.Text = GlobalSharedData.StartDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-
-
-                    Slider_DateTime.Maximum = GlobalSharedData.EndDateTimeDatalog.Ticks + 1;
-                    TextBlock_EndDateTime.Text = GlobalSharedData.EndDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-                   // Slider_DateTime.Value = Slider_DateTime.Minimum;
+    // Slider_DateTime.Value = Slider_DateTime.Minimum;
                 }
+
+                Slider_DateTime.Minimum = GlobalSharedData.StartDateTimeDatalog.Ticks + 1;
+                TextBlock_StartDateTime.Text = GlobalSharedData.StartDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
+
+
+                Slider_DateTime.Maximum = GlobalSharedData.EndDateTimeDatalog.Ticks + 1;
+                TextBlock_EndDateTime.Text = GlobalSharedData.EndDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
 
 
             }
