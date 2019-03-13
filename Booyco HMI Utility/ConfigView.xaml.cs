@@ -1075,12 +1075,12 @@ namespace Booyco_HMI_Utility
 
         private void ConfigRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
-            {
-                SaveParameterFile();
-            }
-            else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-            {
+            //if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
+            //{
+            //    SaveParameterFile();
+            //}
+            //else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+            //{
                 GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
                 StoredIndex = -1;
                 ParamsRequestStarted = true;
@@ -1091,7 +1091,7 @@ namespace Booyco_HMI_Utility
 
                 updateDispatcherTimer.Start();
 
-            }
+            //}
 
 
         }
@@ -1111,13 +1111,14 @@ namespace Booyco_HMI_Utility
 
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
                 {
-                    ConfigRefreshButton.Content = "Save";
-                    SendFileButton.Visibility = Visibility.Hidden;
+                    SendFileButton.Visibility = Visibility.Collapsed;
+                    ConfigRefreshButton.Visibility = Visibility.Collapsed;
                 }
                 else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
                 {
-                    ConfigRefreshButton.Content = "Refresh";
+                    //ConfigRefreshButton.Content = "Refresh";
                     SendFileButton.Visibility = Visibility.Visible;
+                    ConfigRefreshButton.Visibility = Visibility.Visible;
                 }
             }
             else
@@ -1211,7 +1212,15 @@ namespace Booyco_HMI_Utility
                 {
                     try
                     {
-                        parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
+                        if ((Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value) <= parameters[SortedIndex].MaximumValue) && (Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value) >= parameters[SortedIndex].MinimumValue))
+                        {
+                            parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
+                        }
+                        else
+                        {
+                            Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
+                        }
+                        //parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
                     }
                     catch
                     {
