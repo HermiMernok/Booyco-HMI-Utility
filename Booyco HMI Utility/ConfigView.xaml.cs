@@ -924,7 +924,7 @@ namespace Booyco_HMI_Utility
                         parameters[i].CurrentValue = Value;
                     }
                 }
-                else if ((Value < parameters[i].MaximumValue) && (Value > parameters[i].MinimumValue))
+                else if ((Value <= parameters[i].MaximumValue) && (Value >= parameters[i].MinimumValue))
                 {
                     parameters[i].CurrentValue = Value;
                 }
