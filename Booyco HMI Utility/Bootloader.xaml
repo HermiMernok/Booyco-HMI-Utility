@@ -35,7 +35,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.8*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -44,16 +44,16 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!--Heading-->
-            <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="40" Background="#FF4D4D4D"/>
+            <Label Content="Device Information:" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
             <!--Device info-->
             <Label Content="Name:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Foreground="Gray"/>
             <Label Content="VID:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Foreground="Gray"/>
-            <Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
+            <!--<Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>-->
             <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="1" Content="{Binding DeviceName}"/>
             <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="2" Content="{Binding DeviceVID}"/>
-            <Label Grid.Column="1" Foreground="DarkRed" Grid.Row="3" Content="{Binding LicenseBool}"/>
+            <!--<Label Grid.Column="1" Foreground="DarkRed" Grid.Row="3" Content="{Binding LicenseBool}"/>-->
 
-            <Label Content="Firmware Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
+            <Label Content="Firmware Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D" Height="69"/>
             <!--Firmware info-->
             <Label Content="Current device firmware:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
             <Label Content="Selected firmware revision:" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="Gray"/>
@@ -74,12 +74,13 @@
 
         </Grid>
         <!---->
-        <Button x:Name="btnBack" Content="{Binding BackbtnText}" Grid.Column="2" Click="BtnBack_Click" Grid.Row="5" Margin="10"/>
-        <Button x:Name="btnBootload" Content="Bootload" Grid.Column="2" Click="Bootload_Click" IsEnabled="{Binding BootBtnEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10" Grid.Row="3"/>
-        <Button x:Name="BtnDiffFile" Content="Select file" Grid.Column="2" Click="FileSelect_Click" IsEnabled="{Binding SelectFilebtnEnab}" Margin="10" Grid.Row="2"/>
+        <Button x:Name="ButtonBack" Content="{Binding BackbtnText}" Grid.Column="2" Click="ButtonBack_Click" Grid.Row="5" Margin="10"/>
+        <Button x:Name="ButtonBootloader" Content="Bootload" Grid.Column="2" Click="ButtonBootload_Click" IsEnabled="{Binding BootBtnEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10" Grid.Row="3"/>
+        <Button x:Name="ButtonFileSelect" Content="Select file" Grid.Column="2" Click="ButtonFileSelect_Click" IsEnabled="{Binding SelectFilebtnEnab}" Margin="10" Grid.Row="2"/>
 
-        <Grid Grid.Row="0" Grid.RowSpan="6" Grid.ColumnSpan="5" Visibility="{Binding SureMessageVis}" >
-            <Grid.Background>
+        <Grid Grid.Row="0" Grid.RowSpan="6" Grid.ColumnSpan="5" Visibility="{Binding SureMessageVis}"  >      <!--Visibility="Hidden">-->
+
+        <Grid.Background>
                 <SolidColorBrush Color="Black" Opacity="0.2"/>
             </Grid.Background>
 
@@ -109,8 +110,8 @@
                 </Grid.ColumnDefinitions>
                 <Label Content="Warning :" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
                 <TextBlock x:Name="ErrorMessagelbl" Text="Are you sure that you want to bootload the selected firmware?" Foreground="Black" Grid.Column="1"  Grid.Row="2" Grid.ColumnSpan="2" FontSize="30" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
-                <Button Content="Yes" Grid.Column="1" Grid.Row="3" Margin="15" Click="Button_Click"/>
-                <Button Content="No" Grid.Column="2" Grid.Row="3" Margin="15" Click="Button_Click_1"/>
+                <Button x:Name="ButtonAccept" Content="Yes" Grid.Column="1" Grid.Row="3" Margin="15" Click="ButtonAccept_Click"/>
+                <Button x:Name="ButtonDecline" Content="No" Grid.Column="2" Grid.Row="3" Margin="15" Click="ButtonDecline_Click"/>
             </Grid>
         </Grid>
          </Grid>

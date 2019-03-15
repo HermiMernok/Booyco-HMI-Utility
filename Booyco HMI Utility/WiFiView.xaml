@@ -13,6 +13,7 @@
           Storyboard.TargetProperty="Opacity" From="1" To="0.5" 
           Duration="0:0:0.2" BeginTime="0:0:0"/>
         </Storyboard>
+ 
     </UserControl.Resources>
 
     <Grid Background="White">
@@ -39,17 +40,87 @@
         </Viewbox>
 
         <DataGrid x:Name="DGTCPclientList" Grid.Row="3" RowHeaderWidth="0" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="16" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA68288"  RowBackground="#FFB68181" Margin="5,10">
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                   Color="#338F1838"/>
+            </DataGrid.Resources>
+            
             <DataGrid.Columns>
+
+                <DataGridTemplateColumn Width="170" Header="Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding Name}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                         </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                 </DataGridTemplateColumn>
                 
-                <DataGridTextColumn Width="170" Header="Name" Binding="{Binding Name}"/>
-                <DataGridTextColumn Width="120" Header="VID" Binding="{Binding VID}" />
-                <DataGridTextColumn Width="100" Header="Firmware" Binding="{Binding FirmwareString}" />
-                <DataGridTextColumn Width="110" Header="Bootloader" Binding="{Binding BootloaderrevString}" />
-                <DataGridTextColumn Width="90" Header="Licensed" Binding="{Binding Licensed}" />
+                <DataGridTemplateColumn Width="120" Header="VID">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding VID}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="100" Header="Firmware">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding FirmwareString}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="110" Header="Bootloader">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding BootloaderrevString}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="90" Header="Licensed">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding Licensed}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+           
                 <!--<DataGridTextColumn Width="0.3*" Header="Loss" Binding="{Binding PacketLoss}" />-->
-                <DataGridTextColumn Width="130" Header="Mode" Binding="{Binding ApplicationState}" />
-                <DataGridTextColumn Width="220" Header="IP address" Binding="{Binding IP}" />
-                <DataGridTextColumn Width="*" Header="HB" Binding="{Binding HeartCount}" />
+                <DataGridTemplateColumn Width="130" Header="Mode">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding ApplicationState}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="200" Header="IP Address">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+                            <Label Grid.Row="0" Grid.Column="0"  Content="{Binding IP}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                        </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="HB" Width="*" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate >
+
+                            <Grid x:Name="Grid_HeartbeatColumn" Background="{Binding Heartbeat_Colour}"  >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>                
+                
+                                </Grid.ColumnDefinitions>                             
+                                <Label Grid.Row="0" Grid.Column="0"  Content="{Binding HeartCount}" Foreground="Black"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
+                             </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">

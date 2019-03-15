@@ -85,7 +85,7 @@ namespace Booyco_HMI_Utility
             {
                 ProgressBar_DataLogExtract.Value = DataLogProgress;
 
-                Label_ProgressStatusPercentage.Content = "Overall progress: " + (DataLogProgress / 10).ToString() + "%";
+                Label_ProgressStatusPercentage.Content =  (DataLogProgress / 10).ToString() + "%";
                 Label_StatusView.Content = "Datalog packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
             }
          

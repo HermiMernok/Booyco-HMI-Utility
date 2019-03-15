@@ -33,6 +33,9 @@ namespace Booyco_HMI_Utility
         /////////////////////////////////////////////////////////////
         #endregion
 
+        public static SolidColorBrush HBReceiveColour;
+        public static SolidColorBrush HBConnectingColour;
+        public static SolidColorBrush HBLostColour;
         private DispatcherTimer dispatcherTimer;
 
         WiFiconfig WiFiconfig;
@@ -41,6 +44,9 @@ namespace Booyco_HMI_Utility
         {
             InitializeComponent();           
             DataContext = this;
+            HBReceiveColour = new SolidColorBrush(Color.FromArgb(100, 0, 102, 0));
+            HBConnectingColour = new SolidColorBrush(Color.FromArgb(100, 255, 183, 0));
+            HBLostColour = new SolidColorBrush(Color.FromArgb(100, 188, 0, 0));
             //WiFiconfig = new WiFiconfig();
         }
 
@@ -54,11 +60,11 @@ namespace Booyco_HMI_Utility
                 if (WiFiconfig.clients.Count == 0)
                 {
                     GlobalSharedData.SelectedDevice = -1;
-                    btnEnabler = false;
+                    //btnEnabler = false;
                 }
                 else if (WiFiconfig.clients.Count > 0 && GlobalSharedData.SelectedDevice != -1)
                 {
-                    btnEnabler = true;
+                    //btnEnabler = true;
                 }
             }
             if (DGTCPclientList.Items.Count == 1)
@@ -146,19 +152,34 @@ namespace Booyco_HMI_Utility
             {
                 TCPclientR _selectedItem = (TCPclientR)DGTCPclientList.SelectedItem;
                 GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
-                if (_selectedItem.ApplicationState == "Bootloader")
+
+                if (_selectedItem.HeartCount < 1)
                 {
                     BtnConfig.IsEnabled = false;
                     BtnDatView.IsEnabled = false;
+                    BtnBootload.IsEnabled = false;
+                }
+                else if (_selectedItem.ApplicationState == "Bootloader")
+                {
+                    BtnConfig.IsEnabled = false;
+                    BtnDatView.IsEnabled = false;
+                    BtnBootload.IsEnabled = true;
                 }
                 else if ((_selectedItem.ApplicationState == "Application"))
                 {
                     BtnConfig.IsEnabled = true;
                     BtnDatView.IsEnabled = true;
+                    BtnBootload.IsEnabled = true;
                 }
+                
             }
-            else if (DGTCPclientList.Items.Count == 1)
-                GlobalSharedData.SelectedDevice = 0;
+             else 
+            {
+                BtnConfig.IsEnabled = false;
+                BtnDatView.IsEnabled = false;
+                BtnBootload.IsEnabled = false;
+            }
+        
 
            
               
@@ -175,7 +196,7 @@ namespace Booyco_HMI_Utility
                 dispatcherTimer.Tick += new EventHandler(ClientListUpdater);
                 dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
                 dispatcherTimer.Start();
-               
+                DGTCPclientList.SelectedIndex = -1;
             }
             else
             {

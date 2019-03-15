@@ -30,13 +30,14 @@
         <Border BorderBrush="Black" BorderThickness="2" Grid.Row="2" Grid.Column="1" Grid.RowSpan="4">
             <Grid >
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="0.8*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="69*"/>
+                    <RowDefinition Height="87*"/>
+                    <RowDefinition Height="74*"/>
+                    <RowDefinition Height="13*"/>
+                    <RowDefinition Height="87*"/>
+                    <RowDefinition Height="69*"/>
+                    <RowDefinition Height="86*"/>
+                    <RowDefinition Height="87*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -47,15 +48,15 @@
                 <!--Device info-->
                 <Label Content="Name:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Foreground="Gray"/>
                 <Label Content="VID:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Foreground="Gray"/>
-                <Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Foreground="Gray"/>
+                <!--<Label Content="Licensed:"  HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Foreground="Gray"/>-->
                 <Label x:Name="Label_DeviceName" Grid.Column="1" Foreground="DarkRed" Grid.Row="1"/>
-                <Label x:Name="Label_DeviceVID" Grid.Column="1" Foreground="DarkRed" Grid.Row="2" />
-                <Label x:Name="Label_LicenseBool" Grid.Column="1" Foreground="DarkRed" Grid.Row="3" />
+                <Label x:Name="Label_DeviceVID" Grid.Column="1" Foreground="DarkRed" Grid.Row="2" Grid.RowSpan="2" />
+                <!--<Label x:Name="Label_LicenseBool" Grid.Column="1" Foreground="DarkRed" Grid.Row="4" />-->
 
-                <Label Content="Firmware Information:" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
+                <Label Content="Firmware Information:"  HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="5" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
                 <!--Firmware info-->
-                <Label Content="firmware:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Foreground="Gray"/>
-                <Label x:Name="Label_Firmware" Grid.Column="1" Foreground="DarkRed" Grid.Row="5" />
+                <Label Content="firmware:" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Top" Foreground="Gray"/>
+                <Label x:Name="Label_Firmware" Grid.Column="1" Foreground="DarkRed" Grid.Row="6" />
 
 
 

@@ -67,8 +67,12 @@ namespace Booyco_HMI_Utility
 
         private static Thread BootloaderThread;
 
+
         #endregion
 
+        /// <summary>
+        /// Bootloader Constructor
+        /// </summary>
         public Bootloader()
         {
             DataContext = this;
@@ -80,6 +84,11 @@ namespace Booyco_HMI_Utility
             //BootStop = false;
         }
 
+        /// <summary>
+        /// Bootloader usercontrol on visibility changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (this.Visibility == Visibility.Visible)
@@ -94,7 +103,15 @@ namespace Booyco_HMI_Utility
                 FirmwareRev = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev;
                 FirmSub = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmSubRev;
                 LicenseBool = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].Licensed;
-                FirmwareApp = 56;
+                SelectedApplication = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].ApplicationState;
+                if(SelectedApplication == "ERB Bootloader")
+                {
+                    FirmwareApp = 57;
+                }
+                else
+                {
+                    FirmwareApp = 56;
+                }
 
                 FirmwareString = "M-PFW-" + ((FirmwareApp < 100)?"0"+ FirmwareApp.ToString() : FirmwareApp.ToString()) + "-" + 
                     ((FirmwareRev < 10) ? "0" + FirmwareRev.ToString() : FirmwareRev.ToString()) + "-" +
@@ -119,16 +136,21 @@ namespace Booyco_HMI_Utility
             }
         }
 
+        /// <summary>
+        /// Update information with a timer threat.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InfoUpdater(object sender, EventArgs e)
         {
             if(BootDone && Visibility == Visibility.Visible)
             {
-                BtnBack_Click(null, null);
+                ButtonBack_Click(null, null);
             }
             else if(Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t=> t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
             {
                 WiFiconfig.ConnectionError = true;
-                BtnBack_Click(null, null);
+                ButtonBack_Click(null, null);
                 BootReady = false;
             }
             else if (WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count > 0)
@@ -161,23 +183,38 @@ namespace Booyco_HMI_Utility
 
             
 
-            BootStatuspersentage = "Overall progress: " + (Math.Round(BootloadingProgress.Value/10 , 1)).ToString() + "%";
+            BootStatuspersentage = (Math.Round(BootloadingProgress.Value/10 , 0)).ToString() + "%";
 
             BootStatusView = BootStatus;
         }
 
-        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// ButtonClick - Back/Cancel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
             this.Visibility = Visibility.Collapsed;
         }
         
-        private void Bootload_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// ButtonClick - Send Bootloader over TCP
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonBootload_Click(object sender, RoutedEventArgs e)
         {
             SureMessageVis = Visibility.Visible;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// ButtonClick - Confirm request
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonAccept_Click(object sender, RoutedEventArgs e)
         {
             SureMessageVis = Visibility.Collapsed;
             BootReady = false;
@@ -214,6 +251,9 @@ namespace Booyco_HMI_Utility
             GlobalSharedData.ServerMessageSend = BoottMessage;
         }
 
+        /// <summary>
+        /// Thread Do - While for sending bootloader sections
+        /// </summary>
         private void BootloaderDo()
         {
             
@@ -251,6 +291,11 @@ namespace Booyco_HMI_Utility
             BootFlashPersentage = 0;
         }
 
+        /// <summary>
+        /// Parse bootloader message received over TCP
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="endPoint"></param>
         public static void BootloaderParse(byte[] message, EndPoint endPoint)
         {
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'B'))
@@ -329,7 +374,12 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        public void FileSelect_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// ButtonClick - File dialog to select boot file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void ButtonFileSelect_Click(object sender, RoutedEventArgs e)
         {
             byte[] bootfilebytes;
 
@@ -348,34 +398,36 @@ namespace Booyco_HMI_Utility
                 string fileSub = bootfile.Substring(fileNameStart, bootfile.Length - fileNameStart);
 
                 //           File.WriteAllBytes(fileSub, bootfilebytes);
-
-                if (bootfile.Contains("M-PFW-") && bootfile.Contains(".binary"))
+                try
                 {
-                    int start = bootfile.LastIndexOf("M-PFW");
-                    start += 6;
-                    string firm = bootfile.Substring(start, 3);
-                    SelectedFirm = Int16.Parse(firm);
-                    start += 4;
-                    firm = bootfile.Substring(start, 2);
-                    SelectedFirmRev = Int16.Parse(firm);
-                    start += 3;
-                    firm = bootfile.Substring(start, 2);
-                    SelectedFirmSubRev = Int16.Parse(firm);
-
-                    SelectedFirmwareString = "M-PFW-" + ((SelectedFirm < 100) ? "0" + SelectedFirm.ToString() : SelectedFirm.ToString()) + "-" +
-                    ((SelectedFirmRev < 10) ? "0" + SelectedFirmRev.ToString() : SelectedFirmRev.ToString()) + "-" +
-                    ((SelectedFirmSubRev < 10) ? "0" + SelectedFirmSubRev.ToString() : SelectedFirmSubRev.ToString());
-
-                    if (SelectedFirm == 56)
+                    if (bootfile.Contains("M-PFW-") && bootfile.Contains(".binary"))
                     {
-                        if(SelectedFirmRev == FirmwareRev && SelectedFirmSubRev == FirmSub)
+                        int start = bootfile.LastIndexOf("M-PFW");
+                        start += 6;
+                        string firm = bootfile.Substring(start, 3);
+                        SelectedFirm = Int16.Parse(firm);
+                        start += 4;
+                        firm = bootfile.Substring(start, 2);
+                        SelectedFirmRev = Int16.Parse(firm);
+                        start += 3;
+                        firm = bootfile.Substring(start, 2);
+                        SelectedFirmSubRev = Int16.Parse(firm);
+
+                        SelectedFirmwareString = "M-PFW-" + ((SelectedFirm < 100) ? "0" + SelectedFirm.ToString() : SelectedFirm.ToString()) + "-" +
+                        ((SelectedFirmRev < 10) ? "0" + SelectedFirmRev.ToString() : SelectedFirmRev.ToString()) + "-" +
+                        ((SelectedFirmSubRev < 10) ? "0" + SelectedFirmSubRev.ToString() : SelectedFirmSubRev.ToString());
+
+                        if ((SelectedFirm == 56 || SelectedFirm == 58) && SelectedApplication == "Bootloader" )
                         {
-                            //show that the fimware selected is the same as that of the device
-                            FileErrorMessage = "Selected firmware is the same as device firmware, no need to update.";
-                            FileError = true;
-                        }
-                        //else
-                        {
+                            if (SelectedFirmRev == FirmwareRev && SelectedFirmSubRev == FirmSub && SelectedFirm == FirmwareApp)
+                            {
+                                //show that the fimware selected is the same as that of the device
+                                FileErrorMessage = "Selected firmware is the same as device firmware, no need to update.";
+                                FileError = true;
+                         
+                            }
+                            //else
+                            
                             //enable bootloading
                             int bytesleft = 0;
                             int bootfileSize = 0;
@@ -412,37 +464,103 @@ namespace Booyco_HMI_Utility
 
                             //btnBootload.IsEnabled = true;
                             BootBtnEnabled = true;
+                            
+
+                        }
+                        else if ((SelectedFirm == 57) && SelectedApplication == "ERB Bootloader")
+                        {
+                            if (SelectedFirmRev == FirmwareRev && SelectedFirmSubRev == FirmSub)
+                            {
+                                //show that the fimware selected is the same as that of the device
+                                FileErrorMessage = "Selected firmware is the same as device firmware, no need to update.";
+                                FileError = true;
+                            }
+                            //else
+                            
+                            //enable bootloading
+                            int bytesleft = 0;
+                            int bootfileSize = 0;
+                            int fileChunck = 512;
+                            BootFileList = new List<byte[]>();
+                            bytesleft = bootfileSize = bootfilebytes.Length;
+                            bootchunks = (int)Math.Round(bootfileSize / (double)fileChunck);
+                            int shifter = 0;
+                            for (int i = 0; i <= bootchunks; i++)
+                            {
+                                byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
+                                byte[] bytes = BitConverter.GetBytes(i);
+                                byte[] bytes2 = BitConverter.GetBytes(bootchunks);
+                                bootchunk[0] = (byte)'[';
+                                bootchunk[1] = (byte)'&';
+                                bootchunk[2] = (byte)'B';
+                                bootchunk[3] = (byte)'D';
+                                bootchunk[4] = bytes[0];
+                                bootchunk[5] = bytes[1];
+                                bootchunk[6] = bytes2[0];
+                                bootchunk[7] = bytes2[1];
+
+                                if (bytesleft > fileChunck)
+                                    Array.Copy(bootfilebytes, shifter, bootchunk, 8, fileChunck);
+                                else if (bytesleft > 0)
+                                    Array.Copy(bootfilebytes, shifter, bootchunk, 8, bytesleft);
+
+                                bootchunk[520] = 0;
+                                bootchunk[521] = (byte)']';
+                                BootFileList.Add(bootchunk);
+                                shifter += fileChunck;
+                                bytesleft -= fileChunck;
+                            }
+
+                            //btnBootload.IsEnabled = true;
+                            BootBtnEnabled = true;
+                            
+
+                        }
+                        else
+                        {
+                            //show that the fimware is not the correct fimware for this device
+                            FileErrorMessage = "Selected firmware can not be used for the connected device";
+                            FileError = true;
+                            BootBtnEnabled = false;
+                            bootfile = null;
+                            SelectedFirmwareString = "";
+                            //FileSelect_Click(null, null);
+                        }
+
+
+                    }
+                    else
+                    {
+                        if (!bootfile.Contains("M-PFW-") || !bootfile.Contains(".binary"))
+                        {
+                            //Please select a M-PFW-056-xx-yy.binary file to bootload
+                            FileErrorMessage = "Please select a M-PFW-056-xx-yy.binary file to bootload.";
+                            FileError = true;
+                            BootBtnEnabled = false;
+                            SelectedFirmwareString = "";
+                            //FileSelect_Click(null, null);
+                        }
+                        else
+                        {
+                            //File error, please select a different file
+                            FileErrorMessage = "File error, please select a different file.";
+                            FileError = true;
+                            BootBtnEnabled = false;
+                            SelectedFirmwareString = "";
+                            //FileSelect_Click(null, null);
                         }
 
                     }
-                    else
-                    {
-                        //show that the fimware is not the correct fimware for this device
-                        FileErrorMessage = "Selected firmware can not be used for the connected device";
-                        FileError = true;
-                        //FileSelect_Click(null, null);
-                    }
-
-
                 }
-                else
+                catch
                 {
-                    if (!bootfile.Contains("M-PFW-") || !bootfile.Contains(".binary"))
-                    {
-                        //Please select a M-PFW-056-xx-yy.binary file to bootload
-                        FileErrorMessage = "Please select a M-PFW-056-xx-yy.binary file to bootload.";
-                        FileError = true;
-                        //FileSelect_Click(null, null);
-                    }
-                    else
-                    {
-                        //File error, please select a different file
-                        FileErrorMessage = "File error, please select a different file.";
-                        FileError = true;
-                        //FileSelect_Click(null, null);
-                    }
-
-                }             
+                    //Please select a M-PFW-056-xx-yy.binary file to bootload
+                    FileErrorMessage = "Please select a M-PFW-056-xx-yy.binary file to bootload.";
+                    FileError = true;
+                    BootBtnEnabled = false;
+                    SelectedFirmwareString = "";
+                    //FileSelect_Click(null, null);
+                }
 
             }
             else
@@ -454,7 +572,12 @@ namespace Booyco_HMI_Utility
 
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// ButtonClick - Decline request
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonDecline_Click(object sender, RoutedEventArgs e)
         {
             SureMessageVis = Visibility.Collapsed;
         }
@@ -586,6 +709,13 @@ namespace Booyco_HMI_Utility
             set { _SelectedFirmwareString = value; OnPropertyChanged("SelectedFirmwareString"); }
         }
 
+        private string _SelectedApplication;
+
+        public string SelectedApplication
+        {
+            get { return _SelectedApplication; }
+            set { _SelectedApplication = value; OnPropertyChanged("SelectedApplication"); }
+        }
 
         private bool _LicenseBool;
 
