@@ -74,6 +74,7 @@ namespace Booyco_HMI_Utility
         #region DisplayHandler
         private void BtnMain_Click(object sender, RoutedEventArgs e)
         {
+            this.Visibility = Visibility.Collapsed;
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
         
         }
@@ -200,10 +201,12 @@ namespace Booyco_HMI_Utility
             }
             else
             {
+                DGTCPclientList.SelectedIndex = -1;
                 Bootloader.BootReady = Bootloader.BootDone = false;
                 dispatcherTimer.Stop();
                 TCPclients = new List<TCPclientR>();
                 WiFiconfig.ServerStop();
+                Console.WriteLine("====================== Not Visible");
             }
         }
 

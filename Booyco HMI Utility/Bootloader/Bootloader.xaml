@@ -108,7 +108,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
-                <Label Content="Warning :" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
+                <Label Content="Warning" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
                 <TextBlock x:Name="ErrorMessagelbl" Text="Are you sure that you want to bootload the selected firmware?" Foreground="Black" Grid.Column="1"  Grid.Row="2" Grid.ColumnSpan="2" FontSize="30" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
                 <Button x:Name="ButtonAccept" Content="Yes" Grid.Column="1" Grid.Row="3" Margin="15" Click="ButtonAccept_Click"/>
                 <Button x:Name="ButtonDecline" Content="No" Grid.Column="2" Grid.Row="3" Margin="15" Click="ButtonDecline_Click"/>

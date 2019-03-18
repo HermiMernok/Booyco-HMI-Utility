@@ -216,13 +216,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Assets.cs" />
-    <Compile Include="BluetoothView.xaml.cs">
+    <Compile Include="Bluetooth\BluetoothView.xaml.cs">
       <DependentUpon>BluetoothView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Bootloader.xaml.cs">
+    <Compile Include="Bootloader\Bootloader.xaml.cs">
       <DependentUpon>Bootloader.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ConfigView.xaml.cs">
+    <Compile Include="Parameters\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
@@ -234,7 +234,7 @@
     </Compile>
     <Compile Include="DataLogViewer\CustomMarker\CustomMarkerPoint.xaml.cs" />
     <Compile Include="DataLogViewer\CustomMarker\MarkerEntry.cs" />
-    <Compile Include="CustomObservableCollection\RangeObservableCollection.cs" />
+    <Compile Include="GeneralFunctions\CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataLogViewer\DataLogView.xaml.cs">
       <DependentUpon>DataLogView.xaml</DependentUpon>
     </Compile>
@@ -244,12 +244,12 @@
       <DependentUpon>HMIDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataLogViewer\LogEntry.cs" />
-    <Compile Include="DateTimeUtility\DateTimeCheck.cs" />
+    <Compile Include="DataLogViewer\DateTimeUtility\DateTimeCheck.cs" />
     <Compile Include="DataLogViewer\ExcelFileManagement.cs" />
-    <Compile Include="Error_messageView.xaml.cs">
+    <Compile Include="Pop-up_Views\Error_messageView.xaml.cs">
       <DependentUpon>Error_messageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExtendedWindow.xaml.cs">
+    <Compile Include="Pop-up_Views\ExtendedWindow.xaml.cs">
       <DependentUpon>ExtendedWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileExplorer\FileEntry.cs" />
@@ -264,30 +264,30 @@
     <Compile Include="DataLogViewer\MapView.xaml.cs">
       <DependentUpon>MapView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Parameters.cs" />
-    <Compile Include="ProgrammingDone.xaml.cs">
+    <Compile Include="Parameters\Parameters.cs" />
+    <Compile Include="Pop-up_Views\ProgrammingDone.xaml.cs">
       <DependentUpon>ProgrammingDone.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProximityDetectionSystemInfo1\ProximityDetectionEvent.cs" />
-    <Compile Include="StartUp.xaml.cs">
+    <Compile Include="DataLogViewer\ProximityDetectionSystemInfo1\ProximityDetectionEvent.cs" />
+    <Compile Include="Startup\StartUp.xaml.cs">
       <DependentUpon>StartUp.xaml</DependentUpon>
     </Compile>
-    <Compile Include="USBView.xaml.cs">
+    <Compile Include="USB\USBView.xaml.cs">
       <DependentUpon>USBView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WiFiconfig.cs" />
-    <Compile Include="WiFiView.xaml.cs">
+    <Compile Include="Wifi\WiFiconfig.cs" />
+    <Compile Include="Wifi\WiFiView.xaml.cs">
       <DependentUpon>WiFiView.xaml</DependentUpon>
     </Compile>
-    <Page Include="BluetoothView.xaml">
+    <Page Include="Bluetooth\BluetoothView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Bootloader.xaml">
+    <Page Include="Bootloader\Bootloader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ConfigView.xaml">
+    <Page Include="Parameters\ConfigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -315,11 +315,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Error_messageView.xaml">
+    <Page Include="Pop-up_Views\Error_messageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExtendedWindow.xaml">
+    <Page Include="Pop-up_Views\ExtendedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -339,19 +339,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProgrammingDone.xaml">
+    <Page Include="Pop-up_Views\ProgrammingDone.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StartUp.xaml">
+    <Page Include="Startup\StartUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="USBView.xaml">
+    <Page Include="USB\USBView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WiFiView.xaml">
+    <Page Include="Wifi\WiFiView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -510,6 +510,7 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

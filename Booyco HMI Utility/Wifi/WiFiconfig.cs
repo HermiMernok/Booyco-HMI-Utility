@@ -175,8 +175,8 @@ namespace Booyco_HMI_Utility
             // Don't allow another socket to bind to this port.
             tcpSocket.ExclusiveAddressUse = true;
 
-            //tcpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-            tcpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+            tcpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+            //tcpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
 
             //byte[] InValue = new byte[12];
@@ -255,9 +255,11 @@ namespace Booyco_HMI_Utility
             clients = new List<TcpClient>();
             try
             {
+               
+             
                 server = new TcpListener(IPAddress.Any, 13000);
                 server.Start();
-
+        
                 //                ip = new IPEndPoint(IPAddress.Any, 13000); //Any IPAddress that connects to the server on any port
                 //                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); //Initialize a new Socket
                 //                ConfigureTcpSocket(socket);
@@ -275,10 +277,10 @@ namespace Booyco_HMI_Utility
             catch (SocketException e)
             {
                 Debug.WriteLine("SocketException: {0}", e);
-                var prc = new ProcManager();
-                prc.KillByPort(13000);
-                Thread.Sleep(20);
-                StartServer();
+               // var prc = new ProcManager();
+               // prc.KillByPort(13000);
+               // Thread.Sleep(20);
+               /// StartServer();
             }
         }
 
@@ -453,7 +455,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 10000;
+            clientR[0].ReceiveTimeout = 5000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -464,7 +466,10 @@ namespace Booyco_HMI_Utility
                 {
                     if ((i = stream.Read(data2, 0, data2.Length)) != 0)
                     {
-                        
+                       if (clientR[0].ReceiveTimeout!= 10000)
+                        {
+                            clientR[0].ReceiveTimeout = 10000;
+                        }
                         Console.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0].ToString() + "-" + Buffer[512 + 9].ToString());
                         #region bufferCreator
                         if (i == DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
@@ -860,21 +865,44 @@ namespace Booyco_HMI_Utility
 
                 try
                 {
+
                     server.Stop();
-                    WirelessHotspot(null, null, false);
+                   
+                  
                 }
-                catch
+                catch(Exception ex)
                 {
                     Console.WriteLine("Server failed to stop...");
                     //var prc = new ProcManager();
                     //prc.KillByPort(13000);
                 }
 
+                try
+                {
+                    WirelessHotspot(null, null, false);
+                }
+                catch
+                {
+
+                    Console.WriteLine("Wifi failed to stop...");
+                }
+
             }
-            catch
+            catch(Exception ex)
             {
                 Console.WriteLine("Server close error=========");
             }
+            //try
+            //{
+            //  // var prc = new ProcManager();
+            //  //  prc.KillByPort(13000);
+            //}
+            //catch
+            //{
+            //    Console.WriteLine("port failed to close;");
+
+            //}
+            
         }
 
         private double get_loss(String host, int pingAmount)
@@ -959,7 +987,7 @@ namespace Booyco_HMI_Utility
 
             var output = soStream.ReadToEnd();
             if (process.ExitCode != 0)
-                throw new Exception("somethign broke");
+                throw new Exception("something broke");
 
             var result = new List<PRC>();
 
@@ -1000,7 +1028,7 @@ namespace Booyco_HMI_Utility
         /////////////////////////////////////////////////////////////
         #endregion
 
-        private string _deviceName;
+        private string _deviceName = "NO NAME";
 
         public string DeviceName
         {
@@ -1008,7 +1036,7 @@ namespace Booyco_HMI_Utility
             set { _deviceName = value; OnPropertyChanged("DeviceName"); }
         }
 
-        private string _deviceType;
+        private string _deviceType = "0";
 
         public string DeviceTipe
         {
@@ -1016,7 +1044,7 @@ namespace Booyco_HMI_Utility
             set { _deviceType = value; OnPropertyChanged("DeviceTipe"); }
         }
 
-        private string _deviceIP;
+        private string _deviceIP = "0" ;
 
         public string DeviceIP
         {
@@ -1039,14 +1067,14 @@ namespace Booyco_HMI_Utility
         /////////////////////////////////////////////////////////////
         #endregion
 
-        private string _IP;
+        private string _IP ;
         public string IP
         {
             get { return _IP; }
             set { _IP = value; OnPropertyChanged("IP"); }
         }
 
-        private string _Name = "";
+        private string _Name ;
         public string Name
         {
             get
@@ -1079,21 +1107,21 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private uint _VID;
+        private uint _VID ;
         public uint VID
         {
             get { return _VID; }
             set { _VID = value; OnPropertyChanged("VID"); }
         }
 
-        private int _FirmRev;
+        private int _FirmRev ;
         public int FirmRev
         {
             get { return _FirmRev; }
             set { _FirmRev = value; OnPropertyChanged("FirmRev"); }
         }
 
-        private bool _Licensed;
+        private bool _Licensed = false;
 
         public bool Licensed
         {
@@ -1102,28 +1130,28 @@ namespace Booyco_HMI_Utility
         }
 
 
-        private string _FirmwareString;
+        private string _FirmwareString ;
         public string FirmwareString
         {
             get { return _FirmwareString; }
             set { _FirmwareString = value; OnPropertyChanged("FirmwareString"); }
         }
 
-        private int _FirmSubRev;
+        private int _FirmSubRev ;
         public int FirmSubRev
         {
             get { return _FirmSubRev; }
             set { _FirmSubRev = value; OnPropertyChanged("FirmSubRev"); }
         }
 
-        private double _PacketLoss;
+        private double _PacketLoss ;
         public double PacketLoss
         {
             get { return _PacketLoss; }
             set { _PacketLoss = value; OnPropertyChanged("PacketLoss"); }
         }
 
-        private int _applicationState;
+        private int _applicationState ;
         public int _ApplicationState
         {
             get { return _applicationState; }
@@ -1162,7 +1190,7 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private int _BootloaderFirmRev;
+        private int _BootloaderFirmRev ;
         public int BootloaderFirmRev
         {
             get { return _BootloaderFirmRev; }
@@ -1176,7 +1204,7 @@ namespace Booyco_HMI_Utility
             set { _BootloaderFirmSubRev = value; OnPropertyChanged("BootloaderFirmSubRev"); }
         }
 
-        private string _BootloaderrevString;
+        private string _BootloaderrevString ;
 
         public string BootloaderrevString
         {
