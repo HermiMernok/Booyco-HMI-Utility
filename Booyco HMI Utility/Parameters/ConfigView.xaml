@@ -126,7 +126,7 @@
                                 <Button x:Name="BtnMinDatagrid"  Grid.Row="3" Grid.Column="0" Content="&lt;" Click="min_Button_Click" Visibility="{Binding BtnVisibility}">
                                 </Button>
                                 <TextBox Grid.Row="3" Grid.Column="1"  Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="{Binding LablEdit}" LostFocus="TextBox_LostFocus"/>
-                                <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding parameterEnums}" Visibility="{Binding dropDownVisibility}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectedIndex="{Binding EnumIndx}" SelectionChanged="ComboBox_SelectionChanged" DropDownClosed="ComboBox_DropDownClosed" />
+                                <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding parameterEnums}" Visibility="{Binding dropDownVisibility}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectedIndex="{Binding EnumIndx}" DropDownClosed="ComboBox_DropDownClosed" />
                                 <Button  Grid.Row="3" Grid.Column="2"  Content="&gt;" Click="max_Button_Click" Visibility="{Binding BtnVisibility}"></Button>
                             </Grid>
                         </DataTemplate>

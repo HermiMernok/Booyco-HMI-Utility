@@ -79,11 +79,46 @@ namespace Booyco_HMI_Utility
             InfoDelay.Interval = new TimeSpan(0, 0, 0, 0, 5000);
         }
 
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible)
+            {
+                SureMessageVis = Visibility.Collapsed;
+                ParamsRequestStarted = false;
+                ParamsReceiveComplete = false;
+                ParamsTransmitComplete = false;
+                ParamsSendStarted = false;
+                Label_StatusView.Content = "Waiting for user command..";
+                ProgressBar_Params.Value = 0;
+                Label_ProgressStatusPercentage.Content = "";
+
+                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
+                {
+                    SendFileButton.Visibility = Visibility.Collapsed;
+                    ConfigRefreshButton.Visibility = Visibility.Collapsed;
+                }
+                else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+                {
+                    //ConfigRefreshButton.Content = "Refresh";
+                    SendFileButton.Visibility = Visibility.Visible;
+                    ConfigRefreshButton.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                updateDispatcherTimer.Stop();
+                ProgressBar_Params.Value = 0;
+                ConfigSendReady = false;
+                ConfigSendStop = true;
+            }
+        }
+
+        #region Parameter Display Management
+
         private void InfoDelayFunc(object sender, EventArgs e)
         {
             RevertInfo = true;
-        }
-       
+        }    
 
         private void ConfigReceiveParams(object sender, EventArgs e)
         {
@@ -170,122 +205,6 @@ namespace Booyco_HMI_Utility
                 this.Visibility = Visibility.Collapsed;
                 ConfigSendStop = true;
             }
-        }
-
-        private void GetDefaultParametersFromFile()
-        {
-            ExcelFileManagement excelFileManagement = new ExcelFileManagement();
-            string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/CommanderParametersFile.xlsx";
-
-            Parameters = new List<Parameters>();
-            Parameters = excelFileManagement.ParametersfromFile(_parameterPath);
-
-            Disp_Parameters = new ObservableCollection<ParametersDisplay>();
-            Disp_Parameters = ParametersToDisplay(parameters);
-
-            parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
-            parametrsGroup.GroupDescriptions.Add(groupDescription);
-            parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
-
-            //parametersGroup.Source = Disp_Parameters;                     
-            //parametersGroup.GroupDescriptions.Add(groupDescription);
-            //parametersGroup.GroupDescriptions.Add(SubgroupDescription);
-
-            Save_ParaMetersToFile();
-        }
-
-        static int Configchunks = 0;
-
-        private void Save_ParaMetersToFile()
-        {
-            byte[] paraMeterBytes = new byte[parameters.Count * 4];
-
-            for (int i = 0; i < parameters.Count; i++)
-            {
-                Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
-            }
-
-            string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
-            string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files" + "\\" + "Parameters.mer";
-            File.WriteAllText(_savedFilesPath, hex);
-
-            int fileChunck = 512;
-            int bytesleft = 0;
-            int ConfigfileSize = 0;
-            bytesleft = ConfigfileSize = paraMeterBytes.Length;
-            ConfigSendList.Clear();
-            Configchunks = (int)Math.Round(ConfigfileSize / (double)fileChunck);
-            int shifter = 0;
-            for (int i = 0; i <= Configchunks; i++)
-            {
-                byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
-                byte[] bytes = BitConverter.GetBytes(i);
-                byte[] bytes2 = BitConverter.GetBytes(Configchunks);
-                bootchunk[0] = (byte)'[';
-                bootchunk[1] = (byte)'&';
-                bootchunk[2] = (byte)'P';
-                bootchunk[3] = (byte)'D';
-                bootchunk[4] = bytes[0];
-                bootchunk[5] = bytes[1];
-                bootchunk[6] = bytes2[0];
-                bootchunk[7] = bytes2[1];
-
-                if (bytesleft > fileChunck)
-                    Array.Copy(paraMeterBytes, shifter, bootchunk, 8, fileChunck);
-                else if (bytesleft > 0)
-                    Array.Copy(paraMeterBytes, shifter, bootchunk, 8, bytesleft);
-
-                bootchunk[520] = 0;
-                bootchunk[521] = (byte)']';
-                ConfigSendList.Add(bootchunk);
-                shifter += fileChunck;
-                bytesleft -= fileChunck;
-            }
-        }
-
-        private void ButtonBack_Click(object sender, RoutedEventArgs e)
-        {
-            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
-            //            else
-
-            backBtner = true;
-        }
-
-        private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
-        {
-            SureMessageVis = Visibility.Visible;
-        }
-
-        private static Thread ConfigureThread;
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Save_ParaMetersToFile();
-            ConfigSendReady = false;
-            ConfigSendStop = false;
-            ParamsRequestStarted = false;
-            //BootStart = true;
-            ConfigSentIndex = 0;
-            ConfigSentAckIndex = -1;
-            updateDispatcherTimer.Start();
-            if (ConfigureThread != null && ConfigureThread.IsAlive)
-            {
-
-            }
-            else
-            {
-                ConfigureThread = new Thread(ConfigSendDo)
-                {
-                    IsBackground = true,
-                    Name = "ConfigurationTransmitThread"
-                };
-                ConfigureThread.Start();
-            }
-
-            ConfigStatus = "Asking device to configure parameters...";
-            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
-
-            updateDispatcherTimer.Start();
         }
 
         public ObservableCollection<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
@@ -571,6 +490,8 @@ namespace Booyco_HMI_Utility
             return newDisp_Parameter_value;
         }
 
+        #endregion
+
         #region properties
         private List<Parameters> parameters;
 
@@ -720,14 +641,111 @@ namespace Booyco_HMI_Utility
                 }
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            ParametersDisplay tempPar = new ParametersDisplay();
+            var SortedIndex = 0;
 
-        }
+            if (DGparameters.SelectedIndex != -1)
+            {
+                tempPar = (ParametersDisplay)DGparameters.SelectedItem;
+                SortedIndex = tempPar.OriginIndx;
+            }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+            #region StringConditioners
+            if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 4)
+            {
+                #region Vehicle Name
+                if (tempPar.Name == "Name")
+                {
+                    TextBox textBox = (TextBox)sender;
+                    textBox.Text = generalFunctions.StringConditioner(textBox.Text);
+                    textBox.SelectionStart = textBox.Text.Length;
+                    String str = textBox.Text;
+                    byte[] NameBytes = new byte[15];
 
+                    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
+                    for (int i = 14; i >= 0; i--)
+                    {
+                        if ((14 - i) < NameBytes.Length)
+                            parameters[SortedIndex - i].CurrentValue = NameBytes[14 - i];
+                        else
+                            parameters[SortedIndex - i].CurrentValue = (byte)' ';
+                    }
+                }
+                #endregion
+                #region WiFi IP Conditioning
+                else if ((tempPar.Name == "WiFi Unit IP") || (tempPar.Name == "WiFi Server IP") || (tempPar.Name == "WiFi Gateway IP") || (tempPar.Name == "WiFi Subnet Mask"))
+                {
+                    TextBox textBox = (TextBox)sender;
+                    textBox.Text = generalFunctions.StringConditionerIP(textBox.Text);
+                    textBox.SelectionStart = textBox.Text.Length;
+                    String str = textBox.Text;
+                    byte[] NameBytes = new byte[15];
+
+                    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
+                    for (int i = 14; i >= 0; i--)
+                    {
+                        if ((14 - i) < NameBytes.Length)
+                            parameters[SortedIndex - i].CurrentValue = NameBytes[14 - i];
+                        else
+                            parameters[SortedIndex - i].CurrentValue = (byte)' ';
+                    }
+                }
+                #endregion
+                #region WiFi Password and SSID
+                else if ((tempPar.Name == "WiFi Password") || (tempPar.Name == "WiFi SSID"))
+                {
+                    TextBox textBox = (TextBox)sender;
+                    textBox.Text = generalFunctions.StringConditionerAlphaNum(textBox.Text, 32);
+                    textBox.SelectionStart = textBox.Text.Length;
+                    String str = textBox.Text;
+                    byte[] NameBytes = new byte[32];
+
+                    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
+                    for (int i = 31; i > 0; i--)
+                    {
+                        if ((31 - i) < NameBytes.Length)
+                            parameters[SortedIndex - i].CurrentValue = NameBytes[31 - i];
+                        else
+                            parameters[SortedIndex - i].CurrentValue = (byte)' ';
+                    }
+                }
+                #endregion
+            }
+            #endregion
+
+            #region ValueCondtioners
+            else if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 0)
+            {
+                TextBox textBox = (TextBox)sender;
+                if (StringTestNum(textBox.Text))
+                {
+                    try
+                    {
+                        if ((Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value) <= parameters[SortedIndex].MaximumValue) && (Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value) >= parameters[SortedIndex].MinimumValue))
+                        {
+                            parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
+                        }
+                        else
+                        {
+                            Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
+                        }
+                        //parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
+                    }
+                    catch
+                    {
+                        Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
+                    }
+
+                }
+                else
+                {
+                    Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
+                }
+
+            }
+            #endregion
         }
 
         private void ComboBox_DropDownClosed(object sender, EventArgs e)
@@ -746,27 +764,7 @@ namespace Booyco_HMI_Utility
 
         #endregion
 
-        #region Config Send properties
-        List<byte[]> ConfigSendList = new List<byte[]>();
-
-        public static string ConfigStatus { get; set; }
-
-        public static bool ConfigSendReady { get; set; }
-
-        public static bool ConfigSendDone { get; set; }
-
-        public static int ConfigPersentage { get; set; }
-
-        public static int ConfigSentIndex { get; set; }
-
-        public static bool ConfigSendStop { get; set; }
-
-        public static bool bootContinue;
-
-        public static int ConfigSentAckIndex { get; set; }
-
-        #endregion
-
+        #region Communication
         public static void ConfigSendParse(byte[] message, EndPoint endPoint)
         {
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'P'))
@@ -982,12 +980,98 @@ namespace Booyco_HMI_Utility
             ConfigSendStop = false;
         }
 
-        public static byte[] StringToByteArray(string hex)
+
+        #endregion
+
+        #region Config Send properties
+        List<byte[]> ConfigSendList = new List<byte[]>();
+
+        public static string ConfigStatus { get; set; }
+
+        public static bool ConfigSendReady { get; set; }
+
+        public static bool ConfigSendDone { get; set; }
+
+        public static int ConfigPersentage { get; set; }
+
+        public static int ConfigSentIndex { get; set; }
+
+        public static bool ConfigSendStop { get; set; }
+
+        public static bool bootContinue;
+
+        public static int ConfigSentAckIndex { get; set; }
+
+        #endregion
+
+        #region Parameter File Management
+        static int Configchunks = 0;
+        private void GetDefaultParametersFromFile()
         {
-            return Enumerable.Range(0, hex.Length)
-                             .Where(x => x % 2 == 0)
-                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-                             .ToArray();
+            ExcelFileManagement excelFileManagement = new ExcelFileManagement();
+            string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/CommanderParametersFile.xlsx";
+
+            Parameters = new List<Parameters>();
+            Parameters = excelFileManagement.ParametersfromFile(_parameterPath);
+
+            Disp_Parameters = new ObservableCollection<ParametersDisplay>();
+            Disp_Parameters = ParametersToDisplay(parameters);
+
+            parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+            parametrsGroup.GroupDescriptions.Add(groupDescription);
+            parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+
+            Save_ParaMetersToFile();
+        }
+
+        private void Save_ParaMetersToFile()
+        {
+            byte[] paraMeterBytes = new byte[parameters.Count * 4];
+            //byte[] valuebytes = new byte [4]
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                //valuebytes = BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue),4));
+                
+                //Array.Copy(BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue), 4)), 0, paraMeterBytes, i * 4, 4);
+                Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
+            }
+
+            string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
+            string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files" + "\\" + "Parameters.mer";
+            File.WriteAllText(_savedFilesPath, hex);
+
+            int fileChunck = 512;
+            int bytesleft = 0;
+            int ConfigfileSize = 0;
+            bytesleft = ConfigfileSize = paraMeterBytes.Length;
+            ConfigSendList.Clear();
+            Configchunks = (int)Math.Round(ConfigfileSize / (double)fileChunck);
+            int shifter = 0;
+            for (int i = 0; i <= Configchunks; i++)
+            {
+                byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
+                byte[] bytes = BitConverter.GetBytes(i);
+                byte[] bytes2 = BitConverter.GetBytes(Configchunks);
+                bootchunk[0] = (byte)'[';
+                bootchunk[1] = (byte)'&';
+                bootchunk[2] = (byte)'P';
+                bootchunk[3] = (byte)'D';
+                bootchunk[4] = bytes[0];
+                bootchunk[5] = bytes[1];
+                bootchunk[6] = bytes2[0];
+                bootchunk[7] = bytes2[1];
+
+                if (bytesleft > fileChunck)
+                    Array.Copy(paraMeterBytes, shifter, bootchunk, 8, fileChunck);
+                else if (bytesleft > 0)
+                    Array.Copy(paraMeterBytes, shifter, bootchunk, 8, bytesleft);
+
+                bootchunk[520] = 0;
+                bootchunk[521] = (byte)']';
+                ConfigSendList.Add(bootchunk);
+                shifter += fileChunck;
+                bytesleft -= fileChunck;
+            }
         }
 
         private void OpenParameterFile()
@@ -1046,9 +1130,17 @@ namespace Booyco_HMI_Utility
 
 
                     byte[] paraMeterBytes = new byte[parameters.Count * 4];
-
+                    byte[] valbytes = new byte[4];
+                    Int32 valInt32 = new Int32();
                     for (int i = 0; i < parameters.Count; i++)
                     {
+                        valbytes = BitConverter.GetBytes(parameters[i].CurrentValue);
+                        valInt32 = BitConverter.ToInt32(valbytes, 0);
+                        if (i == 322)
+                        {
+                            Thread.Sleep(1);
+                        }
+                        //Array.Copy(BitConverter.GetBytes(BitConverter.ToInt32(valbytes, 0)), 0, paraMeterBytes, i * 4, 4);
                         Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
                     }
 
@@ -1073,173 +1165,85 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private void ConfigRefreshButton_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Data Conditioning
+        public static byte[] StringToByteArray(string hex)
         {
-            //if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
-            //{
-            //    SaveParameterFile();
-            //}
-            //else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-            //{
-                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
-                StoredIndex = -1;
-                ParamsRequestStarted = true;
-                ParamsReceiveComplete = false;
-
-                ParamsTransmitComplete = false;
-                ParamsSendStarted = false;
-
-                updateDispatcherTimer.Start();
-
-            //}
-
-
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
         }
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (this.Visibility == Visibility.Visible)
-            {
-                SureMessageVis = Visibility.Collapsed;
-                ParamsRequestStarted = false;
-                ParamsReceiveComplete = false;
-                ParamsTransmitComplete = false;
-                ParamsSendStarted = false;
-                Label_StatusView.Content = "Waiting for user command..";
-                ProgressBar_Params.Value = 0;
-                Label_ProgressStatusPercentage.Content = "";
-
-                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
-                {
-                    SendFileButton.Visibility = Visibility.Collapsed;
-                    ConfigRefreshButton.Visibility = Visibility.Collapsed;
-                }
-                else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-                {
-                    //ConfigRefreshButton.Content = "Refresh";
-                    SendFileButton.Visibility = Visibility.Visible;
-                    ConfigRefreshButton.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                updateDispatcherTimer.Stop();
-                ProgressBar_Params.Value = 0;
-                ConfigSendReady = false;
-                ConfigSendStop = true;
-            }
-        }
-
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            ParametersDisplay tempPar = new ParametersDisplay();
-            var SortedIndex = 0;
-
-            if (DGparameters.SelectedIndex != -1)
-            {
-                tempPar = (ParametersDisplay)DGparameters.SelectedItem;
-                SortedIndex = tempPar.OriginIndx;
-            }
-
-            #region StringConditioners
-            if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 4)
-            {
-                #region Vehicle Name
-                if (tempPar.Name == "Name")
-                {
-                    TextBox textBox = (TextBox)sender;
-                    textBox.Text = generalFunctions.StringConditioner(textBox.Text);
-                    textBox.SelectionStart = textBox.Text.Length;
-                    String str = textBox.Text;
-                    byte[] NameBytes = new byte[15];
-
-                    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
-                    for (int i = 14; i > 0; i--)
-                    {
-                        if ((14 - i) < NameBytes.Length)
-                            parameters[SortedIndex - i].CurrentValue = NameBytes[14 - i];
-                        else
-                            parameters[SortedIndex - i].CurrentValue = (byte)' ';
-                    }
-                }
-                #endregion
-                #region WiFi IP Conditioning
-                else if ((tempPar.Name == "WiFi Unit IP") || (tempPar.Name == "WiFi Server IP") || (tempPar.Name == "WiFi Gateway IP") || (tempPar.Name == "WiFi Subnet Mask"))
-                {
-                    TextBox textBox = (TextBox)sender;
-                    textBox.Text = generalFunctions.StringConditionerIP(textBox.Text);
-                    textBox.SelectionStart = textBox.Text.Length;
-                    String str = textBox.Text;
-                    byte[] NameBytes = new byte[15];
-
-                    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
-                    for (int i = 14; i > 0; i--)
-                    {
-                        if ((14 - i) < NameBytes.Length)
-                            parameters[SortedIndex - i].CurrentValue = NameBytes[14 - i];
-                        else
-                            parameters[SortedIndex - i].CurrentValue = (byte)' ';
-                    }
-                }
-                #endregion
-                #region WiFi Password and SSID
-                else if ((tempPar.Name == "WiFi Password") || (tempPar.Name == "WiFi SSID"))
-                {
-                    TextBox textBox = (TextBox)sender;
-                    textBox.Text = generalFunctions.StringConditionerAlphaNum(textBox.Text, 32);
-                    textBox.SelectionStart = textBox.Text.Length;
-                    String str = textBox.Text;
-                    byte[] NameBytes = new byte[32];
-
-                    NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
-                    for (int i = 31; i > 0; i--)
-                    {
-                        if ((31 - i) < NameBytes.Length)
-                            parameters[SortedIndex - i].CurrentValue = NameBytes[31 - i];
-                        else
-                            parameters[SortedIndex - i].CurrentValue = (byte)' ';
-                    }
-                }
-                #endregion
-            }
-            #endregion
-
-            #region ValueCondtioners
-            else if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 0)
-            {
-                TextBox textBox = (TextBox)sender;
-                if (StringTestNum(textBox.Text))
-                {
-                    try
-                    {
-                        if ((Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value) <= parameters[SortedIndex].MaximumValue) && (Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value) >= parameters[SortedIndex].MinimumValue))
-                        {
-                            parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
-                        }
-                        else
-                        {
-                            Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
-                        }
-                        //parameters[SortedIndex].CurrentValue = Convert.ToInt32(Disp_Parameters[FindDispParIndex(SortedIndex)].Value);
-                    }
-                    catch
-                    {
-                        Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
-                    }
-
-                }
-                else
-                {
-                    Disp_Parameters[FindDispParIndex(SortedIndex)].Value = parameters[SortedIndex].CurrentValue.ToString();
-                }
-
-            }
-            #endregion
-        }
         private static readonly Regex _regex = new Regex("[^0-9-]");
+
         private bool StringTestNum(string value)
         {
             return !_regex.IsMatch(value);
+        }
+
+        #endregion
+
+        
+
+        #region Buttons
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
+            //            else
+
+            backBtner = true;
+        }
+
+        private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            SureMessageVis = Visibility.Visible;
+        }
+
+        private static Thread ConfigureThread;
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Save_ParaMetersToFile();
+            ConfigSendReady = false;
+            ConfigSendStop = false;
+            ParamsRequestStarted = false;
+            //BootStart = true;
+            ConfigSentIndex = 0;
+            ConfigSentAckIndex = -1;
+            updateDispatcherTimer.Start();
+            if (ConfigureThread != null && ConfigureThread.IsAlive)
+            {
+
+            }
+            else
+            {
+                ConfigureThread = new Thread(ConfigSendDo)
+                {
+                    IsBackground = true,
+                    Name = "ConfigurationTransmitThread"
+                };
+                ConfigureThread.Start();
+            }
+
+            ConfigStatus = "Asking device to configure parameters...";
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
+
+            updateDispatcherTimer.Start();
+        }
+
+        private void ConfigRefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
+            StoredIndex = -1;
+            ParamsRequestStarted = true;
+            ParamsReceiveComplete = false;
+
+            ParamsTransmitComplete = false;
+            ParamsSendStarted = false;
+
+            updateDispatcherTimer.Start();
         }
 
         private void ButtonClose_Click(object sender, RoutedEventArgs e)
@@ -1258,6 +1262,7 @@ namespace Booyco_HMI_Utility
             SaveParameterFile();
             SureMessageVis = Visibility.Collapsed;
         }
+        #endregion  
     }
 }
 
