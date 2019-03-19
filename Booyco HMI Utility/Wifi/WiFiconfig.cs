@@ -773,23 +773,23 @@ namespace Booyco_HMI_Utility
                         //break;
                     }
                 }
-                try
-                {
+                //try
+                //{
 
-                    IPEndPoint clientel = (IPEndPoint)clientR[0].Client.RemoteEndPoint;
-                    if (clients.Where(t => t.Client.RemoteEndPoint.ToString().Contains(clientel.Address.ToString())).ToList().Count() != 0)
-                    {
-                        clientR[0].Close();
-                        ClientLsitChanged(TCPclients);
-                        clients.Remove(clientR[0]);
-                        clientnum--;
-                        Console.WriteLine("-------------- {0} Client Removed", clientnumr);
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("-------------- {0} Client Removed failed", clientnumr);
-                }
+                //    IPEndPoint clientel = (IPEndPoint)clientR[0].Client.RemoteEndPoint;
+                //    if (clients.Where(t => t.Client.RemoteEndPoint.ToString().Contains(clientel.Address.ToString())).ToList().Count() != 0)
+                //    {
+                //        clientR[0].Close();
+                //        ClientLsitChanged(TCPclients);
+                //        clients.Remove(clientR[0]);
+                //        clientnum--;
+                //        Console.WriteLine("-------------- {0} Client Removed", clientnumr);
+                //    }
+                //}
+                //catch
+                //{
+                //    Console.WriteLine("-------------- {0} Client Removed failed", clientnumr);
+                //}
             }
             catch
             {

@@ -334,8 +334,8 @@ namespace Booyco_HMI_Utility
                     BootDone = true;                      
                     BootFlashPersentage = 0;
                     BootReady = false;
-                    Thread.Sleep(20);
-                    GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
+                   // Thread.Sleep(20);
+                   // GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
                     GlobalSharedData.ServerStatus = "Boot acknowledgment message recieved";
                 }
                 #endregion

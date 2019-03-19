@@ -61,18 +61,24 @@ namespace Booyco_HMI_Utility
             TCPclients = WiFiconfig.ClientLsitChanged(TCPclients);
             if (WiFiconfig.clients != null)
             {
+
+                TCPclientR _removeItem = new TCPclientR();
                 foreach (TCPclientR item in TCPclients)
                 {
                     if (item.HeartbeatTimestamp <= DateTime.Now.AddSeconds(-3) && item.HeartCount > 0)
                     {
                         item.Heartbeat_Colour = HBLostColour;
                     }
-                    if(item.HeartbeatTimestamp <= DateTime.Now.AddSeconds(-15) && item.HeartCount > 0)
+                    if(item.HeartbeatTimestamp <= DateTime.Now.AddSeconds(-20) && item.HeartCount > 0)
                     {
-                        TCPclients.Remove(item);
+                       // _removeItem = item;
+                       // TCPclients.Remove(item);
                         //WiFiconfig.ConnectionError
                     }
                 }
+
+               // TCPclients.Remove(_removeItem);
+               
                 if (WiFiconfig.clients.Count == 0)
                 {
                     GlobalSharedData.SelectedDevice = -1;

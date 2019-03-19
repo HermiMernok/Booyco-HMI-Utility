@@ -76,21 +76,22 @@ namespace Booyco_HMI_Utility
                 Button_Back_Click(null, null);
                
             }
-            if (MovingLogs)
-            {
-                Label_StatusView.Content = "Moving Logs to Flash";
-             
-            }
-            else
-            {
-                ProgressBar_DataLogExtract.Value = DataLogProgress;
-
-                Label_ProgressStatusPercentage.Content =  (DataLogProgress / 10).ToString() + "%";
-                Label_StatusView.Content = "Datalog packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
-            }
+          
          
             if (CancelCheck)
             {
+                if (MovingLogs)
+                {
+                    Label_StatusView.Content = "Moving Logs to Flash";
+
+                }
+                else
+                {
+                    ProgressBar_DataLogExtract.Value = DataLogProgress;
+
+                    Label_ProgressStatusPercentage.Content = (DataLogProgress / 10).ToString() + "%";
+                    Label_StatusView.Content = "Datalog packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
+                }
                 if (Heartbeat)
                 {
                     _heartBeatDelay++;
@@ -106,12 +107,11 @@ namespace Booyco_HMI_Utility
             {
                 if (!DataExtractorComplete)
                 {
-
-
-                    Label_ProgressStatusPercentage.Content = "Process Cancelled...";
+                    Label_ProgressStatusPercentage.Content = "";
 
                     if (File.Exists(_newLogFilePath))
                     {
+                        Label_ProgressStatusPercentage.Content = "Process Cancelled...";
                         File.Delete(_newLogFilePath);
                     }
                 }
@@ -120,7 +120,6 @@ namespace Booyco_HMI_Utility
                     Label_ProgressStatusPercentage.Content = "File Completed...";
                     Button_ViewLogs.Visibility = Visibility.Visible;
                     GlobalSharedData.FilePath = _newLogFilePath;
-
 
                 }
                 DataLogProgress = 0;

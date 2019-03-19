@@ -34,7 +34,7 @@
         <DataGrid x:Name="DGTCPclientList" Grid.Row="3" RowHeaderWidth="0" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="16" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA68288"  RowBackground="#FFB68181" Margin="5,10">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                          
-                  Color="#ff630606"/>
+                  Color="#338F1838"/>
             </DataGrid.Resources>
           
             <DataGrid.Columns>
