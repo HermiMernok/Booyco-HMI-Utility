@@ -379,7 +379,7 @@ namespace Booyco_HMI_Utility
                     {
                         OriginIndx = i,
                         Name = "WiFi Unit IP",
-                        Value = WiFiUnitIP,
+                        Value = IPAddressConditioner(WiFiUnitIP),
                         BtnVisibility = btnvisibility,
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
@@ -394,7 +394,7 @@ namespace Booyco_HMI_Utility
                     {
                         OriginIndx = i,
                         Name = "WiFi Server IP",
-                        Value = WiFiServerIP,
+                        Value = IPAddressConditioner(WiFiServerIP),
                         BtnVisibility = btnvisibility,
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
@@ -409,7 +409,7 @@ namespace Booyco_HMI_Utility
                     {
                         OriginIndx = i,
                         Name = "WiFi Gateway IP",
-                        Value = WiFiGatewayIP,
+                        Value = IPAddressConditioner(WiFiGatewayIP),
                         BtnVisibility = btnvisibility,
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
@@ -424,7 +424,7 @@ namespace Booyco_HMI_Utility
                     {
                         OriginIndx = i,
                         Name = "WiFi Subnet Mask",
-                        Value = WiFiSubnetMask,
+                        Value = IPAddressConditioner(WiFiSubnetMask),
                         BtnVisibility = btnvisibility,
                         dropDownVisibility = drpDwnVisibility,
                         LablEdit = EditLbl,
@@ -678,9 +678,7 @@ namespace Booyco_HMI_Utility
                 else if ((tempPar.Name == "WiFi Unit IP") || (tempPar.Name == "WiFi Server IP") || (tempPar.Name == "WiFi Gateway IP") || (tempPar.Name == "WiFi Subnet Mask"))
                 {
                     TextBox textBox = (TextBox)sender;
-                    textBox.Text = generalFunctions.StringConditionerIP(textBox.Text);
-                    textBox.SelectionStart = textBox.Text.Length;
-                    String str = textBox.Text;
+                    textBox.Text = IPAddressConditioner(textBox.Text);
                     byte[] NameBytes = new byte[15];
 
                     NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
@@ -698,8 +696,6 @@ namespace Booyco_HMI_Utility
                 {
                     TextBox textBox = (TextBox)sender;
                     textBox.Text = generalFunctions.StringConditionerAlphaNum(textBox.Text, 32);
-                    textBox.SelectionStart = textBox.Text.Length;
-                    String str = textBox.Text;
                     byte[] NameBytes = new byte[32];
 
                     NameBytes = Encoding.ASCII.GetBytes(textBox.Text);
@@ -824,9 +820,9 @@ namespace Booyco_HMI_Utility
                     }
                     else
                     {
-                        //ConfigSentIndex = BitConverter.ToUInt16(message, 4);
-                        ConfigSentIndex--;
-                        //ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
+                        ConfigSentIndex = BitConverter.ToUInt16(message, 4);
+                        //ConfigSentIndex--;
+                        ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
                         ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
                         Console.WriteLine("Error at Index" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
                     }
@@ -1047,7 +1043,7 @@ namespace Booyco_HMI_Utility
             ConfigSendList.Clear();
             Configchunks = (int)Math.Round(ConfigfileSize / (double)fileChunck);
             int shifter = 0;
-            for (int i = 0; i <= Configchunks; i++)
+            for (int i = 0; i < Configchunks; i++)
             {
                 byte[] bootchunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
                 byte[] bytes = BitConverter.GetBytes(i);
@@ -1183,6 +1179,39 @@ namespace Booyco_HMI_Utility
             return !_regex.IsMatch(value);
         }
 
+        public static string IPAddressConditioner (string IPAddr)
+        {
+            string IP1 = "";
+            string IP2 = "";
+            string IP3 = "";
+            string IP4 = "";
+            string IP = "";
+            int count = 0;
+            Regex regexItem = new Regex("[^0-9.]");
+
+            //first step is to make sure it is a valid IP address       
+            // are there only numbers and full stops in the string
+            // are there 3 full stops in the string
+            // is the length of the IP address 15 or less
+
+            if (((regexItem.IsMatch(IPAddr)) || ((count = IPAddr.Count(f => f == '.')) != 3)) || IPAddr.Length > 15)
+            {
+                return "000.000.000.000";
+            }
+          
+            // if the string is in the correct format, check each sub-IP number and return a conditioned version
+
+            IP1 = Convert.ToUInt16(IPAddr.Substring(0, IPAddr.IndexOf('.'))) > 255 ? "255" : Convert.ToUInt16(IPAddr.Substring(0, IPAddr.IndexOf('.'))).ToString("000");
+            IPAddr = IPAddr.Remove(0, IPAddr.IndexOf('.')+1);
+            IP2 = Convert.ToUInt16(IPAddr.Substring(0, IPAddr.IndexOf('.'))) > 255 ? "255" : Convert.ToUInt16(IPAddr.Substring(0, IPAddr.IndexOf('.'))).ToString("000");
+            IPAddr = IPAddr.Remove(0, IPAddr.IndexOf('.')+1);
+            IP3 = Convert.ToUInt16(IPAddr.Substring(0, IPAddr.IndexOf('.'))) > 255 ? "255" : Convert.ToUInt16(IPAddr.Substring(0, IPAddr.IndexOf('.'))).ToString("000");
+            IPAddr = IPAddr.Remove(0, IPAddr.IndexOf('.')+1);
+            IP4 = Convert.ToUInt16(IPAddr) > 255 ? "255" : Convert.ToUInt16(IPAddr).ToString("000");
+
+            //IP = IP1 + "." + IP2 + "." + IP3 + "." + IP4;
+            return IP1 + "." + IP2 + "." + IP3 + "." + IP4;
+        }
         #endregion
 
         
