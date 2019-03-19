@@ -118,8 +118,8 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private bool _isInt;
-        public bool IsInt
+        private int _isInt;
+        public int IsInt
         {
             get
             {

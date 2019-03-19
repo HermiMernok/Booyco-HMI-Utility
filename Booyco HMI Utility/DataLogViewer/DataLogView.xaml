@@ -34,7 +34,7 @@
         <Button x:Name="ButtonBack" Content="Back"  Margin="10"  Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
         <Button x:Name="ButtonSave" Content="Export"  Click="ButtonSaveFile_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="True"/>
 
-
+        
         <DataGrid x:Name="DataGridLogs" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="True"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,10,0,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
@@ -46,6 +46,10 @@
                   
                 </Style>
             </DataGrid.RowStyle>
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                   Color="#ff630606"/>
+            </DataGrid.Resources>
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="DarkRed"/>
@@ -86,34 +90,112 @@
                         </Grid>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Width="8*" Binding="{Binding EventInfo}" Header="Event" Visibility="Collapsed"/>
+                <DataGridTextColumn Width="Auto" Binding="{Binding EventInfo}" Header="Event" Visibility="Collapsed"/>
 
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding EventInfo}" Margin="10,5,0,0" TextWrapping="WrapWithOverflow" Width="900"/>
+                   
+                    <Grid >
+                        <Grid.Resources>
+                            <SolidColorBrush x:Key="brush" Color="#33000000"/>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="5"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
+                        <Border Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
+                        <Border Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
+                        <Border Grid.Column="1" Grid.Row="8" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
+
+                        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="6" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="8" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="10" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding EventInfoList[0]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding EventInfoList[1]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="5" Grid.Row="1" Text="{Binding EventInfoList[2]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="7" Grid.Row="1" Text="{Binding EventInfoList[3]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="9" Grid.Row="1" Text="{Binding EventInfoList[4]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="11" Grid.Row="1" Text="{Binding EventInfoList[5]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+
+
+                        <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding EventInfoList[6]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="3" Grid.Row="3" Text="{Binding EventInfoList[7]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="5" Grid.Row="3" Text="{Binding EventInfoList[8]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="7" Grid.Row="3" Text="{Binding EventInfoList[9]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="9" Grid.Row="3" Text="{Binding EventInfoList[10]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="11" Grid.Row="3" Text="{Binding EventInfoList[11]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+
+                        <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding EventInfoList[12]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="3" Grid.Row="5" Text="{Binding EventInfoList[13]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="5" Grid.Row="5" Text="{Binding EventInfoList[14]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="7" Grid.Row="5" Text="{Binding EventInfoList[15]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="9" Grid.Row="5" Text="{Binding EventInfoList[16]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="11" Grid.Row="5" Text="{Binding EventInfoList[17]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+
+                        <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding EventInfoList[18]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="3" Grid.Row="7" Text="{Binding EventInfoList[19]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="5" Grid.Row="7" Text="{Binding EventInfoList[20]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="7" Grid.Row="7" Text="{Binding EventInfoList[21]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="9" Grid.Row="7" Text="{Binding EventInfoList[22]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="11" Grid.Row="7" Text="{Binding EventInfoList[23]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+
+                        <TextBlock Grid.Column="1" Grid.Row="9" Text="{Binding EventInfoList[24]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="3" Grid.Row="9" Text="{Binding EventInfoList[25]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="5" Grid.Row="9" Text="{Binding EventInfoList[26]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="7" Grid.Row="9" Text="{Binding EventInfoList[27]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="9" Grid.Row="9" Text="{Binding EventInfoList[28]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="11" Grid.Row="9" Text="{Binding EventInfoList[29]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                    </Grid>
+            
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <ProgressBar x:Name="ProgressbarDataLogs" Background="Black" Foreground="#8c0909" Margin="10"  Minimum="0" Maximum="100" Grid.ColumnSpan="5" Grid.Column="1" Grid.Row="6" RenderTransformOrigin="0.5,0.5">
-            <ProgressBar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </ProgressBar.RenderTransform>
-        </ProgressBar>
-        <TextBlock x:Name="TextBlockProgressStatus" TextAlignment="Center" VerticalAlignment="Center" Text="" Foreground="White"  Grid.ColumnSpan="5" Grid.Row="6" RenderTransformOrigin="0.5,0.5" Grid.Column="1">
-            <TextBlock.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1" ScaleX="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="-180"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </TextBlock.RenderTransform></TextBlock>
+    
+        <Grid x:Name="Grid_ProgressBar" Grid.Column="1" Grid.Row="6"  Grid.ColumnSpan="5" Background="Gray">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ProgressBar x:Name="ProgressbarDataLogs" Background="Black" Foreground="#8c0909"  Minimum="0" Maximum="100"  Margin="5"/>
+            <TextBlock x:Name="TextBlockProgressStatus" TextAlignment="Center" VerticalAlignment="Center" Text="" Foreground="White"  Grid.ColumnSpan="5" Grid.Row="6" RenderTransformOrigin="0.5,0.5" Grid.Column="1"/>
+
+
+        </Grid>
+       
+      
         <Button x:Name="ButtonMap" Content="Map" Margin="10"  Click="ButtonMap_Click" Grid.Column="5" Grid.Row="3" IsEnabled="False"/>
         <Button x:Name="ButtonDisplay" Content="Display" Margin="10"  Click="ButtonDisplay_Click" Grid.Column="5" Grid.Row="4" IsEnabled="False" />
         <Button x:Name="ButtonToggleExpand" Margin="10,0,10,10" Content="Expand"  Click="ButtonToggleExpanded_Click" Grid.Column="2" Grid.Row="6" RenderTransformOrigin="0.6,1.545"/>

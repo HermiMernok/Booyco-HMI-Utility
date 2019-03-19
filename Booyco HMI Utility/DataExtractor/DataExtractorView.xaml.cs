@@ -319,6 +319,7 @@ namespace Booyco_HMI_Utility
                 StoredIndex = -1;
                 _heartBeatDelay = 0;
                 DataExtractorComplete = false;
+                _fileCreated = false;
                 updateDispatcherTimer.Start();
             }
             else

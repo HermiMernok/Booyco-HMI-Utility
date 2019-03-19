@@ -33,7 +33,7 @@ namespace Booyco_HMI_Utility
                         DataName = Convert.ToString(_row.ItemArray[2]),
                         NumberBytes = Convert.ToInt32(_row.ItemArray[3]),
                         Scale = Convert.ToInt32(_row.ItemArray[4]),
-                        IsInt = Convert.ToBoolean(_row.ItemArray[5]),
+                        IsInt = Convert.ToInt32(_row.ItemArray[5]),
                         Appendix = Convert.ToString(_row.ItemArray[6])
 
                     });

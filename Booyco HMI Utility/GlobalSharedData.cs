@@ -35,6 +35,8 @@ namespace Booyco_HMI_Utility
 
     public static class GlobalSharedData
     {
+
+     
         public static string ServerStatus { get; set; }
         public static byte[] ServerMessageSend { get; set; }
         public static bool BroadCast { get; set; }

@@ -32,6 +32,7 @@ namespace Booyco_HMI_Utility
         //get status of the wifi hotspot created by the device
         public List<NetworkDevice> GetAllLocalIPv4(NetworkInterfaceType _type)
         {
+            
             List<NetworkDevice> ipAddrList = new List<NetworkDevice>();
             var NetWorkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface item in NetWorkInterfaces)
@@ -455,7 +456,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 5000;
+            clientR[0].ReceiveTimeout = 10000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -466,10 +467,11 @@ namespace Booyco_HMI_Utility
                 {
                     if ((i = stream.Read(data2, 0, data2.Length)) != 0)
                     {
-                       if (clientR[0].ReceiveTimeout!= 10000)
-                        {
-                            clientR[0].ReceiveTimeout = 10000;
-                        }
+                       
+                      // if (clientR[0].ReceiveTimeout!= 10000)
+                     //   {
+                     //       clientR[0].ReceiveTimeout = 10000;
+                     //   }
                         Console.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0].ToString() + "-" + Buffer[512 + 9].ToString());
                         #region bufferCreator
                         if (i == DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
@@ -480,39 +482,39 @@ namespace Booyco_HMI_Utility
                             messageReceived = true;
                             totalCount = i;
                         }
-                        else if (i == 522 && data2[0] == '[' && data2[521] == ']')
+                        else if (i >= 522 && data2[0] == '[' && data2[1] == '&' && data2[521] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, Buffer, 522);
                             messagecount++;
                             messageReceived = true;
-                            totalCount = i;
+                            totalCount = 522;
                         }
-                        else if (i == 10 && data2[0] == '[' && data2[9] == ']')
+                        else if (i == 10 && data2[0] == '[' && data2[1] == '&' && data2[9] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, Buffer, 10);
                             messagecount++;
                             messageReceived = true;
-                            totalCount = i;
+                            totalCount = 10;
                         }
-                        else if (i == 9 && data2[0] == '[' && data2[8] == ']')
+                        else if (i == 9 && data2[0] == '[' && data2[1] == '&' && data2[8] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, Buffer, 9);
                             messagecount++;
                             messageReceived = true;
-                            totalCount = i;
+                            totalCount = 9;
                         }
-                        else if (i == 8 && data2[0] == '[' && data2[7] == ']')
+                        else if (i == 8 && data2[0] == '[' && data2[1] == '&' && data2[7] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, Buffer, 9);
                             messagecount++;
                             messageReceived = true;
-                            totalCount = i;
+                            totalCount = 8;
                         }
-                        else if (i == 7 && data2[0] == '[' && data2[6] == ']')
+                        else if (i == 7 && data2[0] == '[' && data2[1] == '&' && data2[6] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, Buffer, 7);
@@ -533,11 +535,7 @@ namespace Booyco_HMI_Utility
 
                         else if (count > 0)
                         {
-                            if (totalCount > 6300)
-                            {
-                                int breakpoint = 0;
-                            }
-
+                           
                             if ((totalCount + i) > (DataExtractorView.DATALOG_RX_SIZE + 10))
                             {
                                 //Console.WriteLine(" Second: " + i.ToString());
@@ -549,7 +547,7 @@ namespace Booyco_HMI_Utility
                             else
                             {
                                 // Console.WriteLine(" Second: " + i.ToString());
-
+                          
                                 Array.Copy(data2, 0, Buffer, totalCount, i);
                             }
 
@@ -573,12 +571,13 @@ namespace Booyco_HMI_Utility
                                 messagecount++;
                                 messageReceived = true;
                             }
-                            else if (totalCount == 522 && Buffer[0] == '[' && Buffer[521] == ']')
+                            else if (totalCount >= 522 && Buffer[0] == '[' && Buffer[1] == '&' && Buffer[521] == ']')
                             {
                                 // Buffer = new byte[2058];
                                 // Array.Copy(data2, Buffer, 522);
                                 messagecount++;
                                 messageReceived = true;
+                                count = 0;
                             }
 
                         }
@@ -593,7 +592,8 @@ namespace Booyco_HMI_Utility
 
                         if (messageReceived)
                         {
-                            messageReceived = false;
+                      
+                           messageReceived = false;
 
                             //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
                             Console.WriteLine(totalCount.ToString() + "-Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
@@ -621,6 +621,8 @@ namespace Booyco_HMI_Utility
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).HeartCount++;
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Licensed = Convert.ToBoolean(Buffer[28]);
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Heartbeat_Colour = WiFiView.HBReceiveColour;
+                                        TCPclients.ElementAt(clients.IndexOf(clientR[0])).HeartbeatTimestamp = DateTime.Now;
+                                        
                                     }
                                     catch
                                     {
@@ -976,7 +978,7 @@ namespace Booyco_HMI_Utility
             pStartInfo.RedirectStandardInput = true;
             pStartInfo.RedirectStandardOutput = true;
             pStartInfo.RedirectStandardError = true;
-
+            pStartInfo.CreateNoWindow = true;
             var process = new Process()
             {
                 StartInfo = pStartInfo
@@ -1033,7 +1035,14 @@ namespace Booyco_HMI_Utility
         public string DeviceName
         {
             get { return _deviceName; }
-            set { _deviceName = value; OnPropertyChanged("DeviceName"); }
+            set
+            {
+                if (_deviceName != value)
+                {
+                    _deviceName = value;
+                    OnPropertyChanged("DeviceName");
+                }
+            }
         }
 
         private string _deviceType = "0";
@@ -1041,7 +1050,14 @@ namespace Booyco_HMI_Utility
         public string DeviceTipe
         {
             get { return _deviceType; }
-            set { _deviceType = value; OnPropertyChanged("DeviceTipe"); }
+            set
+            {
+                if (_deviceType != value)
+                {
+                    _deviceType = value;
+                    OnPropertyChanged("DeviceTipe");
+                }
+            }
         }
 
         private string _deviceIP = "0" ;
@@ -1049,7 +1065,14 @@ namespace Booyco_HMI_Utility
         public string DeviceIP
         {
             get { return _deviceIP; }
-            set { _deviceIP = value; OnPropertyChanged("DeviceIP"); }
+            set
+            {
+                if (_deviceIP != value)
+                {
+                    _deviceIP = value;
+                    OnPropertyChanged("DeviceIP");
+                }
+            }
         }
 
     }
@@ -1071,7 +1094,14 @@ namespace Booyco_HMI_Utility
         public string IP
         {
             get { return _IP; }
-            set { _IP = value; OnPropertyChanged("IP"); }
+            set
+            {
+                if (_IP != value)
+                {
+                    _IP = value;
+                    OnPropertyChanged("IP");
+                }
+            }
         }
 
         private string _Name ;
@@ -1111,14 +1141,28 @@ namespace Booyco_HMI_Utility
         public uint VID
         {
             get { return _VID; }
-            set { _VID = value; OnPropertyChanged("VID"); }
+            set
+            {
+                if (_VID != value)
+                {
+                    _VID = value;
+                    OnPropertyChanged("VID");
+                }
+            }
         }
 
         private int _FirmRev ;
         public int FirmRev
         {
             get { return _FirmRev; }
-            set { _FirmRev = value; OnPropertyChanged("FirmRev"); }
+            set
+            {
+                if (_FirmRev != value)
+                {
+                    _FirmRev = value;
+                    OnPropertyChanged("FirmRev");
+                }
+            }
         }
 
         private bool _Licensed = false;
@@ -1126,7 +1170,14 @@ namespace Booyco_HMI_Utility
         public bool Licensed
         {
             get { return _Licensed; }
-            set { _Licensed = value; OnPropertyChanged("Licensed"); }
+            set
+            {
+                if (_Licensed != value)
+                {
+                    _Licensed = value;
+                    OnPropertyChanged("Licensed");
+                }
+            }
         }
 
 
@@ -1194,14 +1245,29 @@ namespace Booyco_HMI_Utility
         public int BootloaderFirmRev
         {
             get { return _BootloaderFirmRev; }
-            set { _BootloaderFirmRev = value; OnPropertyChanged("BootloaderFirmRev"); }
+            set
+            {
+                if (_BootloaderFirmRev != value)
+                {
+
+                    _BootloaderFirmRev = value;
+                    OnPropertyChanged("BootloaderFirmRev");
+                }
+            }
         }
 
         private int _BootloaderFirmSubRev;
         public int BootloaderFirmSubRev
         {
             get { return _BootloaderFirmSubRev; }
-            set { _BootloaderFirmSubRev = value; OnPropertyChanged("BootloaderFirmSubRev"); }
+            set
+            {
+                if (_BootloaderFirmSubRev != value)
+                {
+                    _BootloaderFirmSubRev = value;
+                    OnPropertyChanged("BootloaderFirmSubRev");
+                }
+            }
         }
 
         private string _BootloaderrevString ;
@@ -1209,7 +1275,14 @@ namespace Booyco_HMI_Utility
         public string BootloaderrevString
         {
             get { return _BootloaderrevString; }
-            set { _BootloaderrevString = value; OnPropertyChanged("BootloaderrevString"); }
+            set
+            {
+                if (_BootloaderrevString != value)
+                {
+                    _BootloaderrevString = value;
+                    OnPropertyChanged("BootloaderrevString");
+                }
+            }
         }
 
         private int _HeartCount;
@@ -1217,16 +1290,47 @@ namespace Booyco_HMI_Utility
         public int HeartCount
         {
             get { return _HeartCount; }
-            set { _HeartCount = value; OnPropertyChanged("HeartCount"); }
+            set {
+                if (_HeartCount != value)
+                {
+                    if (value > 10000)
+                    {
+                        _HeartCount = 0;
+                    }
+                    else
+                    {
+                        _HeartCount = value;
+                    }
+                    OnPropertyChanged("HeartCount");
+                }
+            }
         }
 
+        private DateTime _HeartbeatTimestamp;
+
+        public DateTime HeartbeatTimestamp
+        {
+            get { return _HeartbeatTimestamp; }
+            set
+            {
+                if (_HeartbeatTimestamp != value)
+                {
+                    _HeartbeatTimestamp = value;
+                    OnPropertyChanged("HeartbeatTimestamp");
+                }
+            }
+        }
         private SolidColorBrush _Heartbeat_Colour;
         public SolidColorBrush Heartbeat_Colour
         {
             get { return _Heartbeat_Colour; }
             set
             {
-                _Heartbeat_Colour = value; OnPropertyChanged("Heartbeat_Colour");
+                if (_Heartbeat_Colour != value)
+                {
+                    _Heartbeat_Colour = value;
+                    OnPropertyChanged("Heartbeat_Colour");
+                }
             }
         }
     

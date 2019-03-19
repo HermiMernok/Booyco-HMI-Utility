@@ -79,9 +79,6 @@ namespace Booyco_HMI_Utility
             DataGridLogs.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, SelectAll_Executed));
 
             DataLogIsExpanded = new bool();
-
-            
-                          
                  
         }
 
@@ -123,11 +120,12 @@ namespace Booyco_HMI_Utility
                 ProgressbarDataLogs.Visibility = Visibility.Collapsed;
                 this.ButtonSelectAll.Visibility = Visibility.Visible;
                 this.ButtonToggleExpand.Visibility = Visibility.Visible;
-
+                Grid_ProgressBar.Visibility = Visibility.Collapsed;
 
             }
             else
             {
+       
                 ProgressbarDataLogs.Value = e.ProgressPercentage;
                 TextBlockProgressStatus.Text = "Upload (" + e.ProgressPercentage.ToString().PadLeft(3, '0') + "%)";
             }
@@ -640,6 +638,7 @@ namespace Booyco_HMI_Utility
         {
             if(this.Visibility == Visibility.Visible)
             {
+                Grid_ProgressBar.Visibility = Visibility.Visible;
                 this.ButtonSelectAll.Visibility = Visibility.Collapsed;
                 this.ButtonToggleExpand.Visibility = Visibility.Collapsed;
                 ProgressbarDataLogs.Visibility = Visibility.Visible;
@@ -653,6 +652,12 @@ namespace Booyco_HMI_Utility
                     }
                    
                 }
+            }
+            else
+            {
+                TextBlockProgressStatus.Text = "";
+                ProgressbarDataLogs.Value = 0;
+
             }
            
         }
@@ -774,7 +779,7 @@ namespace Booyco_HMI_Utility
         {
            
             GlobalSharedData.HMIDisplayList.Clear();
-            DateTime _clearTime = new DateTime();
+            DateTime _clearTime = new DateTime(2100, 01, 01);
 
             // List<LogEntry> _tempList = new List<LogEntry>();
             // foreach (LogEntry item in DataGridLogs.SelectedItems)
@@ -828,8 +833,9 @@ namespace Booyco_HMI_Utility
                         {
                             _tempHMIDisplayEntry.StartDateTime = item.DateTime;
                             _tempHMIDisplayEntry.ThreatBID = item.DataList.First();
-                            _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
+                            _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);                      
                             GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+
                         }
                         else
                         {
@@ -842,7 +848,8 @@ namespace Booyco_HMI_Utility
                     _tempHMIDisplayEntry.StartDateTime = item.DateTime;
                     _tempHMIDisplayEntry.ThreatBID = item.DataList.First();
                     _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
-                        GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+                    _tempHMIDisplayEntry.EndDateTime = new DateTime(2100,01,01);
+                    GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
                 }
                
                                         

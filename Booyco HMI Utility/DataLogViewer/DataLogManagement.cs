@@ -45,6 +45,8 @@ namespace Booyco_HMI_Utility
             int _fileLength = (int)(new FileInfo(Log_Filename).Length);
             BinaryReader _breader = new BinaryReader(File.OpenRead(Log_Filename));
 
+
+
             _logBytes = _breader.ReadBytes(_fileLength);
 
             int PercentageComplete = 0;
@@ -57,7 +59,8 @@ namespace Booyco_HMI_Utility
             {
                 if (AbortRequest)
                 {
-
+                    _breader.Close();
+                    _breader.Dispose();
                     PercentageComplete=0;
                     ReportProgress(PercentageComplete);
                     return false;
@@ -87,12 +90,13 @@ namespace Booyco_HMI_Utility
                     UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
                     string _tempEventInfo = "";
                     List<string> _tempDataList = new List<string>();
-                 
+                    List<string> _tempEventInfoList = new List<string>();
                     try
                    {
                         if (ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID-1).Data[0].DataLink == "Empty")
                         {
                             _tempEventInfo = "No Information";
+                            _tempEventInfoList.Add("No Information");
                         }
                         else
                         {
@@ -111,32 +115,49 @@ namespace Booyco_HMI_Utility
 
                                     if (_dataLookupEntry.NumberBytes == 4)
                                     {
-                                        if (_dataLookupEntry.IsInt)
+                                        if(_dataLookupEntry.IsInt == 2)
+                                        {
+                                            byte[] _tempByteArray = { 0, 0 , 0 ,0 };
+
+                                            Array.Copy(_logData, _index, _tempByteArray, 0, 4);
+
+                                            UInt32 HexValue =  BitConverter.ToUInt32(_tempByteArray, 0);
+
+                                             _tempDataList.Add("0x" + (Convert.ToUInt32(HexValue * _scale)).ToString("X8"));
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
+                                            _index += 4;
+                                        }
+                                        else if (_dataLookupEntry.IsInt == 1)
                                         {
                                             _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 4;
                                         }
                                         else
                                         {
                                              _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " +_tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 4;
                                         }
                                     }
                                     else if (_dataLookupEntry.NumberBytes == 2)
                                     {
 
-                                        if (_dataLookupEntry.IsInt)
+                                        if (_dataLookupEntry.IsInt == 1)
                                         {
                                             _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " +_tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 2;
                                         }
                                         else
                                         {
                                             _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 2;
                                         }
                                     }
@@ -144,16 +165,18 @@ namespace Booyco_HMI_Utility
                                     else if (_dataLookupEntry.NumberBytes == 1)
                                     {
 
-                                        if (_dataLookupEntry.IsInt)
+                                        if (_dataLookupEntry.IsInt == 1)
                                         {
                                             _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 1;
                                         }
                                         else
                                         {
                                             _tempDataList.Add((_logData[_index] * _scale).ToString());
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 1;
                                         }
                                     }
@@ -168,6 +191,7 @@ namespace Booyco_HMI_Utility
                     catch
                     {
                         _tempEventInfo = "No Information";
+                        _tempEventInfoList.Add("No Information");
                     }
 
 
@@ -179,9 +203,8 @@ namespace Booyco_HMI_Utility
                             {
                                 TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                 TempList.Last().DataList.AddRange(_tempDataList);
-                                                        
+                                TempList.Last().EventInfoList.AddRange(_tempEventInfoList);                       
                                 Buffer.BlockCopy(_logData, 0, TempList.Last().RawData,(_tempEventID-150)*8, 8);
-
 
                             }
 
@@ -192,7 +215,8 @@ namespace Booyco_HMI_Utility
                             {
                                 TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                 TempList.Last().DataList.AddRange(_tempDataList);
-                              }
+                                TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
+                            }
                             Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - 157) * 8, 8);
                         }
                         else if(_tempEventID==150 || _tempEventID == 157)
@@ -217,6 +241,7 @@ namespace Booyco_HMI_Utility
                                 EventInfo = _tempEventInfo,
                                 DateTime = _eventDateTime,
                                 DataList = _tempDataList,
+                                EventInfoList = _tempEventInfoList
 
                             });
                         }
@@ -232,6 +257,7 @@ namespace Booyco_HMI_Utility
                                 EventInfo = _tempEventInfo,
                                 DateTime = _eventDateTime,
                                 DataList = _tempDataList,
+                                EventInfoList = _tempEventInfoList
 
                             });
                         }
@@ -262,6 +288,15 @@ namespace Booyco_HMI_Utility
                 }
             }
 
+            try
+            {
+                _breader.Close();
+                _breader.Dispose();
+            }
+            catch
+            {
+                Console.WriteLine("failed to close Binary reader.");
+            }
             return true;
             }
 

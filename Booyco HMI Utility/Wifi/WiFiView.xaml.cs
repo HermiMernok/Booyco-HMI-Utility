@@ -45,18 +45,34 @@ namespace Booyco_HMI_Utility
             InitializeComponent();           
             DataContext = this;
             HBReceiveColour = new SolidColorBrush(Color.FromArgb(100, 0, 102, 0));
-            HBConnectingColour = new SolidColorBrush(Color.FromArgb(100, 255, 183, 0));
+            HBConnectingColour = new SolidColorBrush(Color.FromArgb(100, 255, 183, 0));    
             HBLostColour = new SolidColorBrush(Color.FromArgb(100, 188, 0, 0));
             //WiFiconfig = new WiFiconfig();
         }
 
         private void ClientListUpdater(object sender, EventArgs e)
         {
+
+
+           
+
             ServerStatusView = GlobalSharedData.ServerStatus;
             NetworkDevicesp = GlobalSharedData.NetworkDevices;
             TCPclients = WiFiconfig.ClientLsitChanged(TCPclients);
             if (WiFiconfig.clients != null)
             {
+                foreach (TCPclientR item in TCPclients)
+                {
+                    if (item.HeartbeatTimestamp <= DateTime.Now.AddSeconds(-3) && item.HeartCount > 0)
+                    {
+                        item.Heartbeat_Colour = HBLostColour;
+                    }
+                    if(item.HeartbeatTimestamp <= DateTime.Now.AddSeconds(-15) && item.HeartCount > 0)
+                    {
+                        TCPclients.Remove(item);
+                        //WiFiconfig.ConnectionError
+                    }
+                }
                 if (WiFiconfig.clients.Count == 0)
                 {
                     GlobalSharedData.SelectedDevice = -1;
@@ -156,23 +172,32 @@ namespace Booyco_HMI_Utility
 
                 if (_selectedItem.HeartCount < 1)
                 {
+                    BtnBootload.IsEnabled = false;
                     BtnConfig.IsEnabled = false;
                     BtnDatView.IsEnabled = false;
-                    BtnBootload.IsEnabled = false;
+                  
                 }
                 else if (_selectedItem.ApplicationState == "Bootloader")
                 {
+                    BtnBootload.IsEnabled = true;
                     BtnConfig.IsEnabled = false;
                     BtnDatView.IsEnabled = false;
-                    BtnBootload.IsEnabled = true;
+                   
                 }
                 else if ((_selectedItem.ApplicationState == "Application"))
                 {
+                    BtnBootload.IsEnabled = true;
                     BtnConfig.IsEnabled = true;
                     BtnDatView.IsEnabled = true;
-                    BtnBootload.IsEnabled = true;
+                  
                 }
-                
+                else if ((_selectedItem.ApplicationState == "ERB Bootloader"))
+                {
+                    BtnBootload.IsEnabled = true;
+                    BtnConfig.IsEnabled = false;
+                    BtnDatView.IsEnabled = false;                   
+                }
+
             }
              else 
             {
@@ -201,11 +226,23 @@ namespace Booyco_HMI_Utility
             }
             else
             {
+                WiFiconfig.endAll = true;
                 DGTCPclientList.SelectedIndex = -1;
                 Bootloader.BootReady = Bootloader.BootDone = false;
                 dispatcherTimer.Stop();
                 TCPclients = new List<TCPclientR>();
                 WiFiconfig.ServerStop();
+                try
+                {
+                   
+                //    WiFiconfig.WirelessHotspot(null, null, false);
+               //    var prc = new ProcManager();
+                //    prc.KillByPort(13000);
+                }
+                catch
+                {
+
+                }
                 Console.WriteLine("====================== Not Visible");
             }
         }

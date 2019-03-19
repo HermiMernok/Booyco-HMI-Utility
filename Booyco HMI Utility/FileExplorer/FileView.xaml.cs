@@ -175,9 +175,9 @@ namespace Booyco_HMI_Utility
                        
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
-                
+                    Console.WriteLine("Cannot Delete file " + item.Name);
                 }
             }
             ReadSavedFolder();

@@ -106,6 +106,20 @@ namespace Booyco_HMI_Utility
             }
         }
 
+        private List<string> _eventInfoList;
+        public List<string> EventInfoList
+        {
+            get
+            {
+                return _eventInfoList;
+            }
+            set
+            {
+                _eventInfoList = value;
+                OnPropertyChanged("EventInfoList");
+            }
+        }
+
         private List<string> _dataList;
         public List<string> DataList
         {
