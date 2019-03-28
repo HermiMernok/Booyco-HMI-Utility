@@ -37,6 +37,8 @@ namespace Booyco_HMI_Utility
             }
         }
 
+  
+
         private string _threatBID;
         public string ThreatBID
         {
@@ -51,6 +53,19 @@ namespace Booyco_HMI_Utility
             }
         }
 
+        private string _threatPriority;
+        public string ThreatPriority
+        {
+            get
+            {
+                return _threatPriority;
+            }
+            set
+            {
+                _threatPriority = value;
+                OnPropertyChanged("ThreatPriority");
+            }
+        }
         private List<PDSThreatEvent> _PDSThreat = new List<PDSThreatEvent>();
         public List<PDSThreatEvent> PDSThreat
         {
@@ -77,6 +92,19 @@ namespace Booyco_HMI_Utility
     public class PDSThreatEvent : INotifyPropertyChanged
     {
 
+        private string _threatBIDHex;
+        public string ThreatBIDHex
+        {
+            get
+            {
+                return _threatBID;
+            }
+            set
+            {
+                _threatBID = value;
+                OnPropertyChanged("ThreatBIDHex");
+            }
+        }
 
         private string _threatBID;
         public string ThreatBID

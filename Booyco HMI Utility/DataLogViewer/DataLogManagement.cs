@@ -127,6 +127,7 @@ namespace Booyco_HMI_Utility
                                             _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
                                             _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
                                             _index += 4;
+                                                                                        
                                         }
                                         else if (_dataLookupEntry.IsInt == 1)
                                         {
