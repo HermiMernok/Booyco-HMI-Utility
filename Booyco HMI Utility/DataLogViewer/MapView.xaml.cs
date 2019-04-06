@@ -28,6 +28,11 @@ namespace Booyco_HMI_Utility
     {
         private bool isWindow = false;
         public bool CloseRequest = false;
+       
+        public double StartLat = -25.882784;
+        public double StartLon = 28.163630;
+  
+
         public MapView()
         {
             InitializeComponent();
@@ -36,7 +41,7 @@ namespace Booyco_HMI_Utility
         public void UpdateMapMarker()
         {
             this.MainMap.Markers.Clear();
-           
+
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Ellipse))
             {
                 if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
@@ -47,18 +52,23 @@ namespace Booyco_HMI_Utility
                 }
             }
 
-            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
-            {
-                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
-                this.MainMap.Markers.Add(item.MapMarker);
-            }
-
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
             {
                 item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
                 this.MainMap.Markers.Add(item.MapMarker);
-            }                   
+            }
 
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
+            {
+                item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
+             
+            }
+            MainMap.Position = new GMap.NET.PointLatLng(StartLat, StartLon);
+          
+
+           
 
         }
 
@@ -88,11 +98,7 @@ namespace Booyco_HMI_Utility
             // lets the user drag the map with the left mouse button
             MainMap.DragButton = MouseButton.Left;
 
-            double textBoxLat = -25.882784;
-            double textBoxLng = 28.163630;
-
-            MainMap.Position = new GMap.NET.PointLatLng(textBoxLat, textBoxLng);
-
+            MainMap.Position = new GMap.NET.PointLatLng(StartLat, StartLon);
 
             MainMap.ShowCenter = false;
       
@@ -134,17 +140,19 @@ namespace Booyco_HMI_Utility
                     this.MainMap.Markers.Add(item.MapMarker);
                 }
             }
-
-            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
-            {
-                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
-                this.MainMap.Markers.Add(item.MapMarker);
-            }
-
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
             {
                 item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
             }
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
+            {
+                item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);              
+                this.MainMap.Markers.Add(item.MapMarker);
+            }
+
+           
 
        
       

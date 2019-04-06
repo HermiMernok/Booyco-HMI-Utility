@@ -44,6 +44,10 @@ namespace Demo.WindowsPresentation.CustomMarkers
             {
                 PointOfIntersection.Fill = Brushes.Red;
             }
+            else
+            {
+                PointOfIntersection.Fill = Brushes.Transparent;
+            }
 
             this.SizeChanged += new SizeChangedEventHandler(CustomMarkerPoint_SizeChanged);
             this.MouseEnter += new MouseEventHandler(CustomMarkerPoint_MouseEnter);

@@ -6,12 +6,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProximityDetectionSystemInfo;
 
 namespace Booyco_HMI_Utility
 {
     class DataLogManagement    
     {
         public Action<int> ReportProgressDelegate { get; set; }
+        public const int PDSThreatEventID = 150;
+        public const int PDSThreatEventIDEnd = 159;
+        public const int PDSThreatEventLength = 9;
 
         private void ReportProgress(int percent)
         {
@@ -81,13 +85,18 @@ namespace Booyco_HMI_Utility
                 DateTime _eventDateTime;
 
                 //byte[] unixvaluebyte = { 0x0B, 0x62, 0x7F, 0x5C };
-
+                if (BitConverter.ToUInt16(_logChuncks, 6) == 1)
+                {
+                    int testing = 0;
+                }
                 uint _dateTimeStatus = DateTimeCheck.CheckDateTimeStampUnix(BitConverter.ToUInt32(_logTimeStamp, 0), out _eventDateTime);
 
                 _eventDateTime.AddMilliseconds(BitConverter.ToInt16(_logMiliseconds,0));
                 if (_dateTimeStatus == (uint)DateTimeCheck.Status.Ok)
                 {
                     UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
+
+                  
                     string _tempEventInfo = "";
                     List<string> _tempDataList = new List<string>();
                     List<string> _tempEventInfoList = new List<string>();
@@ -113,6 +122,8 @@ namespace Booyco_HMI_Utility
                                         _tempEventInfo += " , ";
                                     }
 
+                                    //if(_Data
+
                                     if (_dataLookupEntry.NumberBytes == 4)
                                     {
                                         if(_dataLookupEntry.IsInt == 2)
@@ -124,43 +135,35 @@ namespace Booyco_HMI_Utility
                                             UInt32 HexValue =  BitConverter.ToUInt32(_tempByteArray, 0);
 
                                              _tempDataList.Add("0x" + (Convert.ToUInt32(HexValue * _scale)).ToString("X8"));
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 4;
                                                                                         
                                         }
                                         else if (_dataLookupEntry.IsInt == 1)
                                         {
-                                            _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 4;
+                                            _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());                                   
                                         }
                                         else
                                         {
-                                             _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " +_tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 4;
+                                             _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());                                   
                                         }
+                                        _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
+                                        _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                        _index += 4;
+
                                     }
                                     else if (_dataLookupEntry.NumberBytes == 2)
                                     {
 
                                         if (_dataLookupEntry.IsInt == 1)
                                         {
-                                            _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " +_tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 2;
+                                            _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());                                         
                                         }
                                         else
                                         {
-                                            _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 2;
+                                            _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());                                         
                                         }
+                                        _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
+                                        _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                        _index += 2;
                                     }
 
                                     else if (_dataLookupEntry.NumberBytes == 1)
@@ -168,18 +171,15 @@ namespace Booyco_HMI_Utility
 
                                         if (_dataLookupEntry.IsInt == 1)
                                         {
-                                            _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 1;
+                                            _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());                                           
                                         }
                                         else
                                         {
-                                            _tempDataList.Add((_logData[_index] * _scale).ToString());
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last();
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last());
-                                            _index += 1;
+                                            _tempDataList.Add((_logData[_index] * _scale).ToString());                                         
                                         }
+                                        _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
+                                        _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                        _index += 1;
                                     }
                                 }
                                 _tempEventInfo += " " + _dataLookupEntry.Appendix;
@@ -198,29 +198,30 @@ namespace Booyco_HMI_Utility
 
                     try
                     {
-                        if(_tempEventID >150 && _tempEventID <157)
+                      
+                        if (_tempEventID > PDSThreatEventID && _tempEventID < PDSThreatEventIDEnd)
                         {
-                            if(TempList.Last().EventID == 150)
+                            if(TempList.Last().EventID == PDSThreatEventID)
                             {
                                 TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                 TempList.Last().DataList.AddRange(_tempDataList);
                                 TempList.Last().EventInfoList.AddRange(_tempEventInfoList);                       
-                                Buffer.BlockCopy(_logData, 0, TempList.Last().RawData,(_tempEventID-150)*8, 8);
+                                Buffer.BlockCopy(_logData, 0, TempList.Last().RawData,(_tempEventID- PDSThreatEventID) *8, 8);
 
                             }
 
                         }
-                        else if(_tempEventID > 157 && _tempEventID < 164)
+                        else if(_tempEventID > PDSThreatEventIDEnd && _tempEventID < PDSThreatEventIDEnd+PDSThreatEventLength)
                         {
-                           if (TempList.Last().EventID == 157)
+                           if (TempList.Last().EventID == PDSThreatEventIDEnd)
                             {
                                 TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                 TempList.Last().DataList.AddRange(_tempDataList);
                                 TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
                             }
-                            Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - 157) * 8, 8);
+                            Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventIDEnd) * 8, 8);
                         }
-                        else if(_tempEventID==150 || _tempEventID == 157)
+                        else if(_tempEventID== PDSThreatEventID || _tempEventID == PDSThreatEventIDEnd)
                         {
                             byte[] byteArray = new byte[58];
                             byteArray[0] = _logData[0];

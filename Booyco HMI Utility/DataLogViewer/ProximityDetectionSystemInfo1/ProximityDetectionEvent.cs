@@ -7,8 +7,25 @@ using System.Threading.Tasks;
 
 namespace ProximityDetectionSystemInfo
 {
+    public enum Tech_Kind
+    {
+        unknown = 0,
+        PDS = 1,
+        Ranging = 2,
+        Pulse = 3,
+        Ranging_pulse = 4,
+        Pulse_GPS = 5,
+        GPS = 6,
+        GSM = 7,
+        RADAR = 8
+    }
+
+   
+   
+
     class ProximityDetectionEvent
     {
+       
 
         private uint _ThreatNumberStart;
         public uint ThreatNumberStart
@@ -220,8 +237,8 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
-        private UInt16 _ThreatPOILOGDistance;
-        public UInt16 ThreatPOILOGDistance
+        private double _ThreatPOILOGDistance;
+        public double ThreatPOILOGDistance
         {
             get { return _ThreatPOILOGDistance; }
             set

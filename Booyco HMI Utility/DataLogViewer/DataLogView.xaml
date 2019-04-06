@@ -113,6 +113,9 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="1"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="5"/>
                         </Grid.RowDefinitions>
                         
@@ -136,12 +139,14 @@
                         <Border Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
                         <Border Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
                         <Border Grid.Column="1" Grid.Row="8" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
+                        <Border Grid.Column="1" Grid.Row="10" Grid.ColumnSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="0 0 0 1"/>
 
-                        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
-                        <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
-                        <Border Grid.Column="6" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
-                        <Border Grid.Column="8" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
-                        <Border Grid.Column="10" Grid.Row="1" Grid.RowSpan="9" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="6" Grid.Row="1" Grid.RowSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="8" Grid.Row="1" Grid.RowSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="10" Grid.Row="1" Grid.RowSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
+                        <Border Grid.Column="12" Grid.Row="1" Grid.RowSpan="11" BorderBrush="{StaticResource brush}" BorderThickness="1 0 1 0"/>
 
                         <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding EventInfoList[0]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
                         <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding EventInfoList[1]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
@@ -178,6 +183,14 @@
                         <TextBlock Grid.Column="7" Grid.Row="9" Text="{Binding EventInfoList[27]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
                         <TextBlock Grid.Column="9" Grid.Row="9" Text="{Binding EventInfoList[28]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
                         <TextBlock Grid.Column="11" Grid.Row="9" Text="{Binding EventInfoList[29]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        
+                        <TextBlock Grid.Column="1" Grid.Row="11" Text="{Binding EventInfoList[30]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="3" Grid.Row="11" Text="{Binding EventInfoList[31]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="5" Grid.Row="11" Text="{Binding EventInfoList[32]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="7" Grid.Row="11" Text="{Binding EventInfoList[33]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="9" Grid.Row="11" Text="{Binding EventInfoList[34]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+                        <TextBlock Grid.Column="11" Grid.Row="11" Text="{Binding EventInfoList[35]}" TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="150"/>
+
                     </Grid>
             
                 </DataTemplate>

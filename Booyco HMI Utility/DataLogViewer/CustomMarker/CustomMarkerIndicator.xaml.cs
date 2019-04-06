@@ -25,6 +25,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
       MainWindow MainWindow;
         GMapControl mapControl;
 
+
       public CustomMarkerIndicator(GMapControl _mapControl, MarkerEntry marker)
       {
         this.InitializeComponent();
@@ -58,20 +59,35 @@ namespace Demo.WindowsPresentation.CustomMarkers
             //CustomMarkerAngle = (Double) (Heading + 180);
 
         this.SizeChanged += new SizeChangedEventHandler(CustomMarkerIndicator_SizeChanged);
-        this.MouseEnter += new MouseEventHandler(CustomMarkerIndicator_MouseEnter);
-        this.MouseLeave += new MouseEventHandler(CustomMarkerIndicator_MouseLeave);
-    
-        Popup.Placement = PlacementMode.Mouse;
-        {
-            Label.Background = Brushes.Gray;
-            Label.Foreground = Brushes.White;
-            Label.BorderBrush = Brushes.Black;
-            Label.BorderThickness = new Thickness(2);
-            Label.Padding = new Thickness(5);
-            Label.FontSize = 12;
-            Label.Content = marker.title;
-        }
-        Popup.Child = Label;
+            //this.MouseEnter += new MouseEventHandler(CustomMarkerIndicator_MouseEnter);
+            //this.MouseLeave += new MouseEventHandler(CustomMarkerIndicator_MouseLeave);
+
+            //Popup.Placement = PlacementMode.Mouse;
+            //{
+            //    Label.Background = Brushes.Gray;
+            //    Label.Foreground = Brushes.White;
+            //    Label.BorderBrush = Brushes.Black;
+            //    Label.BorderThickness = new Thickness(2);
+            //    Label.Padding = new Thickness(5);
+            //    Label.FontSize = 12;
+            //    Label.Content = marker.title;
+            //}
+
+            Label_PopupInfo.Content = marker.title;
+            Ellipse_PresenceZone.Width = marker.PresenceZoneSize / marker.Scale;
+            Ellipse_PresenceZone.Height = marker.PresenceZoneSize / marker.Scale;
+
+            Ellipse_WarningZone.Width = marker.WarningZoneSize / marker.Scale;
+            Ellipse_WarningZone.Height = marker.WarningZoneSize / marker.Scale;
+            Ellipse_WarningZoneBackground.Width = marker.WarningZoneSize / marker.Scale;
+            Ellipse_WarningZoneBackground.Height = marker.WarningZoneSize / marker.Scale;
+
+            Ellipse_CriticalZone.Width = marker.CriticalZoneSize / marker.Scale;
+            Ellipse_CriticalZone.Height = marker.CriticalZoneSize / marker.Scale;
+            Ellipse_CriticalZoneBackground.Width = marker.CriticalZoneSize / marker.Scale;
+            Ellipse_CriticalZoneBackground.Height = marker.CriticalZoneSize / marker.Scale;
+
+            Popup.Child = Label;
       }
         private Double _CustomMarkerAngle;
         public Double CustomMarkerAngle
@@ -98,35 +114,58 @@ namespace Demo.WindowsPresentation.CustomMarkers
          }
       }
 
-      void CustomMarkerIndicator_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+      void CustomMarkerIndicator_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
       {
-         if(!IsMouseCaptured)
-         {
-            Mouse.Capture(this);
-         }
-      }
+            //if(!IsMouseCaptured)
+            //{
+            //   Mouse.Capture(this);
+            //}
+            if (!Label_PopupInfo.IsVisible)
+            {
+                Label_PopupInfo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Label_PopupInfo.Visibility = Visibility.Collapsed;
+               
+            }
 
-      void CustomMarkerIndicator_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        }
+
+      void CustomMarkerIndicator_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
       {
-         if(IsMouseCaptured)
-         {
-            Mouse.Capture(null);
-         }
-      }
+            //if(IsMouseCaptured)
+            //{
+            //   Mouse.Capture(null);
+            //}
+          //  Popup.IsOpen = false;
 
-      void CustomMarkerIndicator_MouseLeave(object sender, MouseEventArgs e)
+        }
+
+        void CustomMarkerIndicator_MouseLeave(object sender, MouseEventArgs e)
       {
             PathIndicator.Opacity = 1;
         // Marker.ZIndex -= 10000;
-         Popup.IsOpen = false;
-      }
+      
+            Ellipse_CriticalZone.Visibility = Visibility.Collapsed;
+            Ellipse_WarningZoneBackground.Visibility = Visibility.Collapsed;
+            Ellipse_WarningZone.Visibility = Visibility.Collapsed;
+            Ellipse_CriticalZoneBackground.Visibility = Visibility.Collapsed;
+            Ellipse_PresenceZone.Visibility = Visibility.Collapsed;
+           
+        }
 
       void CustomMarkerIndicator_MouseEnter(object sender, MouseEventArgs e)
       {
             PathIndicator.Opacity = 0.5;
             //Marker.ZIndex += 10000;
-         Popup.IsOpen = true;
-      }
+        
+            Ellipse_CriticalZone.Visibility = Visibility.Visible;
+            Ellipse_WarningZoneBackground.Visibility = Visibility.Visible;
+            Ellipse_WarningZone.Visibility = Visibility.Visible;
+            Ellipse_CriticalZoneBackground.Visibility = Visibility.Visible;
+            Ellipse_PresenceZone.Visibility = Visibility.Visible;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

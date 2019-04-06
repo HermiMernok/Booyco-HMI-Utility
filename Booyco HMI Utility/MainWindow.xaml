@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Booyco_HMI_Utility"
         mc:Ignorable="d"
-        Title="Booyco HMI Utility V1.03" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
+        Title="Booyco HMI Utility V1.03b" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
 
     <Window.Resources>
         <Style TargetType="{x:Type Button}">

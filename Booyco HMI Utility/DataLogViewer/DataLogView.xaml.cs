@@ -21,6 +21,7 @@ using System.Windows.Shapes;
 using System.IO;
 using Booyco_HMI_Utility.CustomMarker;
 using OfficeOpenXml;
+using ProximityDetectionSystemInfo;
 
 namespace Booyco_HMI_Utility
 {
@@ -295,62 +296,23 @@ namespace Booyco_HMI_Utility
             {
                 if (item != null)
                 {
-                    if (item.EventID == 150 || item.EventID == 157)
+                    if (item.EventID == 150 || item.EventID == 159)
                     {
-                       
 
                         Event_Count++;
                     }
-                    else if (item.EventID == 151 || item.EventID == 158)
-                    {
-                       
-                        Event_Count++;
-                    }
-                    else if (item.EventID == 152 || item.EventID == 159)
-                    {
-
-
-                        Event_Count++;
-
-                    }
-                    else if (item.EventID == 153 || item.EventID == 160)
-                    {
-                        
-
-                        Event_Count++;
-                    }
-                    else if (item.EventID == 154 || item.EventID == 161)
-                    {
-                      
-
-                        Event_Count++;
-                    }
-                    else if (item.EventID == 155 || item.EventID == 162)
-                    {
-                        
-                        Event_Count++;
-                    }
-                    else if (item.EventID == 156 || item.EventID == 163)
-                    {
-                        
-
-                        Event_Count++;
-                    }
-
-                    if (Event_Count == 7)
-                    {
-                        Event_Count = 0;
-                      
-                        return true;
-
-                    }
-
+                   
 
                 }
 
             }
 
-            return false;
+            if(Event_Count> 0)
+            {
+                return true;
+            }
+
+            return false;        
    
         }
 
@@ -359,12 +321,16 @@ namespace Booyco_HMI_Utility
           
             ProximityDetectionEvent TempEvent = new ProximityDetectionEvent();
             uint Event_Count = 0;
-
+            ProximityDetectionEventList = new RangeObservableCollection<ProximityDetectionEvent>();
             foreach (LogEntry item in DataGridLogs.SelectedItems)
             {
+
                 if (item != null)
                 {
-                    if (item.EventID == 150 || item.EventID == 157)
+
+                  
+                    if ((item.EventID == 150 || item.EventID == 159) && ((BitConverter.ToInt32(item.RawData, 40))!= 0 && (BitConverter.ToInt32(item.RawData, 44))!=0))
+                
                     {
                         // TODO: Fix this two variables
                         TempEvent.DateTimeStamp = item.DateTime;
@@ -374,12 +340,20 @@ namespace Booyco_HMI_Utility
                         TempEvent.ThreatTechnology = item.RawData[4];
                         //uint PDS_01_Group = Map_Information1.RawDataEntry[5];
                         TempEvent.ThreatType = item.RawData[6];
-                        TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[7] * 10);
+                        //TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[7] * 10);
 
                         Event_Count++;
                 
                         TempEvent.ThreatDisplaySector = item.RawData[8];
-                        TempEvent.ThreatDisplayZone = item.RawData[9];
+                      
+                        if(item.EventID == 150)
+                        {
+                            TempEvent.ThreatDisplayZone = item.RawData[9];
+                        }
+                        else
+                        {
+                            TempEvent.ThreatDisplayZone = 0;
+                        }
                         TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 10)) / 10.0;
                         TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 12);
                         TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 14);
@@ -392,12 +366,17 @@ namespace Booyco_HMI_Utility
                                             
                         TempEvent.ThreatHorizontalAccuracy = item.RawData[24];
                         TempEvent.ThreatPriority = item.RawData[28];
+                        TempEvent.CriticalDistance = item.RawData[29];
+                        TempEvent.WarningDistance = item.RawData[30];
+                        TempEvent.PresenceDistance = item.RawData[31];
+                        TempEvent.ThreatPOILOGDistance = ((double)BitConverter.ToInt16(item.RawData, 26));
 
                         Event_Count++;
                   
                         TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 32)) / 10.0;
-                        TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 34)) / 100.00;
+                        TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 34)) ;
                         TempEvent.UnitHorizontalAccuracy = item.RawData[36];
+                        TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[38]);
 
                         Event_Count++;
                    
@@ -410,77 +389,83 @@ namespace Booyco_HMI_Utility
                         TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 52) * Math.Pow(10, -7));
 
                         Event_Count++;
-                    }
-                    //if (item.EventID == 150 || item.EventID == 157)
-                    //{
-                    //    // TODO: Fix this two variables
-                    //    TempEvent.DateTimeStamp = item.DateTime;
-                    //    TempEvent.ThreatNumberStart = item.Number;
-                    //    TempEvent.ThreatNumberStop = item.Number + 6;
-                    //    TempEvent.PrimaryID = BitConverter.ToUInt32(item.RawData, 0);
-                    //    TempEvent.ThreatTechnology = item.RawData[4];
-                    //    //uint PDS_01_Group = Map_Information1.RawDataEntry[5];
-                    //    TempEvent.ThreatType = item.RawData[6];
-                    //    TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[7] * 10);
 
-                    //    Event_Count++;
-                    //}
-                    //else if (item.EventID == 151 || item.EventID == 158)
-                    //{
-                    //    TempEvent.ThreatDisplaySector = item.RawData[0];
-                    //    TempEvent.ThreatDisplayZone = item.RawData[1];
-                    //    TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 2)) / 10.0;
-                    //    TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 4);
-                    //    TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 6);
-                    //    Event_Count++;
-                    //}
-                    //else if (item.EventID == 152 || item.EventID == 159)
-                    //{
-                    //    TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                    //    TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                        //Convert Geodetic decimal to UTM for Unit and POI
+                        GeoUtility.GeoSystem.Geographic LatLon_Unit = new GeoUtility.GeoSystem.Geographic(TempEvent.UnitLongitude, TempEvent.UnitLatitude);
+                        GeoUtility.GeoSystem.UTM UTM_Unit = (GeoUtility.GeoSystem.UTM)LatLon_Unit;
+                        GeoUtility.GeoSystem.Geographic POI_LatLon = new GeoUtility.GeoSystem.Geographic(TempEvent.POILongitude, TempEvent.POILatitude);
+                        GeoUtility.GeoSystem.UTM POI_UTM = (GeoUtility.GeoSystem.UTM)POI_LatLon;
+                        //Calculate distance between unit and POI
+                        TempEvent.ThreatPOIUTMDistance = Math.Sqrt((Math.Pow((UTM_Unit.East - POI_UTM.East), 2) + Math.Pow((UTM_Unit.North - POI_UTM.North), 2)));
 
-                    //    Event_Count++;
+                        //if (item.EventID == 150 || item.EventID == 157)
+                        //{
+                        //    // TODO: Fix this two variables
+                        //    TempEvent.DateTimeStamp = item.DateTime;
+                        //    TempEvent.ThreatNumberStart = item.Number;
+                        //    TempEvent.ThreatNumberStop = item.Number + 6;
+                        //    TempEvent.PrimaryID = BitConverter.ToUInt32(item.RawData, 0);
+                        //    TempEvent.ThreatTechnology = item.RawData[4];
+                        //    //uint PDS_01_Group = Map_Information1.RawDataEntry[5];
+                        //    TempEvent.ThreatType = item.RawData[6];
+                        //    TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[7] * 10);
 
-                    //}
-                    //else if (item.EventID == 153 || item.EventID == 160)
-                    //{
-                    //    TempEvent.ThreatHorizontalAccuracy = item.RawData[0];
-                    //    TempEvent.ThreatPriority = item.RawData[4];
+                        //    Event_Count++;
+                        //}
+                        //else if (item.EventID == 151 || item.EventID == 158)
+                        //{
+                        //    TempEvent.ThreatDisplaySector = item.RawData[0];
+                        //    TempEvent.ThreatDisplayZone = item.RawData[1];
+                        //    TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 2)) / 10.0;
+                        //    TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 4);
+                        //    TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 6);
+                        //    Event_Count++;
+                        //}
+                        //else if (item.EventID == 152 || item.EventID == 159)
+                        //{
+                        //    TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                        //    TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
 
-                    //    Event_Count++;
-                    //}
-                    //else if (item.EventID == 154 || item.EventID == 161)
-                    //{
-                    //    TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 0)) / 10.0;
-                    //    TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 2)) / 100.00;
-                    //    TempEvent.UnitHorizontalAccuracy = item.RawData[4];
+                        //    Event_Count++;
 
-                    //    Event_Count++;
-                    //}
-                    //else if (item.EventID == 155 || item.EventID == 162)
-                    //{
-                    //    TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                    //    TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
-                    //    Event_Count++;
-                    //}
-                    //else if (item.EventID == 156 || item.EventID == 163)
-                    //{
-                    //    TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
-                    //    TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                        //}
+                        //else if (item.EventID == 153 || item.EventID == 160)
+                        //{
+                        //    TempEvent.ThreatHorizontalAccuracy = item.RawData[0];
+                        //    TempEvent.ThreatPriority = item.RawData[4];
 
-                    //    Event_Count++;
-                    //}
+                        //    Event_Count++;
+                        //}
+                        //else if (item.EventID == 154 || item.EventID == 161)
+                        //{
+                        //    TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 0)) / 10.0;
+                        //    TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 2)) / 100.00;
+                        //    TempEvent.UnitHorizontalAccuracy = item.RawData[4];
 
-                    //if (Event_Count == 7)
-                    //{
-                    //    Event_Count = 0;
-                    //    ProximityDetectionEventList.Add(TempEvent);
-                    //    TempEvent = new ProximityDetectionEvent();
+                        //    Event_Count++;
+                        //}
+                        //else if (item.EventID == 155 || item.EventID == 162)
+                        //{
+                        //    TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                        //    TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
+                        //    Event_Count++;
+                        //}
+                        //else if (item.EventID == 156 || item.EventID == 163)
+                        //{
+                        //    TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 0) * Math.Pow(10, -7));
+                        //    TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 4) * Math.Pow(10, -7));
 
-                    //}
+                        //    Event_Count++;
+                        //}
 
-                    if (Event_Count == 7)
-                    {
+                        //if (Event_Count == 7)
+                        //{
+                        //    Event_Count = 0;
+                        //    ProximityDetectionEventList.Add(TempEvent);
+                        //    TempEvent = new ProximityDetectionEvent();
+
+                        //}
+
                         Event_Count = 0;
                         ProximityDetectionEventList.Add(TempEvent);
                         TempEvent = new ProximityDetectionEvent();
@@ -491,10 +476,14 @@ namespace Booyco_HMI_Utility
                 }
 
             }
-
+            GlobalSharedData.PDSMapMarkers = new List<MarkerEntry>();
+            double LastLat = 0;
+            double LastLon = 0;
             foreach (ProximityDetectionEvent EventItem in ProximityDetectionEventList)
             {
-                GlobalSharedData.PDSMapMarkers.Clear();
+              
+                //if(TempEvent.ThreatTechnology == (int)Tech_Kind.Pulse_GPS || TempEvent.ThreatTechnology == (int)Tech_Kind_GPS)
+                //{ 
 
                 string PDS_Event_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                                 "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
@@ -531,45 +520,63 @@ namespace Booyco_HMI_Utility
                                           "POI Latitude: " + EventItem.POILatitude.ToString() + " deg\n" +
                                           "POI Longitude: " + EventItem.POILongitude.ToString() + " deg";
 
-
-                MarkerEntry PDSMarker1 = new MarkerEntry();
-                PDSMarker1.MapMarker = new GMapMarker(new PointLatLng(EventItem.ThreatLatitude, EventItem.ThreatLongitude));
-                MarkerEntry PDSMarker2 = new MarkerEntry();
-                PDSMarker2.MapMarker = new GMapMarker(new PointLatLng(EventItem.UnitLatitude, EventItem.UnitLongitude));
+                 MarkerEntry PDSMarker1 = new MarkerEntry();               
+                MarkerEntry PDSMarker2 = new MarkerEntry();               
                 MarkerEntry PDSMarkerPOI = new MarkerEntry();
-                PDSMarkerPOI.MapMarker = new GMapMarker(new PointLatLng(EventItem.POILongitude, EventItem.POILatitude));
 
-                if (TempEvent.ThreatTechnology == 5)
+
+                int LastGeofenceIndex = -1;
+
+                if (TempEvent.ThreatTechnology == (int)Tech_Kind.Pulse_GPS)
                 {
                     PDSMarker1.Heading = EventItem.ThreatHeading;
                     PDSMarker1.Zone = 0;
                     PDSMarker1.title = PDS_Event_Information;
                     PDSMarker1.Type = (int)MarkerType.Indicator;                
                 }
-                else
+                else 
                 {                
                     PDSMarker1.title = PDS_Event_Information;
                     PDSMarker1.Width = EventItem.ThreatDisplayWidth;
                     PDSMarker1.Height = EventItem.ThreatDisplayWidth;
              
-                    PDSMarker1.Type = (int)MarkerType.Ellipse;                 
+                    PDSMarker1.Type = (int)MarkerType.Ellipse;
+          
                 }
+
+                LastGeofenceIndex = GlobalSharedData.PDSMapMarkers.FindLastIndex(x => x.MapMarker.Position.Lat == EventItem.ThreatLatitude && x.MapMarker.Position.Lng == EventItem.ThreatLongitude && x.Type == (int)MarkerType.Ellipse);
+
+             
+                PDSMarker1.MapMarker = new GMapMarker(new PointLatLng(EventItem.ThreatLatitude, EventItem.ThreatLongitude));
+                PDSMarker2.MapMarker = new GMapMarker(new PointLatLng(EventItem.UnitLatitude, EventItem.UnitLongitude));
+                PDSMarkerPOI.MapMarker = new GMapMarker(new PointLatLng(EventItem.POILatitude, EventItem.POILongitude));
+
                 PDSMarker2.Heading = EventItem.UnitHeading;
                 PDSMarker2.Zone = EventItem.ThreatDisplayZone;
-                PDSMarker2.title = Unit_Information;     
+                PDSMarker2.title = Unit_Information;
+                PDSMarker2.PresenceZoneSize = EventItem.PresenceDistance+1;
+                PDSMarker2.WarningZoneSize = EventItem.WarningDistance+1;
+                PDSMarker2.CriticalZoneSize = EventItem.CriticalDistance+1;
                 PDSMarker2.Type = (int)MarkerType.Indicator;
               
                 PDSMarkerPOI.Zone = EventItem.ThreatDisplayZone;
                 PDSMarkerPOI.title = POI_Information;
                 PDSMarkerPOI.Type = (int)MarkerType.Point;
-         
-                GlobalSharedData.PDSMapMarkers.Add(PDSMarker1);
+                if (LastGeofenceIndex == -1)
+                {
+                    GlobalSharedData.PDSMapMarkers.Add(PDSMarker1);
+                }
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarker2);
-                extendedWindow.MapView.UpdateMapMarker();          
-                
+                GlobalSharedData.PDSMapMarkers.Add(PDSMarkerPOI);
+                extendedWindow.MapView.StartLat = EventItem.UnitLatitude;
+                extendedWindow.MapView.StartLon = EventItem.UnitLongitude;
+               
+
             }
-     
-            
+
+            extendedWindow.MapView.UpdateMapMarker();
+
+
         }
 
         public void DisplayWindowMap()
@@ -861,7 +868,7 @@ namespace Booyco_HMI_Utility
                
                                         
                 }
-                if (item.EventID == 157)
+                if (item.EventID == 159)
                 {
 
                     if (uint.Parse(item.DataList.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber) == 0)

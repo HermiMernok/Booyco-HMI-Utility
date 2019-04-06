@@ -60,7 +60,7 @@ namespace Booyco_HMI_Utility
               
                 List<LPDDataLookupEntry> _tempData = new List<LPDDataLookupEntry>();
 
-                    if (_row.ItemArray.Count() == 10)
+                    if (_row.ItemArray.Count() == 12)
                     {
                         for (int i = 2; i < 10; i++)
                         {
@@ -96,7 +96,7 @@ namespace Booyco_HMI_Utility
 
                         {
                             EventID = Convert.ToUInt16(_row.ItemArray[0]),
-                            EventName = Convert.ToString(_row.ItemArray[1]),
+                            EventName = Convert.ToString(_row.ItemArray[10]),
                             Data = _tempData
 
                         });

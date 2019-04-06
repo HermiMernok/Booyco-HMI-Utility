@@ -26,5 +26,8 @@ namespace Booyco_HMI_Utility.CustomMarker
         public ushort Width;
         public double Scale;
         public ushort Height;
+        public int PresenceZoneSize;
+        public int WarningZoneSize;
+        public int CriticalZoneSize;
     }
 }
