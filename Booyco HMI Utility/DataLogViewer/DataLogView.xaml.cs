@@ -37,9 +37,9 @@ namespace Booyco_HMI_Utility
         private DataLogManagement dataLogManager = new DataLogManagement();
         private bool _dataLogIsExpanded = false;
 
+        private RangeObservableCollection<LogEntry> AnalogLogs = new RangeObservableCollection<LogEntry>();
+        private RangeObservableCollection<LogEntry> EventLogs = new RangeObservableCollection<LogEntry>();
 
-
-       
 
         public bool DataLogIsExpanded
         {       
@@ -115,7 +115,23 @@ namespace Booyco_HMI_Utility
             if (e.ProgressPercentage > 100)
             {
                 DataLogs.Clear();
-                DataLogs.AddRange(dataLogManager.TempList);
+                EventLogs.Clear();
+                AnalogLogs.Clear();
+                foreach (LogEntry item in dataLogManager.TempList)
+                {
+                    if(item.EventID < 500)
+                    {
+                        EventLogs.Add(item);
+                      
+                    }
+                    else
+                    {
+                        AnalogLogs.Add(item);
+                    }
+                  
+                }
+                DataLogs.AddRange(EventLogs);
+                DataLogs.AddRange(AnalogLogs);
                 dataLogManager.TempList.Clear();
                 ButtonSave.IsEnabled = true;
                 ProgressbarDataLogs.Visibility = Visibility.Collapsed;
@@ -373,7 +389,7 @@ namespace Booyco_HMI_Utility
                         TempEvent.ThreatPOILOGDistance = double.Parse(item.DataList[14]);
                         TempEvent.CriticalDistance = ushort.Parse(item.DataList[16]);
                         TempEvent.WarningDistance = ushort.Parse(item.DataList[17]);
-                        TempEvent.PresenceDistance = ushort.Parse(item.DataList[18]);                    
+                        //PresenceDistance = ushort.Parse(item.DataList[18]);                    
 
                         Event_Count++;
                   

@@ -35,7 +35,7 @@
         <Button x:Name="ButtonSave" Content="Export"  Click="ButtonSaveFile_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="True"/>
 
 
-        <DataGrid x:Name="DataGridLogs"   ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,10,0,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
+        <DataGrid x:Name="DataGridLogs" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,10,0,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
                     <EventSetter Event="MouseDoubleClick" Handler="RowDoubleClick"/>
@@ -62,9 +62,9 @@
             </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Header="No." Binding="{Binding Number}" MinWidth="60" MaxWidth="60"/>
-                <DataGridTextColumn Width="4*" Header="Date" Binding="{Binding DateTime, StringFormat='{}{0:dd/MM/yyyy}'}" MinWidth="150" MaxWidth="150" />
-                <DataGridTextColumn Width="4*" Header="Time" Binding="{Binding DateTime, StringFormat='{}{0:HH:mm:ss:fff}'}" MinWidth="150" MaxWidth="150" />
-                <DataGridTextColumn Width="2*" Header="Event ID" Binding="{Binding EventID}" MinWidth="110" MaxWidth="110"/>
+                <DataGridTextColumn Width="4*" Header="Date" Binding="{Binding DateTime, StringFormat='{}{0:dd/MM/yyyy}'}" MinWidth="10" MaxWidth="150" />
+                <DataGridTextColumn Width="4*" Header="Time" Binding="{Binding DateTime, StringFormat='{}{0:HH:mm:ss:fff}'}" MinWidth="50" MaxWidth="150" />
+                <DataGridTextColumn Width="2*" Header="Event ID" Binding="{Binding EventID}" MinWidth="10" MaxWidth="110"/>
                 <DataGridTextColumn Width="8*" Binding="{Binding EventName}" >
                     <!--<DataGridTextColumn.HeaderStyle>
                         <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -90,7 +90,7 @@
                         </Grid>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EventInfo}" Header="Event" Visibility="Visible"/>
+                <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EventInfo}" Header="Event" />
 
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
