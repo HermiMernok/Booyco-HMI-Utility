@@ -127,30 +127,30 @@ namespace Booyco_HMI_Utility
 
         private void MainMap_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-             this.MainMap.Markers.Clear();
+            // this.MainMap.Markers.Clear();
 
-            // double zoom = MainMap.Zoom;
+            //// double zoom = MainMap.Zoom;
 
-            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Ellipse))
-            {
-                if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
-                {
-                    item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
-                    item.MapMarker.Shape = new CustomMarkerEllipse(this.MainMap, item);
-                    this.MainMap.Markers.Add(item.MapMarker);
-                }
-            }
-            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
-            {
-                item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
-                this.MainMap.Markers.Add(item.MapMarker);
-            }
-            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
-            {
-                item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
-                item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);              
-                this.MainMap.Markers.Add(item.MapMarker);
-            }
+            //foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Ellipse))
+            //{
+            //    if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
+            //    {
+            //        item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+            //        item.MapMarker.Shape = new CustomMarkerEllipse(this.MainMap, item);
+            //        this.MainMap.Markers.Add(item.MapMarker);
+            //    }
+            //}
+            //foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
+            //{
+            //    item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
+            //    this.MainMap.Markers.Add(item.MapMarker);
+            //}
+            //foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
+            //{
+            //    item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+            //    item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);              
+            //    this.MainMap.Markers.Add(item.MapMarker);
+            //}
 
            
 

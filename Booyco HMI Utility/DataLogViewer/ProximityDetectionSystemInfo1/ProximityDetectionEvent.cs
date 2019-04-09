@@ -152,6 +152,19 @@ namespace ProximityDetectionSystemInfo
                 }
             }
         }
+        private List<string> _eventInfo;
+        public List<string> EventInfo
+        {
+            get { return _eventInfo; }
+            set
+            {
+                if (_eventInfo != value)
+                {
+                    _eventInfo = value;
+                    OnPropertyChanged("EventInfo");
+                }
+            }
+        }
 
         private double _ThreatSpeed;
         public double ThreatSpeed

@@ -14,13 +14,16 @@ namespace Booyco_HMI_Utility
     class ExcelFileManagement
     {
         public List<LPDEntry> LPDInfoList = new List<LPDEntry>();
+        public List<List<string>> LPDInfoEnumList = new List<List<string>>();
         public List<LPDDataLookupEntry> LPDLookupList = new List<LPDDataLookupEntry>();
+     
         string _LPDPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/LPD.xlsx";
         public void StoreLogProtocolInfo()
         {
             DataRowCollection _data = ReadExcelFile(_LPDPath, 0);
             DataRowCollection _lookup = ReadExcelFile(_LPDPath, 1);
-
+            List<string> tempStringList = new List<string>();
+            int EnumIndex = 0;
             foreach (DataRow _row in _lookup)
             {
                 try
@@ -34,9 +37,22 @@ namespace Booyco_HMI_Utility
                         NumberBytes = Convert.ToInt32(_row.ItemArray[3]),
                         Scale = Convert.ToInt32(_row.ItemArray[4]),
                         IsInt = Convert.ToInt32(_row.ItemArray[5]),
-                        Appendix = Convert.ToString(_row.ItemArray[6])
+                        Appendix = Convert.ToString(_row.ItemArray[6]),
+                        EnumLink = Convert.ToInt32(_row.ItemArray[7]),
 
                     });
+
+                    if (Convert.ToInt32(_row.ItemArray[11]) == EnumIndex)
+                    {
+                        tempStringList.Add(Convert.ToString(_row.ItemArray[12]));
+                    }
+                    else
+                    {
+                        LPDInfoEnumList.Add(tempStringList);
+                        tempStringList = new List<string>();
+                        tempStringList.Add(Convert.ToString(_row.ItemArray[12]));
+                        EnumIndex = Convert.ToInt32(_row.ItemArray[11]);
+                    }
 
                 }
 
@@ -52,8 +68,8 @@ namespace Booyco_HMI_Utility
 
             }
 
-
-                foreach (DataRow _row in _data)
+            LPDInfoEnumList.Add(tempStringList);
+            foreach (DataRow _row in _data)
 
                 {
 

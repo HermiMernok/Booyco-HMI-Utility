@@ -354,26 +354,30 @@ namespace Booyco_HMI_Utility
                         {
                             TempEvent.ThreatDisplayZone = 0;
                         }
-                        TempEvent.ThreatSpeed = ((double)BitConverter.ToInt16(item.RawData, 10)) / 10.0;
-                        TempEvent.ThreatDistance = BitConverter.ToUInt16(item.RawData, 12);
-                        TempEvent.ThreatHeading = BitConverter.ToInt16(item.RawData, 14);
+                        if(DataLogs.Count() == 0)
+                        {
+
+                        }
+                        TempEvent.EventInfo = item.EventInfoList;
+                        TempEvent.ThreatSpeed = double.Parse(item.DataList[7]);
+                        TempEvent.ThreatDistance = ushort.Parse(item.DataList[8]);
+                        TempEvent.ThreatHeading = double.Parse(item.DataList[9]);
                         Event_Count++;
-                  
-                        TempEvent.ThreatLatitude = ((double)BitConverter.ToInt32(item.RawData, 16) * Math.Pow(10, -7));
-                        TempEvent.ThreatLongitude = ((double)BitConverter.ToInt32(item.RawData, 20) * Math.Pow(10, -7));
+
+                        TempEvent.ThreatLatitude = double.Parse(item.DataList[10]);
+                        TempEvent.ThreatLongitude = double.Parse(item.DataList[11]);
 
                         Event_Count++;
-                                            
-                        TempEvent.ThreatHorizontalAccuracy = item.RawData[24];
-                        TempEvent.ThreatPriority = item.RawData[28];
-                        TempEvent.CriticalDistance = item.RawData[29];
-                        TempEvent.WarningDistance = item.RawData[30];
-                        TempEvent.PresenceDistance = item.RawData[31];
-                        TempEvent.ThreatPOILOGDistance = ((double)BitConverter.ToInt16(item.RawData, 26));
+                        TempEvent.ThreatHorizontalAccuracy = uint.Parse(item.DataList[12]);                    
+                        TempEvent.ThreatPriority = uint.Parse(item.DataList[13]);
+                        TempEvent.ThreatPOILOGDistance = double.Parse(item.DataList[14]);
+                        TempEvent.CriticalDistance = ushort.Parse(item.DataList[16]);
+                        TempEvent.WarningDistance = ushort.Parse(item.DataList[17]);
+                        TempEvent.PresenceDistance = ushort.Parse(item.DataList[18]);                    
 
                         Event_Count++;
                   
-                        TempEvent.UnitSpeed = ((double)BitConverter.ToUInt16(item.RawData, 32)) / 10.0;
+                        TempEvent.UnitSpeed = double.Parse(item.DataList[10]); 
                         TempEvent.UnitHeading = ((double)BitConverter.ToUInt16(item.RawData, 34)) ;
                         TempEvent.UnitHorizontalAccuracy = item.RawData[36];
                         TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[38]);
@@ -481,44 +485,45 @@ namespace Booyco_HMI_Utility
             double LastLon = 0;
             foreach (ProximityDetectionEvent EventItem in ProximityDetectionEventList)
             {
-              
+
                 //if(TempEvent.ThreatTechnology == (int)Tech_Kind.Pulse_GPS || TempEvent.ThreatTechnology == (int)Tech_Kind_GPS)
                 //{ 
 
                 string PDS_Event_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                                 "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
-                                                "Threat ID: 0x" + EventItem.PrimaryID.ToString("X") + "\n" +
-                                                "Threat Kind: " + EventItem.ThreatTechnology.ToString() + "\n" +
-                                                // "Threat Group: " + PDS_01_Group.ToString() + "\n" +
-                                                "Threat Type: " + EventItem.ThreatType.ToString() + "\n" +
-                                                "Threat Speed: " + EventItem.ThreatSpeed.ToString("##,#00.0") + " km/h\n" +
-                                                "Threat Distance: " + EventItem.ThreatDistance.ToString() + " m\n" +
-                                                "Threat Heading: " + EventItem.ThreatHeading.ToString() + " deg\n" +
-                                                "Threat Accuracy: " + EventItem.ThreatHorizontalAccuracy.ToString() + " m\n" +
-                                                "Threat Priority: " + EventItem.ThreatPriority.ToString() + "\n" +
-                                                "Threat Latitude: " + EventItem.ThreatLatitude.ToString() + " deg\n" +
-                                                "Threat Longitude: " + EventItem.ThreatLongitude.ToString() + " deg";
+                                                EventItem.EventInfo[0] + "\n" +         //Thread BID
+                                                EventItem.EventInfo[1] + "\n" +         //THreat Kind
+                                                EventItem.EventInfo[2] + "\n" +         //Threat Group
+                                                EventItem.EventInfo[3] + "\n" +         //Threat Type
+                                                EventItem.EventInfo[4] + "\n" +         //Threat Cluster
+                                                EventItem.EventInfo[5] + "\n" +         //Threat Sector
+                                                EventItem.EventInfo[6] + "\n" +         //Threat Zone
+                                                EventItem.EventInfo[7] + "\n" +         //Threat Speed
+                                                EventItem.EventInfo[8] + "\n" +         //Threat Distance
+                                                EventItem.EventInfo[9] + "\n" +         //Threat Heading
+                                                EventItem.EventInfo[10] + "\n" +         //Threat Latitude
+                                                EventItem.EventInfo[11] + "\n" +         //Threat Longitude
+                                                EventItem.EventInfo[12] + "\n";         //Threat Acc
 
                 string Unit_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                           "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
-                                          "Unit Speed: " + EventItem.UnitSpeed.ToString("##,#00.0") + " km/h\n" +
-                                          "Unit Heading: " + EventItem.UnitHeading.ToString("###,#.00") + " deg\n" +
-                                          "Unit Accuracy: " + EventItem.UnitHorizontalAccuracy.ToString() + " m\n" +
-                                          "Unit Latitude: " + EventItem.UnitLatitude.ToString() + " deg\n" +
-                                          "Unit Longitude: " + EventItem.UnitLongitude.ToString() + " deg\n" +
-                                          "Unit Presence Distance: " + EventItem.PresenceDistance.ToString() + " m\n" +
-                                          "Unit Warning Distance: " + EventItem.WarningDistance.ToString() + " m\n" +
-                                          "Unit Critical Distance: " + EventItem.CriticalDistance.ToString() + " m\n" +
-                                          "Threat Zone: " + EventItem.ThreatDisplayZone.ToString() + "\n" +
-                                          "Threat Display Width: " + EventItem.ThreatDisplayWidth.ToString() + "\n" +
-                                          "Threat Sector: " + EventItem.ThreatDisplaySector.ToString();
+                                            EventItem.EventInfo[19] + "\n" +         //Speed
+                                            EventItem.EventInfo[20] + "\n" +         //Heading
+                                            EventItem.EventInfo[21] + "\n" +         //Accuracy
+                                           // EventItem.EventInfo[22] + "\n" +        
+                                           // EventItem.EventInfo[23] + "\n" +         
+                                            EventItem.EventInfo[24] + "\n" +         //LAT
+                                            EventItem.EventInfo[25] + "\n" +         //LON
+                                            EventItem.EventInfo[29] + "\n";         //Scenario
+                                           // EventItem.EventInfo[27] + "\n" +         //Scenario
 
                 string POI_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                           "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
                                           "POI Distance (UTM Plot): " + EventItem.ThreatPOIUTMDistance.ToString("##,##00.00") + " m\n" +
                                           "POI Distance (Log): " + EventItem.ThreatPOILOGDistance.ToString() + " m\n" +
                                           "POI Latitude: " + EventItem.POILatitude.ToString() + " deg\n" +
-                                          "POI Longitude: " + EventItem.POILongitude.ToString() + " deg";
+                                          "POI Longitude: " + EventItem.POILongitude.ToString() + " deg" + "\n" +  
+                                          EventItem.EventInfo[29] + "\n";        //Scenario;
 
                  MarkerEntry PDSMarker1 = new MarkerEntry();               
                 MarkerEntry PDSMarker2 = new MarkerEntry();               
@@ -527,21 +532,27 @@ namespace Booyco_HMI_Utility
 
                 int LastGeofenceIndex = -1;
 
-                if (TempEvent.ThreatTechnology == (int)Tech_Kind.Pulse_GPS)
+                if (EventItem.ThreatTechnology == (int)Tech_Kind.Pulse_GPS)
                 {
                     PDSMarker1.Heading = EventItem.ThreatHeading;
-                    PDSMarker1.Zone = 0;
+                    PDSMarker1.Zone = 10;
                     PDSMarker1.title = PDS_Event_Information;
                     PDSMarker1.Type = (int)MarkerType.Indicator;                
                 }
-                else 
+                else if(EventItem.ThreatTechnology == (int)Tech_Kind.GPS)
                 {                
                     PDSMarker1.title = PDS_Event_Information;
                     PDSMarker1.Width = EventItem.ThreatDisplayWidth;
                     PDSMarker1.Height = EventItem.ThreatDisplayWidth;
              
+                    PDSMarker1.Type = (int)MarkerType.Ellipse;          
+                }
+                else
+                {
+                    PDSMarker1.title = PDS_Event_Information;
+                    PDSMarker1.Width = EventItem.ThreatDisplayWidth;
+                    PDSMarker1.Height = EventItem.ThreatDisplayWidth;
                     PDSMarker1.Type = (int)MarkerType.Ellipse;
-          
                 }
 
                 LastGeofenceIndex = GlobalSharedData.PDSMapMarkers.FindLastIndex(x => x.MapMarker.Position.Lat == EventItem.ThreatLatitude && x.MapMarker.Position.Lng == EventItem.ThreatLongitude && x.Type == (int)MarkerType.Ellipse);

@@ -132,7 +132,21 @@ namespace Booyco_HMI_Utility
             }
         }
 
-   
+        private int _enumLink;
+        public int EnumLink
+        {
+            get
+            {
+                return _enumLink;
+            }
+            set
+            {
+                _enumLink = value;
+                OnPropertyChanged("EnumLink");
+            }
+        }
+
+
 
         private string _appendix;
         public string Appendix

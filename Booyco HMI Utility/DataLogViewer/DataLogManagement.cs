@@ -61,6 +61,13 @@ namespace Booyco_HMI_Utility
             TotalLogEntries = (UInt32)((float)_fileLength / (float)TOTAL_ENTRY_BYTES);
             for (uint i = 0; i < (int)TotalLogEntries - 1; i++)
             {
+
+                if ((i % (TotalLogEntries / 100)) == 0)
+                {
+                    PercentageComplete++;
+                    ReportProgress(PercentageComplete);
+                }
+
                 if (AbortRequest)
                 {
                     _breader.Close();
@@ -78,196 +85,218 @@ namespace Booyco_HMI_Utility
 
                 // ---- Copy from the 16 byte logChunk the DateTimeStamp ----
                 Buffer.BlockCopy(_logChuncks, 0, _logTimeStamp, 0, 4);
-                Buffer.BlockCopy(_logChuncks, 4, _logMiliseconds, 0, 2);
-                // ---- Copy from the 16 byte logChunk the Data ----
-                Buffer.BlockCopy(_logChuncks, 8, _logData, 0, 8);
-
                 DateTime _eventDateTime;
-
-                //byte[] unixvaluebyte = { 0x0B, 0x62, 0x7F, 0x5C };
-                if (BitConverter.ToUInt16(_logChuncks, 6) == 1)
-                {
-                    int testing = 0;
-                }
                 uint _dateTimeStatus = DateTimeCheck.CheckDateTimeStampUnix(BitConverter.ToUInt32(_logTimeStamp, 0), out _eventDateTime);
-
-                _eventDateTime.AddMilliseconds(BitConverter.ToInt16(_logMiliseconds,0));
+               
                 if (_dateTimeStatus == (uint)DateTimeCheck.Status.Ok)
                 {
-                    UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
+                    Buffer.BlockCopy(_logChuncks, 4, _logMiliseconds, 0, 2);
+                    // ---- Copy from the 16 byte logChunk the Data ----
+                    Buffer.BlockCopy(_logChuncks, 8, _logData, 0, 8);
 
-                  
-                    string _tempEventInfo = "";
-                    List<string> _tempDataList = new List<string>();
-                    List<string> _tempEventInfoList = new List<string>();
-                    try
-                   {
-                        if (ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID-1).Data[0].DataLink == "Empty")
+
+
+                    //byte[] unixvaluebyte = { 0x0B, 0x62, 0x7F, 0x5C };
+                    if (BitConverter.ToUInt16(_logChuncks, 6) == 1)
+                    {
+                        int testing = 0;
+                    }
+                    
+                    _eventDateTime.AddMilliseconds(BitConverter.ToInt16(_logMiliseconds, 0));
+                    UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
+                    if (_tempEventID > 0)
+                    {
+
+                        string _tempEventInfo = "";
+                        List<string> _tempDataList = new List<string>();
+                        List<string> _tempEventInfoList = new List<string>();
+                        try
+                        {
+
+                            if (ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).Data[0].DataLink == "Empty")
+                            {
+                                _tempEventInfo = "No Information";
+                                _tempEventInfoList.Add("No Information");
+                            }
+                            else
+                            {
+                                int _count = 0;
+                                int _index = 0;
+                                foreach (LPDDataLookupEntry _dataLookupEntry in ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).Data)
+                                {
+
+                                    if (_dataLookupEntry.DataLink != "Empty")
+                                    {
+                                        double _scale = Math.Pow(10, _dataLookupEntry.Scale);
+                                        if (_count > 0)
+                                        {
+                                            _tempEventInfo += " , ";
+                                        }
+
+                                        //if(_Data
+
+                                        if (_dataLookupEntry.NumberBytes == 4)
+                                        {
+                                            if (_dataLookupEntry.IsInt == 2)
+                                            {
+                                                byte[] _tempByteArray = { 0, 0, 0, 0 };
+
+                                                Array.Copy(_logData, _index, _tempByteArray, 0, 4);
+
+                                                UInt32 HexValue = BitConverter.ToUInt32(_tempByteArray, 0);
+
+                                                _tempDataList.Add("0x" + (Convert.ToUInt32(HexValue * _scale)).ToString("X8"));
+
+                                            }
+                                            else if (_dataLookupEntry.IsInt == 1)
+                                            {
+                                                _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());
+                                            }
+                                            else
+                                            {
+                                                _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());
+                                            }
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                            _index += 4;
+
+                                        }
+                                        else if (_dataLookupEntry.NumberBytes == 2)
+                                        {
+
+                                            if (_dataLookupEntry.IsInt == 1)
+                                            {
+                                                _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());
+                                            }
+                                            else
+                                            {
+                                                _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());
+                                            }
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                            _index += 2;
+                                        }
+
+                                        else if (_dataLookupEntry.NumberBytes == 1)
+                                        {
+                                            if (i == 118)
+                                            {
+                                                int breakpoint = 0;
+                                            }
+                                            if (_dataLookupEntry.EnumLink == 0 || ExcelFilemanager.LPDInfoEnumList[_dataLookupEntry.EnumLink].Count < _logData[_index])
+                                            {
+
+                                                if (_dataLookupEntry.IsInt == 1)
+                                                {
+                                                    _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());
+                                                }
+                                                else
+                                                {
+                                                    _tempDataList.Add((_logData[_index] * _scale).ToString());
+                                                }
+                                            }
+
+                                            else if (_dataLookupEntry.EnumLink != 0)
+                                            {
+                                                _tempDataList.Add((ExcelFilemanager.LPDInfoEnumList[_dataLookupEntry.EnumLink].ElementAt(_logData[_index])));
+
+                                            }
+
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+
+
+                                            _index += 1;
+                                        }
+                                    }
+                                    _tempEventInfo += " " + _dataLookupEntry.Appendix;
+                                    _count++;
+
+                                }
+
+                            }
+
+                        }
+                        catch
                         {
                             _tempEventInfo = "No Information";
                             _tempEventInfoList.Add("No Information");
                         }
-                        else
-                        {
-                            int _count = 0;
-                            int _index = 0;
-                            foreach (LPDDataLookupEntry _dataLookupEntry in ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID-1).Data)
-                            {
 
-                                if (_dataLookupEntry.DataLink != "Empty")
+
+                        try
+                        {
+
+                            if (_tempEventID > PDSThreatEventID && _tempEventID < PDSThreatEventIDEnd)
+                            {
+                                if (TempList.Last().EventID == PDSThreatEventID)
                                 {
-                                    double _scale = Math.Pow(10, _dataLookupEntry.Scale);
-                                    if (_count > 0)
-                                    {
-                                        _tempEventInfo += " , ";
-                                    }
+                                    TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
+                                    TempList.Last().DataList.AddRange(_tempDataList);
+                                    TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
+                                    Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventID) * 8, 8);
 
-                                    //if(_Data
-
-                                    if (_dataLookupEntry.NumberBytes == 4)
-                                    {
-                                        if(_dataLookupEntry.IsInt == 2)
-                                        {
-                                            byte[] _tempByteArray = { 0, 0 , 0 ,0 };
-
-                                            Array.Copy(_logData, _index, _tempByteArray, 0, 4);
-
-                                            UInt32 HexValue =  BitConverter.ToUInt32(_tempByteArray, 0);
-
-                                             _tempDataList.Add("0x" + (Convert.ToUInt32(HexValue * _scale)).ToString("X8"));
-                                                                                        
-                                        }
-                                        else if (_dataLookupEntry.IsInt == 1)
-                                        {
-                                            _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());                                   
-                                        }
-                                        else
-                                        {
-                                             _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());                                   
-                                        }
-                                        _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
-                                        _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
-                                        _index += 4;
-
-                                    }
-                                    else if (_dataLookupEntry.NumberBytes == 2)
-                                    {
-
-                                        if (_dataLookupEntry.IsInt == 1)
-                                        {
-                                            _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());                                         
-                                        }
-                                        else
-                                        {
-                                            _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());                                         
-                                        }
-                                        _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
-                                        _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
-                                        _index += 2;
-                                    }
-
-                                    else if (_dataLookupEntry.NumberBytes == 1)
-                                    {
-
-                                        if (_dataLookupEntry.IsInt == 1)
-                                        {
-                                            _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());                                           
-                                        }
-                                        else
-                                        {
-                                            _tempDataList.Add((_logData[_index] * _scale).ToString());                                         
-                                        }
-                                        _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
-                                        _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
-                                        _index += 1;
-                                    }
                                 }
-                                _tempEventInfo += " " + _dataLookupEntry.Appendix;
-                               _count++;
 
+                            }
+                            else if (_tempEventID > PDSThreatEventIDEnd && _tempEventID < PDSThreatEventIDEnd + PDSThreatEventLength)
+                            {
+                                if (TempList.Last().EventID == PDSThreatEventIDEnd)
+                                {
+                                    TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
+                                    TempList.Last().DataList.AddRange(_tempDataList);
+                                    TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
+                                }
+                                Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventIDEnd) * 8, 8);
+                            }
+                            else if (_tempEventID == PDSThreatEventID || _tempEventID == PDSThreatEventIDEnd)
+                            {
+                                byte[] byteArray = new byte[58];
+                                byteArray[0] = _logData[0];
+                                byteArray[1] = _logData[1];
+                                byteArray[2] = _logData[2];
+                                byteArray[3] = _logData[3];
+                                byteArray[4] = _logData[4];
+                                byteArray[5] = _logData[5];
+                                byteArray[6] = _logData[6];
+                                byteArray[7] = _logData[7];
+
+                                TempList.Add(new LogEntry
+                                {
+                                    Number = i,
+                                    EventID = _tempEventID,
+                                    EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
+                                    RawEntry = _logChuncks,
+                                    RawData = byteArray,
+                                    EventInfo = _tempEventInfo,
+                                    DateTime = _eventDateTime,
+                                    DataList = _tempDataList,
+                                    EventInfoList = _tempEventInfoList
+
+                                });
+                            }
+                            else
+                            {
+                                TempList.Add(new LogEntry
+                                {
+                                    Number = i,
+                                    EventID = _tempEventID,
+                                    EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
+                                    RawEntry = _logChuncks,
+                                    RawData = _logData,
+                                    EventInfo = _tempEventInfo,
+                                    DateTime = _eventDateTime,
+                                    DataList = _tempDataList,
+                                    EventInfoList = _tempEventInfoList
+
+                                });
                             }
 
                         }
-                    }
-                    catch
-                    {
-                        _tempEventInfo = "No Information";
-                        _tempEventInfoList.Add("No Information");
-                    }
-
-
-                    try
-                    {
-                      
-                        if (_tempEventID > PDSThreatEventID && _tempEventID < PDSThreatEventIDEnd)
+                        catch
                         {
-                            if(TempList.Last().EventID == PDSThreatEventID)
-                            {
-                                TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
-                                TempList.Last().DataList.AddRange(_tempDataList);
-                                TempList.Last().EventInfoList.AddRange(_tempEventInfoList);                       
-                                Buffer.BlockCopy(_logData, 0, TempList.Last().RawData,(_tempEventID- PDSThreatEventID) *8, 8);
-
-                            }
 
                         }
-                        else if(_tempEventID > PDSThreatEventIDEnd && _tempEventID < PDSThreatEventIDEnd+PDSThreatEventLength)
-                        {
-                           if (TempList.Last().EventID == PDSThreatEventIDEnd)
-                            {
-                                TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
-                                TempList.Last().DataList.AddRange(_tempDataList);
-                                TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
-                            }
-                            Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventIDEnd) * 8, 8);
-                        }
-                        else if(_tempEventID== PDSThreatEventID || _tempEventID == PDSThreatEventIDEnd)
-                        {
-                            byte[] byteArray = new byte[58];
-                            byteArray[0] = _logData[0];
-                            byteArray[1] = _logData[1];
-                            byteArray[2] = _logData[2];
-                            byteArray[3] = _logData[3];
-                            byteArray[4] = _logData[4];
-                            byteArray[5] = _logData[5];
-                            byteArray[6] = _logData[6];
-                            byteArray[7] = _logData[7];
-     
-                            TempList.Add(new LogEntry
-                            {
-                                Number = i,
-                                EventID = _tempEventID,
-                                EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
-                                RawEntry = _logChuncks,
-                                RawData = byteArray,
-                                EventInfo = _tempEventInfo,
-                                DateTime = _eventDateTime,
-                                DataList = _tempDataList,
-                                EventInfoList = _tempEventInfoList
-
-                            });
-                        }
-                        else
-                        {
-                            TempList.Add(new LogEntry
-                            {
-                                Number = i,
-                                EventID = _tempEventID,
-                                EventName = ExcelFilemanager.LPDInfoList.ElementAt(_tempEventID - 1).EventName,
-                                RawEntry = _logChuncks,
-                                RawData = _logData,
-                                EventInfo = _tempEventInfo,
-                                DateTime = _eventDateTime,
-                                DataList = _tempDataList,
-                                EventInfoList = _tempEventInfoList
-
-                            });
-                        }
-                       
-                    }
-                    catch
-                    {
-
                     }
                 }
                 else if (_dateTimeStatus == (uint)DateTimeCheck.Status.Error_2)
@@ -283,11 +312,6 @@ namespace Booyco_HMI_Utility
                     LogErrorDateTimeCounter++;
                 }
 
-                if ((i % (TotalLogEntries / 100)) == 0)
-                {
-                    PercentageComplete++;
-                    ReportProgress(PercentageComplete);
-                }
             }
 
             try

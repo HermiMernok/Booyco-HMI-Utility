@@ -34,8 +34,8 @@
         <Button x:Name="ButtonBack" Content="Back"  Margin="10"  Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
         <Button x:Name="ButtonSave" Content="Export"  Click="ButtonSaveFile_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="True"/>
 
-        
-        <DataGrid x:Name="DataGridLogs" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="True"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,10,0,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
+
+        <DataGrid x:Name="DataGridLogs"   ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" SelectionChanged="Datagrid_Logs_SelectionChanged" Grid.ColumnSpan="4" Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" Margin="10,10,0,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
                     <EventSetter Event="MouseDoubleClick" Handler="RowDoubleClick"/>
@@ -90,7 +90,7 @@
                         </Grid>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Width="Auto" Binding="{Binding EventInfo}" Header="Event" Visibility="Collapsed"/>
+                <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EventInfo}" Header="Event" Visibility="Visible"/>
 
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>

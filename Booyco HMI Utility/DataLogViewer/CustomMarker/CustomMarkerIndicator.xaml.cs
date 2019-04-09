@@ -41,7 +41,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
             if (marker.Zone == 1)
             {
                 PathIndicator.Fill = Brushes.Blue;
-               
+
             }
             else if (marker.Zone == 2)
             {
@@ -51,10 +51,16 @@ namespace Demo.WindowsPresentation.CustomMarkers
             {
                 PathIndicator.Fill = Brushes.Red;
             }
+            else if (marker.Zone == 10)
+            {
+                PathIndicator.Fill = Brushes.Black;
+            }        
             else
             {
                 PathIndicator.Fill = Brushes.Transparent;
             }
+              
+            
 
             //CustomMarkerAngle = (Double) (Heading + 180);
 
