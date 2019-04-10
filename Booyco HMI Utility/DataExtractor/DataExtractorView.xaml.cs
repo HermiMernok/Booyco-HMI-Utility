@@ -69,7 +69,7 @@ namespace Booyco_HMI_Utility
             if (Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
             {
                 WiFiconfig.ConnectionError = true;
-                if (File.Exists(_newLogFilePath))
+                if (File.Exists(_newLogFilePath) && !DataExtractorComplete)
                 {
                     File.Delete(_newLogFilePath);
                 }
@@ -120,6 +120,7 @@ namespace Booyco_HMI_Utility
                     Label_ProgressStatusPercentage.Content = "File Completed...";
                     Button_ViewLogs.Visibility = Visibility.Visible;
                     GlobalSharedData.FilePath = _newLogFilePath;
+                    _newLogFilePath = "";
 
                 }
                 DataLogProgress = 0;
@@ -129,34 +130,16 @@ namespace Booyco_HMI_Utility
                 _fileCreated = false;
                 ProgressBar_DataLogExtract.Value = 0;
                 Label_StatusView.Content = "Waiting instructions..";
-            }
-           
+            }           
         }
          
-
-
-        
-
         private void Button_Back_Click(object sender, RoutedEventArgs e)
-        {
-          
+        {          
             if (CancelCheck)
             {
                 CancelCheck = false;
                 Button_Back.Content = "Back";
-                StoredIndex = -1;
-                //if (!DataExtractorComplete)
-                //{
-
-
-                //    Label_ProgressStatusPercentage.Content = "Process Cancelled...";
-
-                //    if (File.Exists(_newLogFilePath))
-                //    {
-                //        File.Delete(_newLogFilePath);
-                //    }
-                //}
-
+                StoredIndex = -1;               
             }
             else
             {
@@ -164,9 +147,7 @@ namespace Booyco_HMI_Utility
                 this.Visibility = Visibility.Collapsed;
                 ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
             }
-
         }
-
 
         private static Thread DataExtractorThread;
         private void Button_Extract_Click(object sender, RoutedEventArgs e)
@@ -185,7 +166,7 @@ namespace Booyco_HMI_Utility
             if (!_fileCreated)
             {
 
-                _newLogFilePath = _savedFilesPath + "\\DataLog_BooycoPDS_" + WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID.ToString() + "_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".Mer";
+                _newLogFilePath = _savedFilesPath + "\\DataLog_BooycoPDS_" + WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID.ToString() + "_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".Mer";
                 int Filecount = 1;
                 while (File.Exists(_newLogFilePath))
                 {
@@ -239,15 +220,14 @@ namespace Booyco_HMI_Utility
                 }
 
                 else if (DataIndex < TotalCount && DataIndex > StoredIndex)
-                {
-                  
+                {                
                     
-                        using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
-                        {
-                            stream.Write(message, 8, DATALOG_RX_SIZE);
-                        }
+                    using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
+                    {
+                        stream.Write(message, 8, DATALOG_RX_SIZE);
+                    }
                     
-                        byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+                    byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
                     
                     Logchunk[0] = (byte)'[';
                     Logchunk[1] = (byte)'&';
@@ -293,9 +273,8 @@ namespace Booyco_HMI_Utility
                     }
                     GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
                     DataExtractorComplete = true;
-                    _fileCreated = false;
-                
-                }                   
+                    _fileCreated = false;                
+                }                 
                            
             }
             else

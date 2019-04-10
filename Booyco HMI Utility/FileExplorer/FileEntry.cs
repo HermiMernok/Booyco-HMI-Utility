@@ -22,17 +22,31 @@ namespace Booyco_HMI_Utility.FileExplorer
                 OnPropertyChanged("Number");
             }
         }
-        private string _name;
-        public string Name
+        private string _fileName;
+        public string FileName
         {
             get
             {
-                return _name;
+                return _fileName;
             }
             set
             {
-                _name = value;
-                OnPropertyChanged("Name");
+                _fileName = value;
+                OnPropertyChanged("FileName");
+            }
+        }
+
+        private string _dateTimeCreated;
+        public string DateTimeCreated
+        {
+            get
+            {
+                return _dateTimeCreated;
+            }
+            set
+            {
+                _dateTimeCreated = value;
+                OnPropertyChanged("DateTimeCreated");
             }
         }
 

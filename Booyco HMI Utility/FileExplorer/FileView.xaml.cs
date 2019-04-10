@@ -57,12 +57,13 @@ namespace Booyco_HMI_Utility
             if (Directory.Exists(_savedFilesPath))
             {
                 DirectoryInfo d = new DirectoryInfo(_savedFilesPath);
-
+                RangeObservableCollection<FileEntry> UnsortedFileList = new RangeObservableCollection<FileEntry>();
                 FileInfo[] FilesTxt = d.GetFiles("*.txt");
                 FileInfo[] FilesMer = d.GetFiles("*.mer");
                 FileInfo[] Files = FilesTxt.Union(FilesMer).ToArray();
                 string str = "";
-                uint count = 0;
+              
+               
                 foreach (FileInfo file in Files)
                 {
                     string _type = "";
@@ -70,18 +71,26 @@ namespace Booyco_HMI_Utility
                     {
                         _type = "DataLog";
                     }
-                   
-                    count++;
-                    FileList.Add(new FileEntry
+                 
+                 
+                    UnsortedFileList.Add(new FileEntry
                     {
-                        Number = count,
-                        Name = file.Name,                     
+                        Number = 0,
+                        FileName = file.Name,
                         Type = _type,
-                         Path = file.FullName
-
+                        Path = file.FullName,
+                        DateTimeCreated = file.CreationTime.ToString("yyyy-MM-dd HH-mm-ss")
                     });
-
                 }
+
+                FileList.AddRange((UnsortedFileList.OrderByDescending(p => p.DateTimeCreated)));
+                uint count = 0;
+                foreach (FileEntry item in FileList)
+                {
+                    count++;
+                    item.Number = count;
+                }
+          
             }
             else
             {
@@ -171,13 +180,13 @@ namespace Booyco_HMI_Utility
 
                     if (DataGridFiles.SelectedIndex >= 0)
                     {
-                        System.IO.File.Delete(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number-1).Name);
+                        System.IO.File.Delete(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number-1).FileName);
                        
                     }
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine("Cannot Delete file " + item.Name);
+                    Console.WriteLine("Cannot Delete file " + item.FileName);
                 }
             }
             ReadSavedFolder();
@@ -204,11 +213,11 @@ namespace Booyco_HMI_Utility
                     {
                         if (_selectedItems.Count == 1)
                         {
-                            System.IO.File.Copy(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number - 1).Name, _saveFileDialog.FileName, true);
+                            System.IO.File.Copy(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number - 1).FileName, _saveFileDialog.FileName, true);
                         }
                         else
                         {
-                            System.IO.File.Copy(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number - 1).Name, System.IO.Path.GetDirectoryName(_saveFileDialog.FileName) + "\\" + FileList.ElementAt((int)item.Number - 1).Name, true);
+                            System.IO.File.Copy(_savedFilesPath + "\\" + FileList.ElementAt((int)item.Number - 1).FileName, System.IO.Path.GetDirectoryName(_saveFileDialog.FileName) + "\\" + FileList.ElementAt((int)item.Number - 1).FileName, true);
                         }
                     }
                     catch

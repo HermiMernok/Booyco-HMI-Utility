@@ -35,7 +35,8 @@
             </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Header="No." Binding="{Binding Number}" MinWidth="60" MaxWidth="60"/>
-                <DataGridTextColumn Width="8*" Binding="{Binding Name}" Header="Name"/>
+                <DataGridTextColumn Width="8*" Binding="{Binding FileName}" Header="Name"/>
+                <DataGridTextColumn Width="3*" Binding="{Binding DateTimeCreated}"  Header="Date"/>            
             </DataGrid.Columns>
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">

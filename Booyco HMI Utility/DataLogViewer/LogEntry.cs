@@ -7,6 +7,45 @@ using System.Threading.Tasks;
 
 namespace Booyco_HMI_Utility
 {
+
+    enum PDS_Index
+    {
+        Threat_BID = 0,
+        Thtreat_Kind = 1,
+        Threat_Group = 2,
+        Threat_Type = 3,
+        Threat_Cluster_Width = 4,
+        Threat_Sector = 5,
+        Threat_Zone = 6,
+        Threat_Speed = 7,
+        Threat_Distance = 8,
+        Threat_Heading = 9,
+        Threat_LAT = 10,
+        Threat_LON = 11,
+        Threat_Acc = 12,
+        Breake_Distance = 13,
+        POI_Distance = 14,
+        Threat_display_Priority = 15,
+        Critical_Distance = 16,
+        Warning_Distance = 17,
+        Presence_Distance = 18,
+        Speed = 19,
+        Heading = 20,
+        Accuracy = 21,
+        Threat_Length = 22,
+        Threat_Width = 23,
+        Threat_Brake_Distance = 24,
+        LAT = 25,
+        LON = 26,
+        POI_LAT = 27,
+        POI_LON = 28,
+        Threat_Scenario = 29,
+        Threat_Display_x = 30,
+        Threat_Display_y = 31,
+        Threat_Positon = 32,
+        Threat_Bearing = 33
+    }
+
     class LogEntry : INotifyPropertyChanged
     {
         private uint _number;
@@ -120,8 +159,22 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private List<string> _dataList;
-        public List<string> DataList
+        private List<string> _dataListString;
+        public List<string> DataListString
+        {
+            get
+            {
+                return _dataListString;
+            }
+            set
+            {
+                _dataListString = value;
+                OnPropertyChanged("DataListString");
+            }
+        }
+
+        private List<double> _dataList;
+        public List<double> DataList
         {
             get
             {
@@ -133,7 +186,6 @@ namespace Booyco_HMI_Utility
                 OnPropertyChanged("DataList");
             }
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)

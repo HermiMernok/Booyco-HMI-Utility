@@ -14,7 +14,9 @@ namespace Booyco_HMI_Utility
     {
         public Action<int> ReportProgressDelegate { get; set; }
         public const int PDSThreatEventID = 150;
-        public const int PDSThreatEventIDEnd = 159;
+        public const int PDSThreatEventIDLast = 158;
+        public const int PDSThreatEventEndID = 159;
+        public const int PDSThreatEventEndIDLast = 168;
         public const int PDSThreatEventLength = 9;
 
         private void ReportProgress(int percent)
@@ -24,6 +26,7 @@ namespace Booyco_HMI_Utility
                 ReportProgressDelegate(percent);
             }
         }
+
 
         #region Variables
         public RangeObservableCollection<LogEntry> TempList = new RangeObservableCollection<LogEntry>();
@@ -42,7 +45,7 @@ namespace Booyco_HMI_Utility
             byte[] _logBytes = { 0 };
       
             byte[] _logTimeStamp = { 0, 0, 0, 0, };
-            byte[] _logMiliseconds = {  0, 0 };
+          
             UInt16 _logID = 0;
             string _logGroup = "";
             string _logInfoRaw = System.IO.File.ReadAllText(Log_Filename, Encoding.Default);
@@ -90,7 +93,7 @@ namespace Booyco_HMI_Utility
                
                 if (_dateTimeStatus == (uint)DateTimeCheck.Status.Ok)
                 {
-                    Buffer.BlockCopy(_logChuncks, 4, _logMiliseconds, 0, 2);
+                  //  Buffer.BlockCopy(_logChuncks, 4, _logMiliseconds, 0, 1);
                     // ---- Copy from the 16 byte logChunk the Data ----
                     Buffer.BlockCopy(_logChuncks, 8, _logData, 0, 8);
 
@@ -101,15 +104,23 @@ namespace Booyco_HMI_Utility
                     {
                         int testing = 0;
                     }
-                    
-                    _eventDateTime.AddMilliseconds(BitConverter.ToInt16(_logMiliseconds, 0));
+
+                    if (_logChuncks[4] < 100)
+                    {
+                        _eventDateTime = _eventDateTime.AddMilliseconds((double)_logChuncks[4] * 10);
+                    }
+                    else
+                    {
+                        _eventDateTime = _eventDateTime.AddMilliseconds(990);
+                    }
                     UInt16 _tempEventID = BitConverter.ToUInt16(_logChuncks, 6);
                     if (_tempEventID > 0)
                     {
 
                         string _tempEventInfo = "";
-                        List<string> _tempDataList = new List<string>();
+                        List<string> _tempDataListString = new List<string>();
                         List<string> _tempEventInfoList = new List<string>();
+                        List<double> _tempDataList = new List<double>();
                         try
                         {
 
@@ -145,19 +156,27 @@ namespace Booyco_HMI_Utility
 
                                                 UInt32 HexValue = BitConverter.ToUInt32(_tempByteArray, 0);
 
-                                                _tempDataList.Add("0x" + (Convert.ToUInt32(HexValue * _scale)).ToString("X8"));
+                                                _tempDataListString.Add("0x" + (Convert.ToUInt32(HexValue * _scale)).ToString("X8"));
+                                                _tempDataList.Add(Convert.ToDouble(HexValue));
+
 
                                             }
                                             else if (_dataLookupEntry.IsInt == 1)
                                             {
-                                                _tempDataList.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());
+                                                _tempDataListString.Add((BitConverter.ToInt32(_logData, _index) * _scale).ToString());
+                                                _tempDataList.Add(double.Parse(_tempDataListString.Last()));
+
                                             }
                                             else
                                             {
-                                                _tempDataList.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());
+                                                _tempDataListString.Add((BitConverter.ToUInt32(_logData, _index) * _scale).ToString());
+                                                _tempDataList.Add(double.Parse(_tempDataListString.Last()));
+
                                             }
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+
+
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataListString.Last();
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataListString.Last() + _dataLookupEntry.Appendix);
                                             _index += 4;
 
                                         }
@@ -166,48 +185,49 @@ namespace Booyco_HMI_Utility
 
                                             if (_dataLookupEntry.IsInt == 1)
                                             {
-                                                _tempDataList.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());
+                                                _tempDataListString.Add((BitConverter.ToInt16(_logData, _index) * _scale).ToString());
                                             }
                                             else
                                             {
-                                                _tempDataList.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());
+                                                _tempDataListString.Add((BitConverter.ToUInt16(_logData, _index) * _scale).ToString());
                                             }
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                            _tempDataList.Add(double.Parse(_tempDataListString.Last()));
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataListString.Last() ;
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataListString.Last() + _dataLookupEntry.Appendix);
                                             _index += 2;
                                         }
 
                                         else if (_dataLookupEntry.NumberBytes == 1)
                                         {
-                                            if (i == 118)
-                                            {
-                                                int breakpoint = 0;
-                                            }
+                                          
                                             if (_dataLookupEntry.EnumLink == 0 || ExcelFilemanager.LPDInfoEnumList[_dataLookupEntry.EnumLink].Count < _logData[_index])
                                             {
 
                                                 if (_dataLookupEntry.IsInt == 1)
                                                 {
-                                                    _tempDataList.Add(((ushort)_logData[_index] * _scale).ToString());
+                                                    _tempDataListString.Add(((ushort)_logData[_index] * _scale).ToString());
                                                 }
                                                 else
                                                 {
-                                                    _tempDataList.Add((_logData[_index] * _scale).ToString());
+                                                    _tempDataListString.Add((_logData[_index] * _scale).ToString());
                                                 }
+                                                _tempDataList.Add(double.Parse(_tempDataListString.Last()));
+
                                             }
 
                                             else if (_dataLookupEntry.EnumLink != 0)
                                             {
-                                                _tempDataList.Add((ExcelFilemanager.LPDInfoEnumList[_dataLookupEntry.EnumLink].ElementAt(_logData[_index])));
-
+                                                _tempDataList.Add((_logData[_index] * _scale));
+                                                _tempDataListString.Add((ExcelFilemanager.LPDInfoEnumList[_dataLookupEntry.EnumLink].ElementAt(_logData[_index])));
                                             }
-
-                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix;
-                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataList.Last() + _dataLookupEntry.Appendix);
+                                       
+                                            _tempEventInfo += _dataLookupEntry.DataName + ": " + _tempDataListString.Last() ;
+                                            _tempEventInfoList.Add(_dataLookupEntry.DataName + ": " + _tempDataListString.Last() + _dataLookupEntry.Appendix);
 
 
                                             _index += 1;
                                         }
+                                       
                                     }
                                     _tempEventInfo += " " + _dataLookupEntry.Appendix;
                                     _count++;
@@ -227,31 +247,34 @@ namespace Booyco_HMI_Utility
                         try
                         {
 
-                            if (_tempEventID > PDSThreatEventID && _tempEventID < PDSThreatEventIDEnd)
+                            if (_tempEventID > PDSThreatEventID && _tempEventID < PDSThreatEventIDLast)
                             {
-                                if (TempList.Last().EventID == PDSThreatEventID)
+                               if (TempList.Last().EventID == PDSThreatEventID && _tempDataList.Count() > 0)
                                 {
                                     TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
-                                    TempList.Last().DataList.AddRange(_tempDataList);
+                                    TempList.Last().DataList.AddRange( _tempDataList);
+                                    TempList.Last().DataListString.AddRange(_tempDataListString);
                                     TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
                                     Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventID) * 8, 8);
 
                                 }
 
                             }
-                            else if (_tempEventID > PDSThreatEventIDEnd && _tempEventID < PDSThreatEventIDEnd + PDSThreatEventLength)
+                            else if (_tempEventID > PDSThreatEventEndID && _tempEventID < PDSThreatEventEndIDLast)
                             {
-                                if (TempList.Last().EventID == PDSThreatEventIDEnd)
+                                if (TempList.Last().EventID == PDSThreatEventEndID && _tempDataList.Count() > 0)
                                 {
                                     TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
                                     TempList.Last().DataList.AddRange(_tempDataList);
+                                    TempList.Last().DataListString.AddRange(_tempDataListString);
                                     TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
+                                    Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventEndID) * 8, 8);
                                 }
-                                Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, (_tempEventID - PDSThreatEventIDEnd) * 8, 8);
+                                
                             }
-                            else if (_tempEventID == PDSThreatEventID || _tempEventID == PDSThreatEventIDEnd)
+                            else if (_tempEventID == PDSThreatEventID || _tempEventID == PDSThreatEventEndID)
                             {
-                                byte[] byteArray = new byte[58];
+                                byte[] byteArray = new byte[PDSThreatEventLength*8];
                                 byteArray[0] = _logData[0];
                                 byteArray[1] = _logData[1];
                                 byteArray[2] = _logData[2];
@@ -270,7 +293,8 @@ namespace Booyco_HMI_Utility
                                     RawData = byteArray,
                                     EventInfo = _tempEventInfo,
                                     DateTime = _eventDateTime,
-                                    DataList = _tempDataList,
+                                    DataListString = _tempDataListString,
+                                    DataList =_tempDataList,
                                     EventInfoList = _tempEventInfoList
 
                                 });
@@ -286,6 +310,7 @@ namespace Booyco_HMI_Utility
                                     RawData = _logData,
                                     EventInfo = _tempEventInfo,
                                     DateTime = _eventDateTime,
+                                    DataListString = _tempDataListString,
                                     DataList = _tempDataList,
                                     EventInfoList = _tempEventInfoList
 
@@ -293,9 +318,9 @@ namespace Booyco_HMI_Utility
                             }
 
                         }
-                        catch
+                        catch(Exception e)
                         {
-
+                            Console.WriteLine("unable to add event");
                         }
                     }
                 }
