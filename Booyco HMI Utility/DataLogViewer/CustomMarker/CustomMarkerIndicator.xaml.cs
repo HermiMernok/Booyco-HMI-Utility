@@ -24,34 +24,44 @@ namespace Demo.WindowsPresentation.CustomMarkers
       GMapMarker Marker;
       MainWindow MainWindow;
         GMapControl mapControl;
+        bool IsBrakeZoneVisible = false;
+        public MarkerEntry CurrentMarker;
 
-
-      public CustomMarkerIndicator(GMapControl _mapControl, MarkerEntry marker)
+        public CustomMarkerIndicator(GMapControl _mapControl, MarkerEntry marker)
       {
         this.InitializeComponent();
         this.mapControl = _mapControl;
         this.Marker = marker.MapMarker;
 
-        Popup = new Popup();
-        Label = new Label();
+            CurrentMarker = new MarkerEntry();
 
-            RotateTransform IndicatorTransfrom = new RotateTransform(marker.Heading);
-            PathIndicator.LayoutTransform = IndicatorTransfrom;
+            CurrentMarker.Heading = marker.Heading;
+            CurrentMarker.Scale = marker.Scale;
+            CurrentMarker.PresenceZoneSize = marker.PresenceZoneSize;
+            CurrentMarker.WarningZoneSize = marker.WarningZoneSize;
+            CurrentMarker.CriticalZoneSize = marker.CriticalZoneSize;
+            CurrentMarker.Zone = marker.Zone;
+            CurrentMarker.title = marker.title;
 
-            if (marker.Zone == 1)
+            RotateTransform IndicatorTransfrom = new RotateTransform(CurrentMarker.Heading);
+              PathIndicator.LayoutTransform = IndicatorTransfrom;
+           // Grind_Marker.LayoutTransform = IndicatorTransfrom;
+            Rectangle_ProhibitZone.LayoutTransform = IndicatorTransfrom;
+             Rectangle_Vehicle.LayoutTransform = IndicatorTransfrom;
+            if (CurrentMarker.Zone == 1)
             {
                 PathIndicator.Fill = Brushes.Blue;
 
             }
-            else if (marker.Zone == 2)
+            else if (CurrentMarker.Zone == 2)
             {
                 PathIndicator.Fill = Brushes.Yellow;
             }
-            else if (marker.Zone == 3)
+            else if (CurrentMarker.Zone == 3)
             {
                 PathIndicator.Fill = Brushes.Red;
             }
-            else if (marker.Zone == 10)
+            else if (CurrentMarker.Zone == 10)
             {
                 PathIndicator.Fill = Brushes.Black;
             }        
@@ -78,23 +88,56 @@ namespace Demo.WindowsPresentation.CustomMarkers
             //    Label.FontSize = 12;
             //    Label.Content = marker.title;
             //}
+            UpdateSizes();
 
-            Label_PopupInfo.Content = marker.title;
-            Ellipse_PresenceZone.Width = marker.PresenceZoneSize / marker.Scale;
-            Ellipse_PresenceZone.Height = marker.PresenceZoneSize / marker.Scale;
-
-            Ellipse_WarningZone.Width = marker.WarningZoneSize / marker.Scale;
-            Ellipse_WarningZone.Height = marker.WarningZoneSize / marker.Scale;
-            Ellipse_WarningZoneBackground.Width = marker.WarningZoneSize / marker.Scale;
-            Ellipse_WarningZoneBackground.Height = marker.WarningZoneSize / marker.Scale;
-
-            Ellipse_CriticalZone.Width = marker.CriticalZoneSize / marker.Scale;
-            Ellipse_CriticalZone.Height = marker.CriticalZoneSize / marker.Scale;
-            Ellipse_CriticalZoneBackground.Width = marker.CriticalZoneSize / marker.Scale;
-            Ellipse_CriticalZoneBackground.Height = marker.CriticalZoneSize / marker.Scale;
-
-            Popup.Child = Label;
       }
+
+        double VehicleWidth = 1;
+        double VehicleHeight = 3;
+        double ProhibitWidth = 3;
+        double ProhibitHeight = 5;
+        //double VehicleWidth = 3;
+        //double VehicleHeight = 4;
+        //double ProhibitWidth = 8;
+        //double ProhibitHeight = 10;
+        public void UpdateSizes()
+        {
+            Rectangle_ProhibitZone.Width = ProhibitWidth/2 / CurrentMarker.Scale;
+            Rectangle_ProhibitZone.Height = ProhibitHeight/2 / CurrentMarker.Scale;
+
+            Rectangle_Vehicle.Width = VehicleWidth/2 / CurrentMarker.Scale;
+            Rectangle_Vehicle.Height = VehicleHeight/2 / CurrentMarker.Scale;
+
+            Rectangle_PresenceZone.Height = (CurrentMarker.PresenceZoneSize / 2) / CurrentMarker.Scale;
+            Rectangle_PresenceZone.Width = ProhibitWidth/2 / CurrentMarker.Scale;
+
+            Rectangle_WarningZone.Height = (CurrentMarker.WarningZoneSize / 2) / CurrentMarker.Scale;
+            Rectangle_WarningZone.Width = ProhibitWidth / 2 / CurrentMarker.Scale;
+            Rectangle_CriticalZone.Height = (CurrentMarker.CriticalZoneSize / 2) / CurrentMarker.Scale;
+            Rectangle_CriticalZone.Width = ProhibitWidth / 2 / CurrentMarker.Scale;
+            Label_PopupInfo.Content = CurrentMarker.title;
+            RectangleTransform_Crtical.Y = -Rectangle_CriticalZone.Height / 2;
+            RectangleTransform_Warning.Y = -Rectangle_WarningZone.Height / 2;
+            RectangleTransform_Presence.Y = -Rectangle_PresenceZone.Height / 2;
+            //Rectangle_PresenceZone.LayoutTransform = IndicatorTransfrom;
+            //Rectangle_WarningZone.LayoutTransform = IndicatorTransfrom;
+            //Rectangle_CriticalZone.LayoutTransform = IndicatorTransfrom;
+            Rectangle_RotateTransform_Warning.Angle = CurrentMarker.Heading;
+            Rectangle_RotateTransform_Presence.Angle = CurrentMarker.Heading;
+            Rectangle_RotateTransform_Critical.Angle = CurrentMarker.Heading;
+            Ellipse_PresenceZone.Width = CurrentMarker.PresenceZoneSize / CurrentMarker.Scale;
+            Ellipse_PresenceZone.Height = CurrentMarker.PresenceZoneSize / CurrentMarker.Scale;
+
+            Ellipse_WarningZone.Width = CurrentMarker.WarningZoneSize / CurrentMarker.Scale;
+            Ellipse_WarningZone.Height = CurrentMarker.WarningZoneSize / CurrentMarker.Scale;
+            Ellipse_WarningZoneBackground.Width = CurrentMarker.WarningZoneSize / CurrentMarker.Scale;
+            Ellipse_WarningZoneBackground.Height = CurrentMarker.WarningZoneSize / CurrentMarker.Scale;
+
+            Ellipse_CriticalZone.Width = CurrentMarker.CriticalZoneSize / CurrentMarker.Scale;
+            Ellipse_CriticalZone.Height = CurrentMarker.CriticalZoneSize / CurrentMarker.Scale;
+            Ellipse_CriticalZoneBackground.Width = CurrentMarker.CriticalZoneSize / CurrentMarker.Scale;
+            Ellipse_CriticalZoneBackground.Height = CurrentMarker.CriticalZoneSize / CurrentMarker.Scale;
+        }
         private Double _CustomMarkerAngle;
         public Double CustomMarkerAngle
         {
@@ -136,7 +179,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
                
             }
 
-        }
+      }
 
       void CustomMarkerIndicator_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
       {
@@ -158,7 +201,13 @@ namespace Demo.WindowsPresentation.CustomMarkers
             Ellipse_WarningZone.Visibility = Visibility.Collapsed;
             Ellipse_CriticalZoneBackground.Visibility = Visibility.Collapsed;
             Ellipse_PresenceZone.Visibility = Visibility.Collapsed;
-           
+            if (!IsBrakeZoneVisible)
+            {
+                Rectangle_CriticalZone.Visibility = Visibility.Collapsed;
+                Rectangle_WarningZone.Visibility = Visibility.Collapsed;
+                Rectangle_PresenceZone.Visibility = Visibility.Collapsed;
+            }
+
         }
 
       void CustomMarkerIndicator_MouseEnter(object sender, MouseEventArgs e)
@@ -171,6 +220,10 @@ namespace Demo.WindowsPresentation.CustomMarkers
             Ellipse_WarningZone.Visibility = Visibility.Visible;
             Ellipse_CriticalZoneBackground.Visibility = Visibility.Visible;
             Ellipse_PresenceZone.Visibility = Visibility.Visible;
+        
+            Rectangle_CriticalZone.Visibility = Visibility.Visible;
+            Rectangle_WarningZone.Visibility = Visibility.Visible;
+            Rectangle_PresenceZone.Visibility = Visibility.Visible;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -178,6 +231,21 @@ namespace Demo.WindowsPresentation.CustomMarkers
         protected void OnPropertyChanged(string PropertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
+
+   
+
+        private void PathIndicator_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!IsBrakeZoneVisible)
+            {
+                IsBrakeZoneVisible = true;
+            }
+            else
+            {
+                IsBrakeZoneVisible = false;
+            }
+               
         }
     }
 }

@@ -15,8 +15,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
     /// </summary>
     public partial class CustomMarkerEllipse
     {
-        Popup Popup;
-        Label Label;
+        
         GMapMarker Marker;    
         GMapControl mapControl;
 
@@ -26,30 +25,31 @@ namespace Demo.WindowsPresentation.CustomMarkers
                 this.mapControl = _mapControl;
                 this.Marker = marker.MapMarker;
 
-                Popup = new Popup();
-            Label = new Label();
-
+              
+      
             this.SizeChanged += new SizeChangedEventHandler(MarkerEllipseControl_SizeChanged);
             this.MouseEnter += new MouseEventHandler(MarkerellipseControl_MouseEnter);
             this.MouseLeave += new MouseEventHandler(MarkerEllipseControl_MouseLeave);
 
             //ScaleTransform EllipseTransfrom = new ScaleTransform(14,14);
             //EllipseMarker.RenderTransform = EllipseTransfrom;
-        
+            Label_PopupInfo.Content = marker.title;
             EllipseMarker.Width = marker.Width/marker.Scale;
             EllipseMarker.Height = marker.Height/marker.Scale;
 
-            Popup.Placement = PlacementMode.Mouse;
-            {
-                Label.Background = Brushes.Gray;
-                Label.Foreground = Brushes.White;
-                Label.BorderBrush = Brushes.Black;
-                Label.BorderThickness = new Thickness(2);
-                Label.Padding = new Thickness(5);
-                Label.FontSize = 12;
-                Label.Content = marker.title;
-            }
-            Popup.Child = Label;
+            //Popup.Placement = PlacementMode.Mouse;
+            //{
+            //    Label.Background = Brushes.Gray;
+            //    Label.Foreground = Brushes.White;
+            //    Label.BorderBrush = Brushes.Black;
+            //    Label.BorderThickness = new Thickness(2);
+            //    Label.Padding = new Thickness(5);
+            //    Label.FontFamily = new FontFamily("Segoe UI");
+            //    Label.FontSize = 10;
+            //    Label.Content = marker.title;
+            //}
+        
+            //Popup.Child = Label;
         }
 
         void MarkerEllipseControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -61,33 +61,35 @@ namespace Demo.WindowsPresentation.CustomMarkers
         {
             //  Marker.ZIndex -= 10000;
             EllipseMarker.Opacity = 1;
-            Popup.IsOpen = false;
+           
         }
 
         void MarkerellipseControl_MouseEnter(object sender, MouseEventArgs e)
         {
             EllipseMarker.Opacity = 0.5;
             //  Marker.ZIndex += 10000;
-            Popup.IsOpen = true;
+        
         }
 
-      
-
-        private void EllipseMarker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void EllipseMarker_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (Popup.IsOpen)
+  
+            if (!Label_PopupInfo.IsVisible)
             {
-                Popup.IsOpen = false;
+                Label_PopupInfo.Visibility = Visibility.Visible;
             }
             else
             {
-                Popup.IsOpen = true;
+                Label_PopupInfo.Visibility = Visibility.Collapsed;
+
             }
+
         }
 
-        private void EllipseMarker_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void EllipseMarker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            
+           
         }
+              
     }
 }

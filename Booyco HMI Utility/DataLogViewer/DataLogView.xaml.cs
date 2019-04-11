@@ -39,8 +39,9 @@ namespace Booyco_HMI_Utility
         FilterManagement FilterManager;
         private RangeObservableCollection<LogEntry> AnalogLogs = new RangeObservableCollection<LogEntry>();
         private RangeObservableCollection<LogEntry> EventLogs = new RangeObservableCollection<LogEntry>();
-
-
+        bool IsToggleExpand = false;
+        bool IsSelectAll = false;
+        bool IsButtonClickedSelectAll = false;
         public bool DataLogIsExpanded
         {
 
@@ -268,6 +269,11 @@ namespace Booyco_HMI_Utility
 
         private void Datagrid_Logs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!IsButtonClickedSelectAll)
+            {
+                ButtonSelectAll.Content = "Select All";
+                IsSelectAll = false;
+            }
             if (DataGridLogs.SelectedItems.Count >= 1)
             {
                 // ButtonMap.IsEnabled = true;
@@ -288,6 +294,7 @@ namespace Booyco_HMI_Utility
                 ButtonMap.IsEnabled = false;
                 // ButtonDisplay.IsEnabled = false;
             }
+            IsButtonClickedSelectAll = false;
         }
         private void ButtonMap_Click(object sender, RoutedEventArgs e)
         {
@@ -646,10 +653,11 @@ namespace Booyco_HMI_Utility
                 {
                     GlobalSharedData.PDSMapMarkers.Add(PDSMarker1);
                 }
+                PDSMarker2.Latitude = EventItem.UnitLatitude;
+                PDSMarker2.Longitude = EventItem.UnitLongitude;
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarker2);
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarkerPOI);
-                extendedWindow.MapView.StartLat = EventItem.UnitLatitude;
-                extendedWindow.MapView.StartLon = EventItem.UnitLongitude;
+               
 
 
             }
@@ -742,6 +750,14 @@ namespace Booyco_HMI_Utility
             }
             else
             {
+                if (!IsToggleExpand)
+                {
+                    ButtonToggleExpanded_Click(null, null);
+                }
+                if(!IsVisible)
+                { 
+                    ButtonSelectAll_Click(null, null);
+                }
                 TextBlockProgressStatus.Text = "";
                 ProgressbarDataLogs.Value = 0;
 
@@ -764,13 +780,14 @@ namespace Booyco_HMI_Utility
             if (DataGridLogs.Columns[5].Visibility == Visibility.Visible)
             {
                 DataGridLogs.Columns[5].Visibility = Visibility.Collapsed;
-
                 ButtonToggleExpand.Content = "Expand";
+                IsToggleExpand = true;
             }
             else
             {
                 DataGridLogs.Columns[5].Visibility = Visibility.Visible;
                 ButtonToggleExpand.Content = "Collapse";
+                IsToggleExpand = false;
             }
 
 
@@ -909,7 +926,7 @@ namespace Booyco_HMI_Utility
                     _tempPDSThreatEvent.ThreatType = item.DataListString.ElementAt(3);
                     _tempPDSThreatEvent.ThreatWidth = item.DataListString.ElementAt(4);
                     _tempPDSThreatEvent.ThreatSector = item.DataListString.ElementAt(5);
-                    _tempPDSThreatEvent.ThreatZone = item.DataListString.ElementAt(6);
+                  //  _tempPDSThreatEvent.ThreatZone = parse.int(item.DataList.ElementAt(6));
                     _tempPDSThreatEvent.ThreatDistance = item.DataListString.ElementAt(8);
                     _tempPDSThreatEvent.ThreatHeading = item.DataListString.ElementAt(9);
                     _tempPDSThreatEvent.DateTime = item.DateTime;
@@ -1015,20 +1032,22 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.HMIDisplayView;
         }
 
-        bool SelectAll = false;
+
         private void ButtonSelectAll_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectAll)
+            if (IsSelectAll)
             {
                 ButtonSelectAll.Content = "Select All";
                 DataGridLogs.UnselectAll();
-                SelectAll = false;
+                IsSelectAll = false;
+              
             }
             else
             {
                 ButtonSelectAll.Content = "Unselect All";
                 DataGridLogs.SelectAll();
-                SelectAll = true;
+                IsSelectAll = true;
+                IsButtonClickedSelectAll = true; 
             }
         }
 

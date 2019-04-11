@@ -91,7 +91,7 @@
                         </Grid>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EventInfo}" Header="Event" />
+                <DataGridTextColumn Width="Auto" MinWidth="100" Binding="{Binding EventInfo}" Header="Event" Visibility="Collapsed"/>
 
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>

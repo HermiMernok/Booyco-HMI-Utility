@@ -31,7 +31,9 @@ namespace Booyco_HMI_Utility
        
         public double StartLat = -25.882784;
         public double StartLon = 28.163630;
-  
+        public double scalefactor = 70000;
+
+
 
         public MapView()
         {
@@ -46,11 +48,9 @@ namespace Booyco_HMI_Utility
             {
                 if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
                 {
-                    item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                    item.Scale = scalefactor / (Math.Pow(2, (ushort)MainMap.Zoom));
                     item.MapMarker.Shape = new CustomMarkerEllipse(this.MainMap, item);
-                    this.MainMap.Markers.Add(item.MapMarker);
-
-                   
+                    this.MainMap.Markers.Add(item.MapMarker);                   
                 }
             }
 
@@ -59,19 +59,18 @@ namespace Booyco_HMI_Utility
                 item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
                 this.MainMap.Markers.Add(item.MapMarker);
             }
-
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
             {
-                item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                item.Scale = scalefactor / (Math.Pow(2, (ushort)MainMap.Zoom));
                 item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
                 this.MainMap.Markers.Add(item.MapMarker);
-             
+                StartLat = item.Latitude;
+                StartLon = item.Longitude;
             }
-            MainMap.Position = new GMap.NET.PointLatLng(StartLat, StartLon);
-          
-
            
 
+            MainMap.Position = new GMap.NET.PointLatLng(StartLat, StartLon);
+          
         }
 
         private void mapView_Loaded(object sender, RoutedEventArgs e)
@@ -86,8 +85,8 @@ namespace Booyco_HMI_Utility
             //MainMap.MapProvider = GMap.NET.MapProviders.GoogleTerrainMapProvider.Instance;
 
             // whole world zoom
-            MainMap.MinZoom = 0;
-            MainMap.MaxZoom = 24;
+            MainMap.MinZoom = 3;
+            MainMap.MaxZoom = 20;
             MainMap.Zoom = 19;
 
             // lets the map use the mousewheel to zoom
@@ -101,7 +100,7 @@ namespace Booyco_HMI_Utility
             MainMap.DragButton = MouseButton.Left;
 
             MainMap.Position = new GMap.NET.PointLatLng(StartLat, StartLon);
-
+         
             MainMap.ShowCenter = false;
       
         }
@@ -137,7 +136,7 @@ namespace Booyco_HMI_Utility
             {
                 if (GlobalSharedData.PDSMapMarkers.Exists(p => p.MapMarker.LocalPositionX != item.MapMarker.LocalPositionX && p.MapMarker.LocalPositionY != item.MapMarker.LocalPositionY))
                 {
-                    item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                    item.Scale = scalefactor / (Math.Pow(2, (ushort)MainMap.Zoom));
                     item.MapMarker.Shape = new CustomMarkerEllipse(this.MainMap, item);
                     this.MainMap.Markers.Add(item.MapMarker);
                 }
@@ -149,7 +148,7 @@ namespace Booyco_HMI_Utility
             }
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
             {
-                item.Scale = 78271.518 / (Math.Pow(2, (ushort)MainMap.Zoom));
+                item.Scale = scalefactor / (Math.Pow(2, (ushort)MainMap.Zoom));
                 item.MapMarker.Shape = new CustomMarkerIndicator(this.MainMap, item);
                 this.MainMap.Markers.Add(item.MapMarker);
             }

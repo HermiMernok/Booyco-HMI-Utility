@@ -190,8 +190,8 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private string _threatZone;
-        public string ThreatZone
+        private int _threatZone;
+        public int ThreatZone
         {
             get
             {

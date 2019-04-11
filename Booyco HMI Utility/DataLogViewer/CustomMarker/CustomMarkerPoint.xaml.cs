@@ -17,8 +17,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
     /// </summary>
     public partial class CustomMarkerPoint
    {
-        Popup Popup;
-        Label Label;
+    
         GMapMarker Marker;
     
         GMapControl mapControl;
@@ -29,8 +28,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
                 this.mapControl = _mapControl;
                 this.Marker = marker.MapMarker;
 
-                Popup = new Popup();
-            Label = new Label();
+          
 
             if (marker.Zone == 1)
             {
@@ -48,22 +46,11 @@ namespace Demo.WindowsPresentation.CustomMarkers
             {
                 PointOfIntersection.Fill = Brushes.Transparent;
             }
-
+            Label_PopupInfo.Content = marker.title;
             this.SizeChanged += new SizeChangedEventHandler(CustomMarkerPoint_SizeChanged);
             this.MouseEnter += new MouseEventHandler(CustomMarkerPoint_MouseEnter);
             this.MouseLeave += new MouseEventHandler(CustomMarkerPoint_MouseLeave);
-
-            Popup.Placement = PlacementMode.Mouse;
-            {
-                Label.Background = Brushes.Gray;
-                Label.Foreground = Brushes.White;
-                Label.BorderBrush = Brushes.Black;
-                Label.BorderThickness = new Thickness(2);
-                Label.Padding = new Thickness(5);
-                Label.FontSize = 12;
-                Label.Content = marker.title;
-            }
-            Popup.Child = Label;
+         
         }
 
         void CustomMarkerPoint_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -99,13 +86,13 @@ namespace Demo.WindowsPresentation.CustomMarkers
         void CustomMarkerPoint_MouseLeave(object sender, MouseEventArgs e)
         {
          //   Marker.ZIndex -= 10000;
-            Popup.IsOpen = false;
+ 
         }
 
         void CustomMarkerPoint_MouseEnter(object sender, MouseEventArgs e)
         {
            // Marker.ZIndex += 10000;
-            Popup.IsOpen = true;
+         
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -113,6 +100,19 @@ namespace Demo.WindowsPresentation.CustomMarkers
         protected void OnPropertyChanged(string PropertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
+
+        private void PointOfIntersection_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!Label_PopupInfo.IsVisible)
+            {
+                Label_PopupInfo.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Label_PopupInfo.Visibility = Visibility.Collapsed;
+
+            }
         }
     }
 }
