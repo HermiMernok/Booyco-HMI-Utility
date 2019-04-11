@@ -401,20 +401,20 @@ namespace Booyco_HMI_Utility
 
                         Event_Count++;
 
-                        TempEvent.UnitSpeed = item.DataList[10];
-                        TempEvent.UnitHeading = ((double)BitConverter.ToInt32(item.RawData, 34));
-                        TempEvent.UnitHorizontalAccuracy = item.RawData[36];
-                        TempEvent.ThreatDisplayWidth = (UInt16)(item.RawData[38]);
+                        TempEvent.UnitSpeed = item.DataList[(int)PDS_Index.Speed];
+                        TempEvent.UnitHeading = item.DataList[(int)PDS_Index.Heading];
+                        TempEvent.UnitHorizontalAccuracy = Convert.ToUInt16(item.DataList[(int)PDS_Index.Threat_Acc]);
+                        TempEvent.ThreatDisplayWidth = Convert.ToUInt16(item.DataList[(int)PDS_Index.Threat_Width]);
 
                         Event_Count++;
 
-                        TempEvent.UnitLatitude = ((double)BitConverter.ToInt32(item.RawData, 40) * Math.Pow(10, -7));
-                        TempEvent.UnitLongitude = ((double)BitConverter.ToInt32(item.RawData, 44) * Math.Pow(10, -7));
+                        TempEvent.UnitLatitude = item.DataList[(int)PDS_Index.LAT];
+                        TempEvent.UnitLongitude = item.DataList[(int)PDS_Index.LON];
                         Event_Count++;
 
 
-                        TempEvent.POILatitude = ((double)BitConverter.ToInt32(item.RawData, 48) * Math.Pow(10, -7));
-                        TempEvent.POILongitude = ((double)BitConverter.ToInt32(item.RawData, 52) * Math.Pow(10, -7));
+                        TempEvent.POILatitude = item.DataList[(int)PDS_Index.POI_LAT];
+                        TempEvent.POILongitude = item.DataList[(int)PDS_Index.POI_LON];
 
                         Event_Count++;
 
@@ -547,7 +547,7 @@ namespace Booyco_HMI_Utility
                                                 EventItem.EventInfo[4] + "\n" +         //Threat Cluster
                                                 EventItem.EventInfo[5] + "\n" +         //Threat Sector
                                                 EventItem.EventInfo[6] + "\n" +         //Threat Zone
-                                                EventItem.EventInfo[7] + "\n" +         //Threat Speed
+                                                EventItem.EventInfo[7] + "  (" + (EventItem.ThreatSpeed / 3.6).ToString("0.##") + "ms)" + "\n" +          //Threat Speed
                                                 EventItem.EventInfo[8] + "\n" +         //Threat Distance
                                                 EventItem.EventInfo[9] + "\n" +         //Threat Heading
                                                 EventItem.EventInfo[10] + "\n" +         //Threat Latitude
@@ -561,19 +561,19 @@ namespace Booyco_HMI_Utility
 
                 string Unit_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                           "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
-                                            EventItem.EventInfo[19] + "\n" +         //Speed
+                                            EventItem.EventInfo[19] + "  ("+  (EventItem.UnitSpeed/3.6).ToString("0.##") +"ms)" + "\n" +         //Speed
                                             EventItem.EventInfo[20] + "\n" +         //Heading
                                             EventItem.EventInfo[21] + "\n" +         //Accuracy
                                                                                      // EventItem.EventInfo[22] + "\n" +        
                                                                                      // EventItem.EventInfo[23] + "\n" +         
-                                        
+
                                             EventItem.EventInfo[25] + "\n" +         //LON
                                               EventItem.EventInfo[26] + "\n" +         //Lat
 
                                             EventItem.EventInfo[16] + "\n" +         //Presence distance
                                               EventItem.EventInfo[17] + "\n" +         //Warning distance
                                             EventItem.EventInfo[18] + "\n" +       //Critical distance
-                                            EventItem.EventInfo[29] + "\n"+       //Scenario
+                                            EventItem.EventInfo[29] + "\n" +       //Scenario
                                             EventItem.EventInfo[32] + "\n" +       //Scenario Position
                                             EventItem.EventInfo[33] + "\n";       //Bearing
 
