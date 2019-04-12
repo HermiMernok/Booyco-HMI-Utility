@@ -315,7 +315,7 @@ namespace Booyco_HMI_Utility
 
         }
         private RangeObservableCollection<ProximityDetectionEvent> ProximityDetectionEventList = new RangeObservableCollection<ProximityDetectionEvent>();
-
+        private RangeObservableCollection<ProximityDetectionEvent> AnalogList = new RangeObservableCollection<ProximityDetectionEvent>();
         private bool ThreadsIsSelected()
         {
 
@@ -325,7 +325,7 @@ namespace Booyco_HMI_Utility
             {
                 if (item != null)
                 {
-                    if (item.EventID == 150 || item.EventID == 159)
+                    if (item.EventID == 150 || item.EventID == 159 || item.EventID == 500)
                     {
 
                         Event_Count++;
@@ -349,8 +349,10 @@ namespace Booyco_HMI_Utility
         {
 
             ProximityDetectionEvent TempEvent = new ProximityDetectionEvent();
+         
             uint Event_Count = 0;
             ProximityDetectionEventList = new RangeObservableCollection<ProximityDetectionEvent>();
+            AnalogList = new RangeObservableCollection<ProximityDetectionEvent>();
             foreach (LogEntry item in DataGridLogs.SelectedItems)
             {
 
@@ -505,6 +507,22 @@ namespace Booyco_HMI_Utility
 
                     }
 
+                    else if(item.EventID == 500)
+                    {
+                        TempEvent.DateTimeStamp = item.DateTime;
+                        TempEvent.ThreatNumberStart = item.Number;
+                        TempEvent.ThreatNumberStop = item.Number + 1;
+                        TempEvent.UnitLatitude = item.DataList[0];
+                        TempEvent.UnitLongitude = item.DataList[1];
+                        TempEvent.UnitHeading = item.DataList[3];
+                        TempEvent.EventInfo = item.EventInfoList;
+                        TempEvent.ThreatSpeed = item.DataList[2];
+                    
+                        TempEvent.ThreatDisplayZone = 20;
+
+                        AnalogList.Add(TempEvent);
+                        TempEvent = new ProximityDetectionEvent();
+                    }
 
                 }
 
@@ -660,7 +678,27 @@ namespace Booyco_HMI_Utility
 
             }
 
-            extendedWindow.MapView.UpdateMapMarker();
+
+            foreach (ProximityDetectionEvent AnalogItem in AnalogList)
+            {
+                string Unit_Information = "Data Entry (PDS): " + AnalogItem.ThreatNumberStart.ToString() + " - " + AnalogItem.ThreatNumberStop.ToString() + "\n" +
+                                        "Timestamp: " + AnalogItem.DateTimeStamp.ToString() + " \n" +
+                                          AnalogItem.EventInfo[2] + "  (" + (AnalogItem.UnitSpeed / 3.6).ToString("0.##") + "ms)" + "\n" +         //Speed
+                                          AnalogItem.EventInfo[3] + "\n" +         //Heading
+                                            AnalogItem.EventInfo[0] + "\n" +         //Lat
+                                          AnalogItem.EventInfo[1] + "\n";        //Lon
+                                         
+            
+                MarkerEntry AnalogUnitMarker = new MarkerEntry();
+                AnalogUnitMarker.MapMarker = new GMapMarker(new PointLatLng(AnalogItem.UnitLatitude, AnalogItem.UnitLongitude));
+                AnalogUnitMarker.title = Unit_Information;
+                AnalogUnitMarker.Heading = AnalogItem.UnitHeading;
+                AnalogUnitMarker.Latitude = AnalogItem.UnitLatitude;
+                AnalogUnitMarker.Longitude = AnalogItem.UnitLongitude;
+                AnalogUnitMarker.Zone = AnalogItem.ThreatDisplayZone;
+                GlobalSharedData.PDSMapMarkers.Add(AnalogUnitMarker);
+            }
+                extendedWindow.MapView.UpdateMapMarker();
 
 
         }

@@ -272,7 +272,20 @@ namespace Booyco_HMI_Utility
                                 }
                                 
                             }
-                            else if (_tempEventID == PDSThreatEventID || _tempEventID == PDSThreatEventEndID)
+                            else if(_tempEventID == 501)
+                            {
+                                if (TempList.Last().EventID == 500 && _tempDataList.Count() > 0)
+                                    {
+                                    TempList.Last().EventInfo += Environment.NewLine + _tempEventInfo;
+                                    TempList.Last().DataList.AddRange(_tempDataList);
+                                    TempList.Last().DataListString.AddRange(_tempDataListString);
+                                    TempList.Last().EventInfoList.AddRange(_tempEventInfoList);
+                                    Buffer.BlockCopy(_logData, 0, TempList.Last().RawData, 8, 8);
+                                }
+                                
+                            }
+                     
+                            else if (_tempEventID == PDSThreatEventID || _tempEventID == PDSThreatEventEndID || _tempEventID == 500)
                             {
                                 byte[] byteArray = new byte[PDSThreatEventLength*8];
                                 byteArray[0] = _logData[0];

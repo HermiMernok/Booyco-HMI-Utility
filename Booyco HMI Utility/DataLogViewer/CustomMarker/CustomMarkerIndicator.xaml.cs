@@ -64,7 +64,11 @@ namespace Demo.WindowsPresentation.CustomMarkers
             else if (CurrentMarker.Zone == 10)
             {
                 PathIndicator.Fill = Brushes.Black;
-            }        
+            }
+            else if (CurrentMarker.Zone == 20)
+            {
+                PathIndicator.Fill = Brushes.Green;
+            }
             else
             {
                 PathIndicator.Fill = Brushes.Transparent;
