@@ -229,8 +229,7 @@ namespace Booyco_HMI_Utility
                         ws.Cells[1, 4].Value = "Event ID";
                         ws.Cells[1, 5].Value = "Event Name";
                         ws.Cells[1, 6].Value = "Event Description";
-                        ws.Cells[1, 7].Value = "Raw Data Display";
-                        ws.Cells[1, 8].Value = "Event Information";
+              
 
                         int count = 2;
                         foreach (LogEntry _logEntry in DataLogs)
@@ -239,9 +238,8 @@ namespace Booyco_HMI_Utility
                             ws.Cells[count, 2].Value = _logEntry.DateTime.Date.ToString();
                             ws.Cells[count, 3].Value = _logEntry.DateTime.TimeOfDay.ToString();
                             ws.Cells[count, 4].Value = _logEntry.EventID;
-                            ws.Cells[count, 5].Value = _logEntry.EventName;
-                            ws.Cells[count, 6].Value = _logEntry.EventInfo;
-                            ws.Cells[count, 7].Value = _logEntry.RawEntry;
+                            ws.Cells[count, 5].Value = _logEntry.EventName;                          
+                 
                             count++;
                         }
                         dataRange.AutoFitColumns();
@@ -269,7 +267,7 @@ namespace Booyco_HMI_Utility
 
         private void Datagrid_Logs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!IsButtonClickedSelectAll)
+            if (IsSelectAll)
             {
                 ButtonSelectAll.Content = "Select All";
                 IsSelectAll = false;
@@ -294,7 +292,7 @@ namespace Booyco_HMI_Utility
                 ButtonMap.IsEnabled = false;
                 // ButtonDisplay.IsEnabled = false;
             }
-            IsButtonClickedSelectAll = false;
+            //IsButtonClickedSelectAll = false;
         }
         private void ButtonMap_Click(object sender, RoutedEventArgs e)
         {
@@ -754,9 +752,10 @@ namespace Booyco_HMI_Utility
                 {
                     ButtonToggleExpanded_Click(null, null);
                 }
-                if(!IsVisible)
-                { 
-                    ButtonSelectAll_Click(null, null);
+                if (IsSelectAll)
+                {
+                    ButtonSelectAll.Content = "Select All";
+                    IsSelectAll = false;
                 }
                 TextBlockProgressStatus.Text = "";
                 ProgressbarDataLogs.Value = 0;
@@ -926,7 +925,7 @@ namespace Booyco_HMI_Utility
                     _tempPDSThreatEvent.ThreatType = item.DataListString.ElementAt(3);
                     _tempPDSThreatEvent.ThreatWidth = item.DataListString.ElementAt(4);
                     _tempPDSThreatEvent.ThreatSector = item.DataListString.ElementAt(5);
-                  //  _tempPDSThreatEvent.ThreatZone = parse.int(item.DataList.ElementAt(6));
+                    _tempPDSThreatEvent.ThreatZone = Convert.ToInt16(item.DataList.ElementAt(6));
                     _tempPDSThreatEvent.ThreatDistance = item.DataListString.ElementAt(8);
                     _tempPDSThreatEvent.ThreatHeading = item.DataListString.ElementAt(9);
                     _tempPDSThreatEvent.DateTime = item.DateTime;

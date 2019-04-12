@@ -94,7 +94,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
         double VehicleWidth = 1;
         double VehicleHeight = 3;
-        double ProhibitWidth = 3;
+        double ProhibitWidth = 4;
         double ProhibitHeight = 5;
         //double VehicleWidth = 3;
         //double VehicleHeight = 4;
