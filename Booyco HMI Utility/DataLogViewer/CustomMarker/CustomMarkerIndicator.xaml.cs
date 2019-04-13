@@ -42,6 +42,8 @@ namespace Demo.WindowsPresentation.CustomMarkers
             CurrentMarker.CriticalZoneSize = marker.CriticalZoneSize;
             CurrentMarker.Zone = marker.Zone;
             CurrentMarker.title = marker.title;
+            CurrentMarker.Accuracy = marker.Accuracy;
+            CurrentMarker.BrakeDistance = marker.BrakeDistance;
 
             RotateTransform IndicatorTransfrom = new RotateTransform(CurrentMarker.Heading);
               PathIndicator.LayoutTransform = IndicatorTransfrom;
@@ -96,30 +98,45 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
       }
 
-        double VehicleWidth = 1;
-        double VehicleHeight = 3;
-        double ProhibitWidth = 4;
-        double ProhibitHeight = 5;
+        double VehicleWidth = 2;
+        double VehicleHeight = 4;
+        double ProhibitWidth = 1;
+        double ProhibitHeight = 3;
         //double VehicleWidth = 3;
         //double VehicleHeight = 4;
         //double ProhibitWidth = 8;
+        double WidthFactor = 0.5;
         //double ProhibitHeight = 10;
         public void UpdateSizes()
         {
-            Rectangle_ProhibitZone.Width = ProhibitWidth/2 / CurrentMarker.Scale;
-            Rectangle_ProhibitZone.Height = ProhibitHeight/2 / CurrentMarker.Scale;
+            Rectangle_ProhibitZone.Width = (ProhibitWidth+ VehicleWidth/2+CurrentMarker.Accuracy) / CurrentMarker.Scale;
+            Rectangle_ProhibitZone.Height = (ProhibitHeight+VehicleHeight/2) / CurrentMarker.Scale;
 
-            Rectangle_Vehicle.Width = VehicleWidth/2 / CurrentMarker.Scale;
-            Rectangle_Vehicle.Height = VehicleHeight/2 / CurrentMarker.Scale;
+            Rectangle_Vehicle.Width = (VehicleWidth / 2) / CurrentMarker.Scale;
+            Rectangle_Vehicle.Height = (VehicleHeight / 2) / CurrentMarker.Scale;
+            if (CurrentMarker.Zone == 10)
+            {
+                Rectangle_CriticalZone.Height = (CurrentMarker.BrakeDistance / 2+ ProhibitWidth + VehicleWidth / 2) / CurrentMarker.Scale;
+                Rectangle_CriticalZone.Width = (ProhibitWidth + VehicleWidth / 2 + CurrentMarker.Accuracy ) / CurrentMarker.Scale;
+                Rectangle_PresenceZone.Width = 0;
+                Rectangle_PresenceZone.Height = 0;
 
+                Rectangle_WarningZone.Height = 0;
+                Rectangle_WarningZone.Width = 0;
+            }
+            else
+            {
+
+            Rectangle_PresenceZone.Width = (ProhibitWidth + VehicleWidth / 2 + CurrentMarker.Accuracy + WidthFactor) / CurrentMarker.Scale;
             Rectangle_PresenceZone.Height = (CurrentMarker.PresenceZoneSize / 2) / CurrentMarker.Scale;
-            Rectangle_PresenceZone.Width = ProhibitWidth/2 / CurrentMarker.Scale;
 
             Rectangle_WarningZone.Height = (CurrentMarker.WarningZoneSize / 2) / CurrentMarker.Scale;
-            Rectangle_WarningZone.Width = ProhibitWidth / 2 / CurrentMarker.Scale;
+            Rectangle_WarningZone.Width = (ProhibitWidth + VehicleWidth / 2 + CurrentMarker.Accuracy + WidthFactor) / CurrentMarker.Scale;
             Rectangle_CriticalZone.Height = (CurrentMarker.CriticalZoneSize / 2) / CurrentMarker.Scale;
-            Rectangle_CriticalZone.Width = ProhibitWidth / 2 / CurrentMarker.Scale;
+            Rectangle_CriticalZone.Width = (ProhibitWidth + VehicleWidth / 2 + CurrentMarker.Accuracy+ WidthFactor) / CurrentMarker.Scale;
+            }
             Label_PopupInfo.Content = CurrentMarker.title;
+
             RectangleTransform_Crtical.Y = -Rectangle_CriticalZone.Height / 2;
             RectangleTransform_Warning.Y = -Rectangle_WarningZone.Height / 2;
             RectangleTransform_Presence.Y = -Rectangle_PresenceZone.Height / 2;
@@ -211,6 +228,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
                 Rectangle_WarningZone.Visibility = Visibility.Collapsed;
                 Rectangle_PresenceZone.Visibility = Visibility.Collapsed;
             }
+    
 
         }
 
@@ -228,6 +246,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
             Rectangle_CriticalZone.Visibility = Visibility.Visible;
             Rectangle_WarningZone.Visibility = Visibility.Visible;
             Rectangle_PresenceZone.Visibility = Visibility.Visible;
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

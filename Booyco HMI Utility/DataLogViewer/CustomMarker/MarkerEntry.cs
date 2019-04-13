@@ -31,5 +31,7 @@ namespace Booyco_HMI_Utility.CustomMarker
         public int CriticalZoneSize;
         public double Latitude;
         public double Longitude;
+        public double Accuracy;
+        public double BrakeDistance;
     }
 }

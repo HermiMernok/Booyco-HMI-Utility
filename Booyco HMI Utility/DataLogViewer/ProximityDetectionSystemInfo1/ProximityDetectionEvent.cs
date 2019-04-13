@@ -55,6 +55,19 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
+        private double _ThreatBrakeDistance;
+        public double ThreatBrakeDistance
+        {
+            get { return _ThreatBrakeDistance; }
+            set
+            {
+                if (_ThreatBrakeDistance != value)
+                {
+                    _ThreatBrakeDistance = value;
+                    OnPropertyChanged("ThreatBrakeDistance");
+                }
+            }
+        }
         private DateTime _DateTimeStamp;
         public DateTime DateTimeStamp
         {
