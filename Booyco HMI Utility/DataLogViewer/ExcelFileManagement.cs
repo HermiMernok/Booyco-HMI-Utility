@@ -57,7 +57,7 @@ namespace Booyco_HMI_Utility
                 }
 
                
-                catch
+                catch(Exception e)
                 {
                     Console.WriteLine("====== Lookup Excel Read Fail ======");
                 }

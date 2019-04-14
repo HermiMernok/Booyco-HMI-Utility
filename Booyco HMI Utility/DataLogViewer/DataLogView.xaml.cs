@@ -419,10 +419,15 @@ namespace Booyco_HMI_Utility
                         TempEvent.UnitLongitude = item.DataList[(int)PDS_Index.LON];
                         Event_Count++;
 
-
+                        TempEvent.ThreatScenario = Convert.ToUInt16(item.DataList[(int)PDS_Index.Threat_Scenario]);
                         TempEvent.POILatitude = item.DataList[(int)PDS_Index.POI_LAT];
                         TempEvent.POILongitude = item.DataList[(int)PDS_Index.POI_LON];
                         TempEvent.ThreatBrakeDistance = item.DataList[(int)PDS_Index.Threat_Brake_Distance];
+                       // TempEvent.POCDistance = Convert.ToUInt16(item.DataList[(int)PDS_Index.POC_Distance]);
+                        Event_Count++;
+
+                        TempEvent.POCLatitude = item.DataList[(int)PDS_Index.POC_LAT];
+                        TempEvent.POCLongitude = item.DataList[(int)PDS_Index.POC_LON];
                         Event_Count++;
 
                         //Convert Geodetic decimal to UTM for Unit and POI
@@ -430,9 +435,14 @@ namespace Booyco_HMI_Utility
                         GeoUtility.GeoSystem.UTM UTM_Unit = (GeoUtility.GeoSystem.UTM)LatLon_Unit;
                         GeoUtility.GeoSystem.Geographic POI_LatLon = new GeoUtility.GeoSystem.Geographic(TempEvent.POILongitude, TempEvent.POILatitude);
                         GeoUtility.GeoSystem.UTM POI_UTM = (GeoUtility.GeoSystem.UTM)POI_LatLon;
+                        GeoUtility.GeoSystem.Geographic POC_LatLon = new GeoUtility.GeoSystem.Geographic(TempEvent.POCLongitude, TempEvent.POCLatitude);
+                        GeoUtility.GeoSystem.UTM POC_UTM = (GeoUtility.GeoSystem.UTM)POC_LatLon;
+                        GeoUtility.GeoSystem.Geographic Threat_LatLon = new GeoUtility.GeoSystem.Geographic(TempEvent.ThreatLongitude, TempEvent.ThreatLatitude);
+                        GeoUtility.GeoSystem.UTM Threat_UTM = (GeoUtility.GeoSystem.UTM)Threat_LatLon;
                         //Calculate distance between unit and POI
                         TempEvent.ThreatPOIUTMDistance = Math.Sqrt((Math.Pow((UTM_Unit.East - POI_UTM.East), 2) + Math.Pow((UTM_Unit.North - POI_UTM.North), 2)));
-
+                        TempEvent.POCThreatDistance = Math.Sqrt((Math.Pow((POC_UTM.East - Threat_UTM.East), 2) + Math.Pow((POC_UTM.North - Threat_UTM.North), 2)));
+                        TempEvent.POCUnitDistance = Math.Sqrt((Math.Pow((POC_UTM.East - UTM_Unit.East), 2) + Math.Pow((POC_UTM.North - UTM_Unit.North), 2)));
                         Event_Count = 0;
                         ProximityDetectionEventList.Add(TempEvent);
                         TempEvent = new ProximityDetectionEvent();
@@ -441,19 +451,26 @@ namespace Booyco_HMI_Utility
 
                     else if(item.EventID == 500)
                     {
-                        TempEvent.DateTimeStamp = item.DateTime;
-                        TempEvent.ThreatNumberStart = item.Number;
-                        TempEvent.ThreatNumberStop = item.Number + 1;
-                        TempEvent.UnitLatitude = item.DataList[0];
-                        TempEvent.UnitLongitude = item.DataList[1];
-                        TempEvent.UnitHeading = item.DataList[3];
-                        TempEvent.EventInfo = item.EventInfoList;
-                        TempEvent.ThreatSpeed = item.DataList[2];
-                    
-                        TempEvent.ThreatDisplayZone = 20;
+                        try
+                        {
+                            TempEvent.DateTimeStamp = item.DateTime;
+                            TempEvent.ThreatNumberStart = item.Number;
+                            TempEvent.ThreatNumberStop = item.Number + 1;
+                            TempEvent.UnitLatitude = item.DataList[0];
+                            TempEvent.UnitLongitude = item.DataList[1];
+                            TempEvent.UnitHeading = item.DataList[3];
+                            TempEvent.EventInfo = item.EventInfoList;
+                            TempEvent.ThreatSpeed = item.DataList[2];
 
-                        AnalogList.Add(TempEvent);
-                        TempEvent = new ProximityDetectionEvent();
+                            TempEvent.ThreatDisplayZone = 20;
+
+                            AnalogList.Add(TempEvent);
+                            TempEvent = new ProximityDetectionEvent();
+                        }
+                        catch
+                        {
+
+                        }
                     }
 
                 }
@@ -476,11 +493,11 @@ namespace Booyco_HMI_Utility
                 double y_dif = (UTM_ThreatUnit.North - UTM_Unit2.North);
                 string calculated_position = "";
 
-                if(x_dif >= 0 && y_dif >=0)
+                if (x_dif >= 0 && y_dif >= 0)
                 {
                     calculated_position = "Front Right";
                 }
-                else if(x_dif < 0 && y_dif >= 0)
+                else if (x_dif < 0 && y_dif >= 0)
                 {
                     calculated_position = "Front Left";
                 }
@@ -510,13 +527,11 @@ namespace Booyco_HMI_Utility
                                                 EventItem.EventInfo[12] + "\n" +
                                                 EventItem.EventInfo[24] + "\n" +         //Threat brake distance
                                                 "X: " + UTM_ThreatUnit.EastString + "\n" +
-                                                "Y:" + UTM_ThreatUnit.NorthString  ;         //Threat Acc
-
-
-
+                                                "Y:" + UTM_ThreatUnit.NorthString;         //Threat Acc
+                               
                 string Unit_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                           "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
-                                            EventItem.EventInfo[19] + "  ("+  (EventItem.UnitSpeed/3.6).ToString("0.##") +"ms)" + "\n" +         //Speed
+                                            EventItem.EventInfo[19] + "  (" + (EventItem.UnitSpeed / 3.6).ToString("0.##") + "ms)" + "\n" +         //Speed
                                             EventItem.EventInfo[20] + "\n" +         //Heading
                                             EventItem.EventInfo[21] + "\n" +         //Accuracy
                                                                                      // EventItem.EventInfo[22] + "\n" +        
@@ -532,15 +547,6 @@ namespace Booyco_HMI_Utility
                                             EventItem.EventInfo[32] + "\n" +       //Scenario Position
                                             EventItem.EventInfo[33] + "\n";       //Bearing
 
-                //     "X: " + UTM_Unit2.EastString + "\n" +
-                //    "Y:" + UTM_Unit2.NorthString + "\n" +       //Threat Acc
-                //"Difference x: " + x_dif.ToString() + "\n" +
-                //"Difference y: " + y_dif.ToString() + "\n" +
-                //"Scenario Position: " + calculated_position;
-
-                //Threat Acc
-                // EventItem.EventInfo[27] + "\n" +         //Scenario
-
                 string POI_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
                                           "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
                                           "POI Distance (UTM Plot): " + EventItem.ThreatPOIUTMDistance.ToString("##,##00.00") + " m\n" +
@@ -549,9 +555,18 @@ namespace Booyco_HMI_Utility
                                           "POI Longitude: " + EventItem.POILongitude.ToString() + " deg" + "\n" +
                                           EventItem.EventInfo[29] + "\n";        //Scenario;
 
+
+                string POC_Information = "Data Entry (PDS): " + EventItem.ThreatNumberStart.ToString() + " - " + EventItem.ThreatNumberStop.ToString() + "\n" +
+                                          "Timestamp: " + EventItem.DateTimeStamp.ToString() + " \n" +
+                                          "POC Latitude: " + EventItem.POCLatitude.ToString() + " deg\n" +
+                                          "POC Longitude: " + EventItem.POCLongitude.ToString() + " deg\n" +
+                                          "POC to Threat Distance: " + EventItem.POCThreatDistance.ToString("##,##00.00") + " m\n" +
+                                          "POC to Unit Distance: " + EventItem.POCUnitDistance.ToString("##,##00.00") + " m";
+
                 MarkerEntry PDSMarker1 = new MarkerEntry();
                 MarkerEntry PDSMarker2 = new MarkerEntry();
                 MarkerEntry PDSMarkerPOI = new MarkerEntry();
+                MarkerEntry PDSMarkerPOC = new MarkerEntry();
 
 
                 int LastGeofenceIndex = -1;
@@ -583,11 +598,12 @@ namespace Booyco_HMI_Utility
                 }
 
                 LastGeofenceIndex = GlobalSharedData.PDSMapMarkers.FindLastIndex(x => x.MapMarker.Position.Lat == EventItem.ThreatLatitude && x.MapMarker.Position.Lng == EventItem.ThreatLongitude && x.Type == (int)MarkerType.Ellipse);
-                
+
                 PDSMarker1.MapMarker = new GMapMarker(new PointLatLng(EventItem.ThreatLatitude, EventItem.ThreatLongitude));
                 PDSMarker2.MapMarker = new GMapMarker(new PointLatLng(EventItem.UnitLatitude, EventItem.UnitLongitude));
                 PDSMarkerPOI.MapMarker = new GMapMarker(new PointLatLng(EventItem.POILatitude, EventItem.POILongitude));
-                
+                PDSMarkerPOC.MapMarker = new GMapMarker(new PointLatLng(EventItem.POCLatitude, EventItem.POCLongitude));
+
                 PDSMarker2.Heading = EventItem.UnitHeading;
                 PDSMarker2.Zone = EventItem.ThreatDisplayZone;
                 PDSMarker2.title = Unit_Information;
@@ -600,6 +616,11 @@ namespace Booyco_HMI_Utility
                 PDSMarkerPOI.Zone = EventItem.ThreatDisplayZone;
                 PDSMarkerPOI.title = POI_Information;
                 PDSMarkerPOI.Type = (int)MarkerType.Point;
+
+                PDSMarkerPOC.Zone = EventItem.ThreatDisplayZone;
+                PDSMarkerPOC.title = POC_Information;
+                PDSMarkerPOC.Type = (int)MarkerType.Cross;
+
                 if (LastGeofenceIndex == -1)
                 {
                     GlobalSharedData.PDSMapMarkers.Add(PDSMarker1);
@@ -608,7 +629,10 @@ namespace Booyco_HMI_Utility
                 PDSMarker2.Longitude = EventItem.UnitLongitude;
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarker2);
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarkerPOI);
-               
+                if (EventItem.ThreatScenario == 5 || EventItem.ThreatScenario == 4)
+                { 
+                    GlobalSharedData.PDSMapMarkers.Add(PDSMarkerPOC);
+                }
             }
             
             foreach (ProximityDetectionEvent AnalogItem in AnalogList)
@@ -617,7 +641,7 @@ namespace Booyco_HMI_Utility
                                         "Timestamp: " + AnalogItem.DateTimeStamp.ToString() + " \n" +
                                           AnalogItem.EventInfo[2] + "  (" + (AnalogItem.UnitSpeed / 3.6).ToString("0.##") + "ms)" + "\n" +         //Speed
                                           AnalogItem.EventInfo[3] + "\n" +         //Heading
-                                            AnalogItem.EventInfo[0] + "\n" +         //Lat
+                                          AnalogItem.EventInfo[0] + "\n" +         //Lat
                                           AnalogItem.EventInfo[1] + "\n";        //Lon
                                                      
                 MarkerEntry AnalogUnitMarker = new MarkerEntry();

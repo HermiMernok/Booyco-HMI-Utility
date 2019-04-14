@@ -12,7 +12,8 @@ namespace Booyco_HMI_Utility.CustomMarker
     {
         Indicator,
         Ellipse,
-        Point
+        Point,
+        Cross
     }
 
     public class MarkerEntry

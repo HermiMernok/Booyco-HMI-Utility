@@ -247,7 +247,7 @@ namespace Booyco_HMI_Utility
                         try
                         {
 
-                            if (_tempEventID > PDSThreatEventID && _tempEventID < PDSThreatEventIDLast)
+                            if (_tempEventID > PDSThreatEventID && _tempEventID <= PDSThreatEventIDLast)
                             {
                                if (TempList.Last().EventID == PDSThreatEventID && _tempDataList.Count() > 0)
                                 {
@@ -260,7 +260,7 @@ namespace Booyco_HMI_Utility
                                 }
 
                             }
-                            else if (_tempEventID > PDSThreatEventEndID && _tempEventID < PDSThreatEventEndIDLast)
+                            else if (_tempEventID > PDSThreatEventEndID && _tempEventID <= PDSThreatEventEndIDLast)
                             {
                                 if (TempList.Last().EventID == PDSThreatEventEndID && _tempDataList.Count() > 0)
                                 {

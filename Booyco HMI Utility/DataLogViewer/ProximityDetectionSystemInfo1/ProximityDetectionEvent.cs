@@ -124,6 +124,20 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
+        private uint _ThreatScenario;
+        public uint ThreatScenario
+        {
+            get { return _ThreatScenario; }
+            set
+            {
+                if (_ThreatScenario != value)
+                {
+                    _ThreatScenario = value;
+                    OnPropertyChanged("ThreatScenario");
+                }
+            }
+        }
+
         private UInt16 _ThreatDisplayWidth;
         public UInt16 ThreatDisplayWidth
         {
@@ -249,6 +263,19 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
+        private UInt16 _POCDistance;
+        public UInt16 POCDistance
+        {
+            get { return _POCDistance; }
+            set
+            {
+                if (_POCDistance != value)
+                {
+                    _POCDistance = value;
+                    OnPropertyChanged("POCDistance");
+                }
+            }
+        }
         private double _ThreatPOIUTMDistance;
         public double ThreatPOIUTMDistance
         {
@@ -263,6 +290,33 @@ namespace ProximityDetectionSystemInfo
             }
         }
 
+        private double _POCUnitDistance;
+        public double POCUnitDistance
+        {
+            get { return _POCUnitDistance; }
+            set
+            {
+                if (_POCUnitDistance != value)
+                {
+                    _POCUnitDistance = value;
+                    OnPropertyChanged("POCUnitDistance");
+                }
+            }
+        }
+
+        private double _POCThreatDistance;
+        public double POCThreatDistance
+        {
+            get { return _POCThreatDistance; }
+            set
+            {
+                if (_POCThreatDistance != value)
+                {
+                    _POCThreatDistance = value;
+                    OnPropertyChanged("POCThreatDistance");
+                }
+            }
+        }
         private double _ThreatPOILOGDistance;
         public double ThreatPOILOGDistance
         {
@@ -441,6 +495,34 @@ namespace ProximityDetectionSystemInfo
                 {
                     _POILongitude = value;
                     OnPropertyChanged("POILongitude");
+                }
+            }
+        }
+
+        private double _POCLatitude;
+        public double POCLatitude
+        {
+            get { return _POCLatitude; }
+            set
+            {
+                if (_POCLatitude != value)
+                {
+                    _POCLatitude = value;
+                    OnPropertyChanged("POCLatitude");
+                }
+            }
+        }
+
+        private double _POCLongitude;
+        public double POCLongitude
+        {
+            get { return _POCLongitude; }
+            set
+            {
+                if (_POCLongitude != value)
+                {
+                    _POCLongitude = value;
+                    OnPropertyChanged("POCLongitude");
                 }
             }
         }

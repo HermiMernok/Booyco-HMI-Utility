@@ -59,6 +59,11 @@ namespace Booyco_HMI_Utility
                 item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
                 this.MainMap.Markers.Add(item.MapMarker);
             }
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Cross))
+            {
+                item.MapMarker.Shape = new CustomMarkerCross(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
+            }
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))
             {
                 item.Scale = scalefactor / (Math.Pow(2, (ushort)MainMap.Zoom));
@@ -144,6 +149,11 @@ namespace Booyco_HMI_Utility
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Point))
             {
                 item.MapMarker.Shape = new CustomMarkerPoint(this.MainMap, item);
+                this.MainMap.Markers.Add(item.MapMarker);
+            }
+            foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Cross))
+            {
+                item.MapMarker.Shape = new CustomMarkerCross(this.MainMap, item);
                 this.MainMap.Markers.Add(item.MapMarker);
             }
             foreach (MarkerEntry item in GlobalSharedData.PDSMapMarkers.FindAll(p => p.Type == (int)MarkerType.Indicator))

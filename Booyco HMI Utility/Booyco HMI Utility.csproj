@@ -225,6 +225,7 @@
     <Compile Include="Bootloader\Bootloader.xaml.cs">
       <DependentUpon>Bootloader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataLogViewer\CustomMarker\CustomMarkerCross.xaml.cs" />
     <Compile Include="DataLogViewer\FilterManagement.cs" />
     <Compile Include="Parameters\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
@@ -291,6 +292,10 @@
     <Page Include="Bootloader\Bootloader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataLogViewer\CustomMarker\CustomMarkerCross.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Parameters\ConfigView.xaml">
       <SubType>Designer</SubType>

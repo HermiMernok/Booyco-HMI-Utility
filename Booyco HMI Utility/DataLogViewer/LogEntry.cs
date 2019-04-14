@@ -43,7 +43,10 @@ namespace Booyco_HMI_Utility
         Threat_Display_x = 30,
         Threat_Display_y = 31,
         Threat_Positon = 32,
-        Threat_Bearing = 33
+        Threat_Bearing = 33,
+
+        POC_LAT = 34,
+        POC_LON = 35 
     }
 
     class LogEntry : INotifyPropertyChanged
