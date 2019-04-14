@@ -120,8 +120,7 @@ namespace Booyco_HMI_Utility
                     Label_ProgressStatusPercentage.Content = "File Completed...";
                     Button_ViewLogs.Visibility = Visibility.Visible;
                     GlobalSharedData.FilePath = _newLogFilePath;
-                    _newLogFilePath = "";
-
+                 
                 }
                 DataLogProgress = 0;
                 DataIndex = 0;
@@ -317,8 +316,7 @@ namespace Booyco_HMI_Utility
             DataLogProgress = 0;
             DataIndex = 0;
             if (DataExtractorComplete)
-            {
-                
+            {               
                 ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
             }
         }
