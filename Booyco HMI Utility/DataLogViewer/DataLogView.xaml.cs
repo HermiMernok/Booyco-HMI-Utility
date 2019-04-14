@@ -742,7 +742,10 @@ namespace Booyco_HMI_Utility
             {
                 if (!IsToggleExpand)
                 {
-                    ButtonToggleExpanded_Click(null, null);
+                    if (ButtonToggleExpand.Content.ToString() == "Collapse")
+                    {
+                        ButtonToggleExpanded_Click(null, null);
+                    }
                 }
                 if (IsSelectAll)
                 {
