@@ -878,59 +878,83 @@ namespace Booyco_HMI_Utility
 
             GlobalSharedData.HMIDisplayList.Clear();
             DateTime _clearTime = new DateTime(2100, 01, 01);
-
-            // List<LogEntry> _tempList = new List<LogEntry>();
-            // foreach (LogEntry item in DataGridLogs.SelectedItems)
-            // {
-            //     _tempList.Add(item);
-            // }
-
-            //GlobalSharedData.
-
-            DateTime StartSelectedDateTime = new DateTime(2100, 01, 01);
-            DateTime EndSelectedDateTime = new DateTime(1700, 01, 01);
-
+            bool RadarCheck = true;
+            List<LogEntry> _tempList = new List<LogEntry>();
             foreach (LogEntry item in DataGridLogs.SelectedItems)
             {
-                if (item.DateTime < StartSelectedDateTime)
-                {
-                    StartSelectedDateTime = item.DateTime;
-                }
-                if (item.DateTime > EndSelectedDateTime)
-                {
-                    EndSelectedDateTime = item.DateTime;
+                _tempList.Add(item);
+                //=== check if selected is only radar event
+                if(item.EventID != 168)
+                {                    
+                    RadarCheck = false;
                 }
             }
 
-            GlobalSharedData.EndDateTimeDatalog = EndSelectedDateTime;
-            GlobalSharedData.StartDateTimeDatalog = StartSelectedDateTime;
-
-            List<LogEntry> _sortedList = DataLogs.OrderBy(a => a.DateTime).ToList();
-
-            foreach (LogEntry item in _sortedList)
+            //=== if selected data is not only radar plot normally
+            if (!RadarCheck)
             {
-                HMIDisplayEntry _tempHMIDisplayEntry = new HMIDisplayEntry();
-                PDSThreatEvent _tempPDSThreatEvent = new PDSThreatEvent();
+                GlobalSharedData.OnlyRadarSelected = false;
+                DateTime StartSelectedDateTime = new DateTime(2100, 01, 01);
+                DateTime EndSelectedDateTime = new DateTime(1700, 01, 01);
 
-                if (item.EventID == 150)
+                foreach (LogEntry item in DataGridLogs.SelectedItems)
                 {
-                    _tempPDSThreatEvent.ThreatBIDHex = item.DataListString.ElementAt(0);
-                    _tempPDSThreatEvent.ThreatBID = uint.Parse(item.DataListString.ElementAt(0).Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
-                    _tempPDSThreatEvent.ThreatGroup = item.DataListString.ElementAt(2);
-                    _tempPDSThreatEvent.ThreatType = item.DataListString.ElementAt(3);
-                    _tempPDSThreatEvent.ThreatWidth = item.DataListString.ElementAt(4);
-                    _tempPDSThreatEvent.ThreatSector = item.DataListString.ElementAt(5);
-                    _tempPDSThreatEvent.ThreatZone = Convert.ToInt16(item.DataList.ElementAt(6));
-                    _tempPDSThreatEvent.ThreatDistance = item.DataListString.ElementAt(8);
-                    _tempPDSThreatEvent.ThreatHeading = item.DataListString.ElementAt(9);
-                    _tempPDSThreatEvent.DateTime = item.DateTime;
-
-                    HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
-
-
-                    if (_foundItem != null)
+                    if (item.DateTime < StartSelectedDateTime)
                     {
-                        if (_foundItem.EndDateTime != _clearTime)
+                        StartSelectedDateTime = item.DateTime;
+                    }
+                    if (item.DateTime > EndSelectedDateTime)
+                    {
+                        EndSelectedDateTime = item.DateTime;
+                    }
+                }
+
+                GlobalSharedData.EndDateTimeDatalog = EndSelectedDateTime;
+                GlobalSharedData.StartDateTimeDatalog = StartSelectedDateTime;
+
+                List<LogEntry> _sortedList = DataLogs.OrderBy(a => a.DateTime).ToList();
+
+                foreach (LogEntry item in _sortedList)
+                {
+                    HMIDisplayEntry _tempHMIDisplayEntry = new HMIDisplayEntry();
+                    PDSThreatEvent _tempPDSThreatEvent = new PDSThreatEvent();
+                 
+                    if (item.EventID == 150)
+                    {
+                        _tempPDSThreatEvent.ThreatBIDHex = item.DataListString.ElementAt(0);
+                        _tempPDSThreatEvent.ThreatBID = uint.Parse(item.DataListString.ElementAt(0).Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
+                        _tempPDSThreatEvent.ThreatGroup = item.DataListString.ElementAt(2);
+                        _tempPDSThreatEvent.ThreatType = item.DataListString.ElementAt(3);
+                        _tempPDSThreatEvent.ThreatWidth = item.DataListString.ElementAt(4);
+                        _tempPDSThreatEvent.ThreatSector = item.DataListString.ElementAt(5);
+                        _tempPDSThreatEvent.ThreatZone = Convert.ToInt16(item.DataList.ElementAt(6));
+                        _tempPDSThreatEvent.ThreatDistance = item.DataListString.ElementAt(8);
+                        _tempPDSThreatEvent.ThreatHeading = item.DataListString.ElementAt(9);
+                        _tempPDSThreatEvent.DateTime = item.DateTime;
+
+                        HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
+
+
+                        if (_foundItem != null)
+                        {
+                            if (_foundItem.EndDateTime != _clearTime)
+                            {
+                                _tempHMIDisplayEntry.StartDateTime = item.DateTime;
+                                _tempHMIDisplayEntry.ThreatBID = uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
+                                _tempHMIDisplayEntry.ThreatPriority = item.DataListString.ElementAt(15);
+                                _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
+                                _tempHMIDisplayEntry.EndDateTime = new DateTime(2100, 01, 01);
+                                GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+
+                            }
+                            else
+                            {
+                                _foundItem.ThreatPriority = item.DataListString.ElementAt(15);
+                                _foundItem.PDSThreat.Add(_tempPDSThreatEvent);
+
+                            }
+                        }
+                        else
                         {
                             _tempHMIDisplayEntry.StartDateTime = item.DateTime;
                             _tempHMIDisplayEntry.ThreatBID = uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
@@ -938,90 +962,94 @@ namespace Booyco_HMI_Utility
                             _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
                             _tempHMIDisplayEntry.EndDateTime = new DateTime(2100, 01, 01);
                             GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+                        }
+
+
+                    }
+                    if (item.EventID == 159)
+                    {
+
+                        if (uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber) == 0)
+                        {
+
+                            HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == item.DataListString.ElementAt(15));
+
+                            if (_foundItem1 != null && _foundItem1.EndDateTime > item.DateTime)
+                            {
+                                _foundItem1.EndDateTime = item.DateTime;
+                            }
 
                         }
                         else
                         {
-                            _foundItem.ThreatPriority = item.DataListString.ElementAt(15);
-                            _foundItem.PDSThreat.Add(_tempPDSThreatEvent);
-
+                            HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
+                            if (_foundItem != null)
+                            {
+                                _foundItem.EndDateTime = item.DateTime;
+                            }
                         }
                     }
-                    else
-                    {
-                        _tempHMIDisplayEntry.StartDateTime = item.DateTime;
-                        _tempHMIDisplayEntry.ThreatBID = uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
-                        _tempHMIDisplayEntry.ThreatPriority = item.DataListString.ElementAt(15);
-                        _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
-                        _tempHMIDisplayEntry.EndDateTime = new DateTime(2100, 01, 01);
-                        GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
-                    }
 
-
-                }
-                if (item.EventID == 159)
-                {
-
-                    if (uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber) == 0)
+                    if (item.EventID == 2)
                     {
 
-                        HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == item.DataListString.ElementAt(15));
+
+                        HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "1");
 
                         if (_foundItem1 != null && _foundItem1.EndDateTime > item.DateTime)
                         {
                             _foundItem1.EndDateTime = item.DateTime;
                         }
 
-                    }
-                    else
-                    {
-                        HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
-                        if (_foundItem != null)
+                        HMIDisplayEntry _foundItem2 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "2");
+
+                        if (_foundItem2 != null && _foundItem1.EndDateTime > item.DateTime)
                         {
-                            _foundItem.EndDateTime = item.DateTime;
+                            _foundItem2.EndDateTime = item.DateTime;
+                        }
+
+                        HMIDisplayEntry _foundItem3 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "3");
+
+                        if (_foundItem3 != null && _foundItem1.EndDateTime > item.DateTime)
+                        {
+                            _foundItem3.EndDateTime = item.DateTime;
+                        }
+
+                        HMIDisplayEntry _foundItem4 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "4");
+
+                        if (_foundItem4 != null && _foundItem1.EndDateTime > item.DateTime)
+                        {
+                            _foundItem4.EndDateTime = item.DateTime;
+                        }
+
+                        HMIDisplayEntry _foundItem5 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "5");
+
+                        if (_foundItem5 != null && _foundItem1.EndDateTime > item.DateTime)
+                        {
+                            _foundItem5.EndDateTime = item.DateTime;
                         }
                     }
                 }
-
-                if (item.EventID == 2)
+            }
+            // === else plot only radar
+            else
+            {
+                int testnow = 0;
+                GlobalSharedData.OnlyRadarSelected = true;
+                GlobalSharedData.HMIRadarDisplayList = new List<HMIRadarDisplayEntry>();
+                foreach (LogEntry item in _tempList)
                 {
+                    HMIRadarDisplayEntry _tempEntry = new HMIRadarDisplayEntry();
 
+                    _tempEntry.ThreatID = (int)item.DataList.ElementAt(0);
+                    _tempEntry.ThreatCordinateX = (int)item.DataList.ElementAt(1);
+                    _tempEntry.ThreatCordinateY = (int)item.DataList.ElementAt(2);
+                    _tempEntry.ThreatWidth = (int)item.DataList.ElementAt(3);
+                    _tempEntry.ThreatDistance = (int)item.DataList.ElementAt(4);
 
-                    HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "1");
-
-                    if (_foundItem1 != null && _foundItem1.EndDateTime > item.DateTime)
-                    {
-                        _foundItem1.EndDateTime = item.DateTime;
-                    }
-
-                    HMIDisplayEntry _foundItem2 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "2");
-
-                    if (_foundItem2 != null && _foundItem1.EndDateTime > item.DateTime)
-                    {
-                        _foundItem2.EndDateTime = item.DateTime;
-                    }
-
-                    HMIDisplayEntry _foundItem3 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "3");
-
-                    if (_foundItem3 != null && _foundItem1.EndDateTime > item.DateTime)
-                    {
-                        _foundItem3.EndDateTime = item.DateTime;
-                    }
-
-                    HMIDisplayEntry _foundItem4 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "4");
-
-                    if (_foundItem4 != null && _foundItem1.EndDateTime > item.DateTime)
-                    {
-                        _foundItem4.EndDateTime = item.DateTime;
-                    }
-
-                    HMIDisplayEntry _foundItem5 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "5");
-
-                    if (_foundItem5 != null && _foundItem1.EndDateTime > item.DateTime)
-                    {
-                        _foundItem5.EndDateTime = item.DateTime;
-                    }
+                    GlobalSharedData.HMIRadarDisplayList.Add(_tempEntry);
                 }
+                       
             }
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.HMIDisplayView;
         }

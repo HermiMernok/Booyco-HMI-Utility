@@ -47,6 +47,8 @@ namespace Booyco_HMI_Utility
         public static string FilePath = "";
         public static List<MarkerEntry> PDSMapMarkers = new List<MarkerEntry>();
         public static List<HMIDisplayEntry> HMIDisplayList = new List<HMIDisplayEntry>();
+        public static List<HMIRadarDisplayEntry> HMIRadarDisplayList = new List<HMIRadarDisplayEntry>();
+        public static bool OnlyRadarSelected = false;
         public static DateTime StartDateTimeDatalog = new DateTime();
         public static DateTime EndDateTimeDatalog = new DateTime();
 

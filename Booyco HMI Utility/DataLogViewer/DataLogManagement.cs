@@ -144,6 +144,11 @@ namespace Booyco_HMI_Utility
                                             _tempEventInfo += " , ";
                                         }
 
+                                        if(_tempEventID == 168)
+                                        {
+                                            int testnow = 0;
+                                        }
+
                                         //if(_Data
 
                                         if (_dataLookupEntry.NumberBytes == 4)
@@ -260,7 +265,7 @@ namespace Booyco_HMI_Utility
                                 }
 
                             }
-                            else if (_tempEventID > PDSThreatEventEndID && _tempEventID <= PDSThreatEventEndIDLast)
+                            else if (_tempEventID > PDSThreatEventEndID && _tempEventID < PDSThreatEventEndIDLast)
                             {
                                 if (TempList.Last().EventID == PDSThreatEventEndID && _tempDataList.Count() > 0)
                                 {

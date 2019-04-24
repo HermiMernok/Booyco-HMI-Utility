@@ -37,7 +37,7 @@ namespace Booyco_HMI_Utility
             }
         }
 
-  
+
 
         private string _threatBID;
         public string ThreatBID
@@ -239,4 +239,83 @@ namespace Booyco_HMI_Utility
 
     }
 
+    public class HMIRadarDisplayEntry : INotifyPropertyChanged
+    {
+        private int _threatID;
+        public int ThreatID
+        {
+            get
+            {
+                return _threatID;
+            }
+            set
+            {
+                _threatID = value;
+                OnPropertyChanged("ThreatID");
+            }
+        }
+
+        private int _threatCordinateX;
+        public int ThreatCordinateX
+        {
+            get
+            {
+                return _threatCordinateX;
+            }
+            set
+            {
+                _threatCordinateX = value;
+                OnPropertyChanged("ThreatCordinateX");
+            }
+        }
+
+        private int _threatCordinateY;
+        public int ThreatCordinateY
+        {
+            get
+            {
+                return _threatCordinateY;
+            }
+            set
+            {
+                _threatCordinateY = value;
+                OnPropertyChanged("ThreatCordinateY");
+            }
+        }
+
+        private int _threatWidth;
+        public int ThreatWidth
+        {
+            get
+            {
+                return _threatWidth;
+            }
+            set
+            {
+                _threatWidth = value;
+                OnPropertyChanged("ThreatWidth");
+            }
+        }
+
+        private int _threatDistance;
+        public int ThreatDistance
+        {
+            get
+            {
+                return _threatDistance;
+            }
+            set
+            {
+                _threatDistance = value;
+                OnPropertyChanged("ThreatDistance");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }
+

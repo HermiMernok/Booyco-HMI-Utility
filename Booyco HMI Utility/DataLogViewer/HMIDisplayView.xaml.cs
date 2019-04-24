@@ -25,6 +25,8 @@ namespace Booyco_HMI_Utility
         public bool CloseRequest = false;
         private DispatcherTimer dispatcherPlayTimer;
         private bool DisplpayPlay = false;
+        private double scaleFactor = 0.07;
+
 
         public HMIDisplayView()
         {
@@ -250,20 +252,153 @@ namespace Booyco_HMI_Utility
             {
                 //GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone;
               
-
-                Slider_DateTime.Minimum = GlobalSharedData.StartDateTimeDatalog.Ticks + 1;
-                TextBlock_StartDateTime.Text = GlobalSharedData.StartDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-
-
-                Slider_DateTime.Maximum = GlobalSharedData.EndDateTimeDatalog.Ticks + 1;
-                TextBlock_EndDateTime.Text = GlobalSharedData.EndDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
-                if (GlobalSharedData.HMIDisplayList.Count() != 0)
+                if(!GlobalSharedData.OnlyRadarSelected)
                 {
+                    Grid_RadarThreat1.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat2.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat3.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat4.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat5.Visibility = Visibility.Collapsed;
 
-                    // PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
+                    Slider_DateTime.Visibility = Visibility.Visible;
+                    Button_Play.Visibility = Visibility.Visible;
+                    TextBlock_EndDateTime.Visibility = Visibility.Visible;
+                    TextBlock_SelectDateTime.Visibility = Visibility.Visible;
+                    TextBlock_StartDateTime.Visibility = Visibility.Visible;
+                    Slider_DateTime.Minimum = GlobalSharedData.StartDateTimeDatalog.Ticks + 1;
+                    TextBlock_StartDateTime.Text = GlobalSharedData.StartDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
 
-                    Slider_DateTime.Value = Slider_DateTime.Minimum;
+
+                    Slider_DateTime.Maximum = GlobalSharedData.EndDateTimeDatalog.Ticks + 1;
+                    TextBlock_EndDateTime.Text = GlobalSharedData.EndDateTimeDatalog.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
+                    if (GlobalSharedData.HMIDisplayList.Count() != 0)
+                    {
+
+                        // PDSThreatOpacity(Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatZone), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatSector), Convert.ToInt32(GlobalSharedData.HMIDisplayList.First().PDSThreat.First().ThreatWidth), 0.8);
+
+                        Slider_DateTime.Value = Slider_DateTime.Minimum;
+                    }
+
                 }
+                else
+                {
+                    ClearClusters();
+                    Slider_DateTime.Visibility = Visibility.Collapsed;
+                    Button_Play.Visibility = Visibility.Collapsed;
+                    TextBlock_EndDateTime.Visibility = Visibility.Collapsed;
+                    TextBlock_SelectDateTime.Visibility = Visibility.Collapsed;
+                    TextBlock_StartDateTime.Visibility = Visibility.Collapsed;
+
+                    Grid_RadarThreat1.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat2.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat3.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat4.Visibility = Visibility.Collapsed;
+                    Grid_RadarThreat5.Visibility = Visibility.Collapsed;
+
+                    foreach ( HMIRadarDisplayEntry item in GlobalSharedData.HMIRadarDisplayList)
+                    {
+
+                        double _diameter = (double)item.ThreatWidth/scaleFactor;
+
+                        if(_diameter > 60)
+                        {
+                            _diameter = 60;
+                        }
+
+                        if (item.ThreatID == 1)
+                        {
+                            if (item.ThreatWidth > 0 && item.ThreatCordinateY > -24 && item.ThreatCordinateY < 24)
+                            {
+                                Grid_RadarThreat1.Visibility = Visibility.Visible;
+                                Ellipse_RadarThreat1.Height = _diameter;
+                                Ellipse_RadarThreat1.Width = _diameter;
+                                TextBlock_RadarDistance1.Text = item.ThreatDistance.ToString() + "m";
+                                Thickness _margin = Grid_RadarThreat1.Margin;
+                                _margin.Left = (double)item.ThreatCordinateX / scaleFactor;
+                                _margin.Bottom = (double)item.ThreatCordinateY / scaleFactor;
+                                Grid_RadarThreat1.Margin = _margin;
+                            }
+                            else
+                            {
+                                Grid_RadarThreat1.Visibility = Visibility.Collapsed;
+                            }
+                            
+                        }
+                        else if(item.ThreatID == 2)
+                        {
+                            if (item.ThreatWidth > 0 && item.ThreatCordinateY > -24 && item.ThreatCordinateY < 24)
+                            {
+                                Grid_RadarThreat2.Visibility = Visibility.Visible;
+                                Ellipse_RadarThreat2.Height = _diameter;
+                                Ellipse_RadarThreat2.Width = _diameter;
+                                TextBlock_RadarDistance2.Text = item.ThreatDistance.ToString() + "m";
+                                Thickness _margin = Grid_RadarThreat2.Margin;
+                                _margin.Left = (double)item.ThreatCordinateX / scaleFactor;
+                                _margin.Bottom = (double)item.ThreatCordinateY / scaleFactor;
+                                Grid_RadarThreat2.Margin = _margin;
+                        }
+                        else
+                        {
+                                Grid_RadarThreat2.Visibility = Visibility.Collapsed;
+                        }
+                    }
+                        else if (item.ThreatID == 3 && item.ThreatCordinateY > -24 && item.ThreatCordinateY < 24)
+                        {
+                            if (item.ThreatWidth > 0)
+                            {
+                                Grid_RadarThreat3.Visibility = Visibility.Visible;
+                                Ellipse_RadarThreat3.Height = _diameter;
+                                Ellipse_RadarThreat3.Width = _diameter;
+                                TextBlock_RadarDistance3.Text = item.ThreatDistance.ToString() + "m";
+                                Thickness _margin = Grid_RadarThreat3.Margin;
+                                _margin.Left = (double)item.ThreatCordinateX / scaleFactor;
+                                _margin.Bottom = (double)item.ThreatCordinateY / scaleFactor;
+                                Grid_RadarThreat3.Margin = _margin;
+                            }
+                            else
+                            {
+                                Grid_RadarThreat3.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                        else if (item.ThreatID == 4)
+                        {
+                            if (item.ThreatWidth > 0 && item.ThreatCordinateY > -24 && item.ThreatCordinateY < 24)
+                            {
+                                Grid_RadarThreat4.Visibility = Visibility.Visible;
+                                Ellipse_RadarThreat4.Height = _diameter;
+                                Ellipse_RadarThreat4.Width = _diameter;
+                                TextBlock_RadarDistance4.Text = item.ThreatDistance.ToString() + "m";
+                                Thickness _margin = Grid_RadarThreat4.Margin;
+                                _margin.Left = (double)item.ThreatCordinateX / scaleFactor;
+                                _margin.Bottom = (double)item.ThreatCordinateY / scaleFactor;
+                                Grid_RadarThreat4.Margin = _margin;
+                        }
+                        else
+                        {
+                                Grid_RadarThreat4.Visibility = Visibility.Collapsed;
+                        }
+                    }
+                        else if (item.ThreatID == 5)
+                        {
+                            if (item.ThreatWidth > 0 && item.ThreatCordinateY > -24 && item.ThreatCordinateY < 24)
+                            {
+                                Grid_RadarThreat5.Visibility = Visibility.Visible;
+                                Ellipse_RadarThreat5.Height = _diameter;
+                                Ellipse_RadarThreat5.Width = _diameter;
+                                TextBlock_RadarDistance5.Text = item.ThreatDistance.ToString() + "m";
+                                Thickness _margin = Grid_RadarThreat5.Margin;
+                                _margin.Left = (double)item.ThreatCordinateX / scaleFactor;
+                                _margin.Bottom = (double)item.ThreatCordinateY / scaleFactor;
+                                Grid_RadarThreat5.Margin = _margin;
+                            }
+                            else
+                            {
+                                Grid_RadarThreat5.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                    }
+                }
+
 
             }
 
