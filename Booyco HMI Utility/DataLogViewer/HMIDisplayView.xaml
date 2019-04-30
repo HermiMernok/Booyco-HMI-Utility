@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
             d:DesignHeight="710" d:DesignWidth="1280" Background="White" IsVisibleChanged="UserControl_IsVisibleChanged">
-    <Grid IsVisibleChanged="Grid_IsVisibleChanged">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>

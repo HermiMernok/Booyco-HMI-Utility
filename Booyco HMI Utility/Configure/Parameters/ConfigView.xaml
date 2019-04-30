@@ -25,15 +25,17 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
-        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-            <Label Content="Configuration" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+   
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <Label Content="Configuration" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
-
+        
         <Button x:Name="ConfigRefreshButton" Content="Refresh" Grid.Column="2" Grid.Row="4" Margin="10" Click="ConfigRefreshButton_Click" />
         <Button x:Name="OpenFileButton" Content="Open / Save" Click="ButtonOpenFile_Click" Grid.Column="2" Grid.Row="3" Margin="10"/>
         <Button x:Name="SendFileButton" Content="Send File" Grid.Column="2" Grid.Row="5" Margin="10" Click="Button_Click"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
-
+        <Button x:Name= "ButtonNext" Content="Images" Click="ButtonNext_Click" Grid.Column="2" Grid.Row="1" Margin="68,10,10,10"/>
+        <Button x:Name= "ButtonPrevious" Content="Audio" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,10,782,10"/>
 
 
         <DataGrid x:Name="DGparameters" Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" ItemsSource="{Binding Disp_Parameters}" RowDetailsVisibilityMode="Collapsed"  AutoGenerateColumns="False" CanUserAddRows="False" FontSize="20" RowHeight="50" VirtualizingPanel.IsVirtualizingWhenGrouping="True" HorizontalScrollBarVisibility="Disabled" Margin="0,10">
@@ -166,7 +168,8 @@
 
         </Grid>
 
-        <Grid Grid.Row="0" Grid.RowSpan="8" Grid.ColumnSpan="4" Visibility="{Binding SureMessageVis}" >
+        <Grid Grid.Row="1"  Grid.RowSpan="8" Grid.ColumnSpan="3" Grid.Column="1" Visibility="Hidden" Margin="0,5,-5,-5" >
+            <!--Visibility="{Binding SureMessageVis}"-->
             <Grid.Background>
                 <SolidColorBrush Color="Black" Opacity="0.2"/>
             </Grid.Background>
@@ -181,7 +184,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            <Grid Background="White" Grid.Column="1" Grid.Row="1">
+            <Grid Background="White" Grid.Column="1" Grid.Row="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="0.2*"/>

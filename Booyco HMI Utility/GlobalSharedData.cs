@@ -19,11 +19,13 @@ namespace Booyco_HMI_Utility
         Bluetooth,
         GPRS,
         Bootload,
-        Confiure,
+        Configure,
         DataLogView,
         DataExtractorView,
         Mapview,
-        HMIDisplayView
+        HMIDisplayView,
+        AudioFilesView,
+        ImageFilesView
     }
 
 

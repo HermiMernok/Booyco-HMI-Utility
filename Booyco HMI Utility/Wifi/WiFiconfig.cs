@@ -665,7 +665,7 @@ namespace Booyco_HMI_Utility
                             }
                             else if (Buffer[2] == 'L')
                             {
-                                DataExtractorView.DataExtractorSendParse(Buffer, clientnumr);
+                                DataExtractorView.DataExtractorParser(Buffer, clientnumr);
                             }
                             #endregion
 

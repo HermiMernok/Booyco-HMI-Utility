@@ -48,7 +48,7 @@ namespace Booyco_HMI_Utility
 
         private void ButtonConfigViewer_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Confiure;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Configure;
         }
 
         private void ReadSavedFolder()

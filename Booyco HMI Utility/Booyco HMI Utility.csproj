@@ -225,9 +225,13 @@
     <Compile Include="Bootloader\Bootloader.xaml.cs">
       <DependentUpon>Bootloader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configure\AudioFiles\AudioEntry.cs" />
+    <Compile Include="Configure\AudioFiles\AudioFilesView.xaml.cs">
+      <DependentUpon>AudioFilesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataLogViewer\CustomMarker\CustomMarkerCross.xaml.cs" />
     <Compile Include="DataLogViewer\FilterManagement.cs" />
-    <Compile Include="Parameters\ConfigView.xaml.cs">
+    <Compile Include="Configure\Parameters\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
@@ -251,6 +255,9 @@
     <Compile Include="DataLogViewer\LogEntry.cs" />
     <Compile Include="DataLogViewer\DateTimeUtility\DateTimeCheck.cs" />
     <Compile Include="DataLogViewer\ExcelFileManagement.cs" />
+    <Compile Include="Icons\UserControlSpinnerLoad.xaml.cs">
+      <DependentUpon>UserControlSpinnerLoad.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pop-up_Views\Error_messageView.xaml.cs">
       <DependentUpon>Error_messageView.xaml</DependentUpon>
     </Compile>
@@ -269,7 +276,7 @@
     <Compile Include="DataLogViewer\MapView.xaml.cs">
       <DependentUpon>MapView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Parameters\Parameters.cs" />
+    <Compile Include="Configure\Parameters\Parameters.cs" />
     <Compile Include="Pop-up_Views\ProgrammingDone.xaml.cs">
       <DependentUpon>ProgrammingDone.xaml</DependentUpon>
     </Compile>
@@ -293,11 +300,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Configure\AudioFiles\AudioFilesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DataLogViewer\CustomMarker\CustomMarkerCross.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Parameters\ConfigView.xaml">
+    <Page Include="Configure\Parameters\ConfigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -322,6 +333,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DataLogViewer\HMIDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Icons\UserControlSpinnerLoad.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -395,6 +410,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Images\ButtonImages\Arrow-Left.png" />
+    <Resource Include="Images\ButtonImages\Arrow-Right.png" />
+    <Resource Include="Images\ButtonImages\Audio.png" />
+    <Resource Include="Images\ButtonImages\Images.png" />
+    <Resource Include="Images\ButtonImages\Parameters.png" />
     <Content Include="Resources\Documents\CommanderParametersFile.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -520,7 +540,9 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Configure\ImageFiles\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

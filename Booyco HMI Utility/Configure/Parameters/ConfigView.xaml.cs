@@ -1291,7 +1291,18 @@ namespace Booyco_HMI_Utility
             SaveParameterFile();
             SureMessageVis = Visibility.Collapsed;
         }
-        #endregion  
+        #endregion
+
+        private void ButtonNext_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.AudioFilesView;
+   
+        }
     }
 }
 

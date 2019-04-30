@@ -93,6 +93,7 @@ namespace Booyco_HMI_Utility
             {
                 BootView.Visibility = DataLogView.Visibility = ConfigView.Visibility = WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
+                 
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.WiFi)
             {
@@ -129,10 +130,15 @@ namespace Booyco_HMI_Utility
                 DataLogView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
                 BootView.Visibility = Visibility.Visible;
             }
-            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Confiure)
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Configure)
             {
-                DataLogView.Visibility = BootView.Visibility = Visibility.Collapsed;
                 ConfigView.Visibility = Visibility.Visible;
+                AudioFilesView.Visibility = Visibility.Collapsed;
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.AudioFilesView)
+            {
+                AudioFilesView.Visibility = Visibility.Visible;
+                ConfigView.Visibility = Visibility.Collapsed;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.DataExtractorView)
             {                             
@@ -181,7 +187,7 @@ namespace Booyco_HMI_Utility
                 ErrorView = true;
             }
 
-            if(ProgramFlow.ProgramWindow != (int)ProgramFlowE.DataExtractorView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.WiFi && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Confiure && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Bootload)
+            if(ProgramFlow.ProgramWindow != (int)ProgramFlowE.DataExtractorView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.WiFi && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Configure && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Bootload)
             {
                 HeartbeatCount = "";
                 WiFiApStatus = "";

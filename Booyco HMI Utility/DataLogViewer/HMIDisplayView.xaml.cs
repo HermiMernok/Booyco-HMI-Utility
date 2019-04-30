@@ -21,31 +21,45 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class HMIDisplayView : UserControl
     {
-
+        // === Public Variables ===
         public bool CloseRequest = false;
+
+        // === Private Variables ===
         private DispatcherTimer dispatcherPlayTimer;
         private bool DisplpayPlay = false;
         private double scaleFactor = 0.07;
 
-
+        /// <summary>
+        /// HMIDisplayViewView: The constructor function
+        /// Setup required variables 
+        /// </summary>
         public HMIDisplayView()
         {
             InitializeComponent();
-
             dispatcherPlayTimer = new DispatcherTimer();
             dispatcherPlayTimer.Tick += new EventHandler(PlayTimerTick);
             dispatcherPlayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
    
         }
 
+        /// <summary>
+        /// ButtonBack_Click: Back Button Click Event
+        /// Open previous View
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
             CloseRequest = true;
         }
-
-
-
+        
+        /// <summary>
+        /// ButtonNewWindow_Click: New Window Button Click Event
+        /// Opens a new HMIDisplayView
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonNewWindow_Click(object sender, RoutedEventArgs e)
         {
             for (int i = 1; i < 25 ; i++)
@@ -56,25 +70,18 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private void ButtonClear_Click(object sender, RoutedEventArgs e)
-        {
-            for (int i = 1; i < 25; i++)
-            {
-              
-                Rectangle _rectangle = (Rectangle)this.FindName("Presence" + i);
-                _rectangle.Opacity -= 0.2;
-            }
-        }
+        /// <summary>
+        /// PlayTimerTick: PlayTimer handler
+        /// Increment slider value with the timer's timeout;
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayTimerTick(object sender, EventArgs e)
         {
             Slider_DateTime.Value += 5000000;
         }
 
-            private void Grid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-          
-        }
-
+    
         void ClearClusters()
         {
             for (int i = 1; i < 25; i++)

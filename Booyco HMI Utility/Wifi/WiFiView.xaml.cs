@@ -115,7 +115,7 @@ namespace Booyco_HMI_Utility
 
         private void BtnConfig_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Confiure;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Configure;
 
         }
         #endregion
