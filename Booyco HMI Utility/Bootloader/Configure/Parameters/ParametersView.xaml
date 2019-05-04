@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Booyco_HMI_Utility.ConfigView"
+﻿<UserControl x:Class="Booyco_HMI_Utility.ParametersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -27,7 +27,7 @@
         </Grid.ColumnDefinitions>
    
         <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-            <Label Content="Configuration" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+            <Label Content="Parameters" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
         
         <Button x:Name="ConfigRefreshButton" Content="Refresh" Grid.Column="2" Grid.Row="4" Margin="10" Click="ConfigRefreshButton_Click" />

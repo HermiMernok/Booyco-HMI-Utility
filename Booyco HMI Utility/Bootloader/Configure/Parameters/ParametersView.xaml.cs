@@ -23,10 +23,8 @@ using System.Text.RegularExpressions;
 
 namespace Booyco_HMI_Utility
 {
-    /// <summary>
-    /// Interaction logic for ConfigView.xaml
-    /// </summary>
-    public partial class ConfigView : UserControl, INotifyPropertyChanged
+
+    public partial class ParametersView : UserControl, INotifyPropertyChanged
     {
         PropertyGroupDescription groupDescription = new PropertyGroupDescription("Group");
         PropertyGroupDescription SubgroupDescription = new PropertyGroupDescription("SubGroup");
@@ -64,7 +62,7 @@ namespace Booyco_HMI_Utility
         /////////////////////////////////////////////////////////////
         #endregion
 
-        public ConfigView()
+        public ParametersView()
         {
             DataContext = this;
             generalFunctions = new GeneralFunctions();

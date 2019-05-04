@@ -91,7 +91,7 @@ namespace Booyco_HMI_Utility
 
             if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Startup)
             {
-                BootView.Visibility = DataLogView.Visibility = ConfigView.Visibility = WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                BootView.Visibility = DataLogView.Visibility = ParametersView.Visibility = WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
                  
             }
@@ -127,18 +127,37 @@ namespace Booyco_HMI_Utility
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Bootload)
             {
-                DataLogView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
+                DataLogView.Visibility = ParametersView.Visibility = Visibility.Collapsed;
                 BootView.Visibility = Visibility.Visible;
             }
-            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Configure)
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.ConfigureMenuView)
             {
-                ConfigView.Visibility = Visibility.Visible;
+                ConfigureMenuView.Visibility = Visibility.Visible;
+                //ConfigView.Visibility = Visibility.Visible;
                 AudioFilesView.Visibility = Visibility.Collapsed;
+                ParametersView.Visibility = Visibility.Collapsed;
+                ImageFilesView.Visibility = Visibility.Collapsed;
+            }
+            else if(ProgramFlow.ProgramWindow == (int)ProgramFlowE.ParametersView)
+            {
+                ParametersView.Visibility = Visibility.Visible;
+                AudioFilesView.Visibility = Visibility.Collapsed;
+                ConfigureMenuView.Visibility = Visibility.Collapsed;
+                ImageFilesView.Visibility = Visibility.Collapsed;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.AudioFilesView)
             {
                 AudioFilesView.Visibility = Visibility.Visible;
-                ConfigView.Visibility = Visibility.Collapsed;
+                ParametersView.Visibility = Visibility.Collapsed;
+                ConfigureMenuView.Visibility = Visibility.Collapsed;
+                ImageFilesView.Visibility = Visibility.Collapsed;
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.ImageFilesView)
+            {
+                ImageFilesView.Visibility = Visibility.Visible;
+                AudioFilesView.Visibility = Visibility.Collapsed;
+                ParametersView.Visibility = Visibility.Collapsed;
+                ConfigureMenuView.Visibility = Visibility.Collapsed;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.DataExtractorView)
             {                             
@@ -147,7 +166,7 @@ namespace Booyco_HMI_Utility
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.DataLogView)
             {
                 DataLogView.DisplayWindowMap();
-                BootView.Visibility = ConfigView.Visibility = Visibility.Collapsed;
+                BootView.Visibility = ParametersView.Visibility = Visibility.Collapsed;
                 MapView.Visibility = Visibility.Collapsed;
                 HMIDisplayView.Visibility = Visibility.Collapsed;
                 DataLogView.Visibility = Visibility.Visible;
@@ -187,7 +206,7 @@ namespace Booyco_HMI_Utility
                 ErrorView = true;
             }
 
-            if(ProgramFlow.ProgramWindow != (int)ProgramFlowE.DataExtractorView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.WiFi && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Configure && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Bootload)
+            if (ProgramFlow.ProgramWindow != (int)ProgramFlowE.DataExtractorView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.WiFi && ProgramFlow.ProgramWindow != (int)ProgramFlowE.ParametersView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Bootload)
             {
                 HeartbeatCount = "";
                 WiFiApStatus = "";
@@ -205,13 +224,15 @@ namespace Booyco_HMI_Utility
                 Error_messageView.Visibility = Visibility.Visible;
             }
 
+        
+
 
 
             //else
             //    ProgrammingDone.Visibility = Visibility.Collapsed;
 
 
-            
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -252,7 +273,7 @@ namespace Booyco_HMI_Utility
         }
 
         public bool ErrorView { get; private set; }
-
+        public bool BusyView { get; private set; }
         private void StartUpView_Loaded(object sender, RoutedEventArgs e)
         {
 

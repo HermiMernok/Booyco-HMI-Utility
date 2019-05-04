@@ -121,7 +121,8 @@ namespace Booyco_HMI_Utility
 
         }
         #endregion
-
+        
+        public static bool BusyReconnecting = false;
         public static bool ConnectionError = false;
         public static string Hearted = "";
         public static string PCName = Environment.MachineName;
@@ -657,11 +658,15 @@ namespace Booyco_HMI_Utility
                             }
                             else if (Buffer[2] == 'P')
                             {
-                                ConfigView.ConfigSendParse(Buffer, clientnumr);
+                                ParametersView.ConfigSendParse(Buffer, clientnumr);
                             }
                             else if (Buffer[2] == 'p')
                             {
-                                ConfigView.ConfigReceiveParamsParse(Buffer, clientnumr);
+                                ParametersView.ConfigReceiveParamsParse(Buffer, clientnumr);
+                            }
+                            else if(Buffer[2] == 'A')
+                            {
+                                AudioFilesView.AudioFileSendParse(Buffer, clientnumr);
                             }
                             else if (Buffer[2] == 'L')
                             {

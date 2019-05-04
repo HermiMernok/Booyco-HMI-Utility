@@ -225,14 +225,21 @@
     <Compile Include="Bootloader\Bootloader.xaml.cs">
       <DependentUpon>Bootloader.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Configure\AudioFiles\AudioEntry.cs" />
-    <Compile Include="Configure\AudioFiles\AudioFilesView.xaml.cs">
+    <Compile Include="Bootloader\Configure\AudioFiles\AudioEntry.cs" />
+    <Compile Include="Bootloader\Configure\AudioFiles\AudioFilesView.xaml.cs">
       <DependentUpon>AudioFilesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Bootloader\Configure\ConfigureMenuView.xaml.cs">
+      <DependentUpon>ConfigureMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Bootloader\Configure\ImageFiles\ImageEntry.cs" />
+    <Compile Include="Bootloader\Configure\ImageFiles\ImageFilesView.xaml.cs">
+      <DependentUpon>ImageFilesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataLogViewer\CustomMarker\CustomMarkerCross.xaml.cs" />
     <Compile Include="DataLogViewer\FilterManagement.cs" />
-    <Compile Include="Configure\Parameters\ConfigView.xaml.cs">
-      <DependentUpon>ConfigView.xaml</DependentUpon>
+    <Compile Include="Bootloader\Configure\Parameters\ParametersView.xaml.cs">
+      <DependentUpon>ParametersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataExtractor\DataExtractorView.xaml.cs">
       <DependentUpon>DataExtractorView.xaml</DependentUpon>
@@ -258,6 +265,9 @@
     <Compile Include="Icons\UserControlSpinnerLoad.xaml.cs">
       <DependentUpon>UserControlSpinnerLoad.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pop-up_Views\Busy_messageView .xaml.cs">
+      <DependentUpon>Busy_messageView .xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pop-up_Views\Error_messageView.xaml.cs">
       <DependentUpon>Error_messageView.xaml</DependentUpon>
     </Compile>
@@ -276,7 +286,7 @@
     <Compile Include="DataLogViewer\MapView.xaml.cs">
       <DependentUpon>MapView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Configure\Parameters\Parameters.cs" />
+    <Compile Include="Bootloader\Configure\Parameters\Parameters.cs" />
     <Compile Include="Pop-up_Views\ProgrammingDone.xaml.cs">
       <DependentUpon>ProgrammingDone.xaml</DependentUpon>
     </Compile>
@@ -300,7 +310,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Configure\AudioFiles\AudioFilesView.xaml">
+    <Page Include="Bootloader\Configure\AudioFiles\AudioFilesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Bootloader\Configure\ConfigureMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Bootloader\Configure\ImageFiles\ImageFilesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -308,7 +326,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Configure\Parameters\ConfigView.xaml">
+    <Page Include="Bootloader\Configure\Parameters\ParametersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -339,6 +357,10 @@
     <Page Include="Icons\UserControlSpinnerLoad.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pop-up_Views\Busy_messageView .xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pop-up_Views\Error_messageView.xaml">
       <SubType>Designer</SubType>
@@ -540,9 +562,7 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configure\ImageFiles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -31,20 +31,9 @@ namespace Booyco_HMI_Utility
     /// 
     public partial class DataLogView : UserControl
     {
-        private RangeObservableCollection<LogEntry> DataLogs;
-        private string logFilename = "";
-        private static BackgroundWorker backgroundWorkerReadFile = new BackgroundWorker();
-        private DataLogManagement dataLogManager = new DataLogManagement();
-        private bool _dataLogIsExpanded = false;
-        FilterManagement FilterManager;
-        private RangeObservableCollection<LogEntry> AnalogLogs = new RangeObservableCollection<LogEntry>();
-        private RangeObservableCollection<LogEntry> EventLogs = new RangeObservableCollection<LogEntry>();
-        bool IsToggleExpand = false;
-        bool IsSelectAll = false;
-        bool IsButtonClickedSelectAll = false;
+        // === Public Variables ===
         public bool DataLogIsExpanded
         {
-
             get
             {
                 return _dataLogIsExpanded;
@@ -54,19 +43,31 @@ namespace Booyco_HMI_Utility
                 _dataLogIsExpanded = value;
                 OnPropertyChanged("DataLogIsExpanded");
             }
-
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        }       
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        // === Private Variables ===
+        private RangeObservableCollection<LogEntry> DataLogs;
+        private string logFilename = "";
+        private static BackgroundWorker backgroundWorkerReadFile = new BackgroundWorker();
+        private DataLogManagement dataLogManager = new DataLogManagement();
+        private bool _dataLogIsExpanded = false;
+        FilterManagement FilterManager;
+        private RangeObservableCollection<LogEntry> AnalogLogs = new RangeObservableCollection<LogEntry>();
+        private RangeObservableCollection<LogEntry> EventLogs = new RangeObservableCollection<LogEntry>();
+        bool IsToggleExpand = false;
+        bool IsSelectAll = false;     
         private ExtendedWindow extendedWindow = new ExtendedWindow();
-
-
+        int counter;
+        bool IsButtonClickedSelectAll = false;
+        /// <summary>
+        /// DataLogView: The constructor function
+        /// Setup required variables 
+        /// </summary>
         public DataLogView()
         {
             InitializeComponent();
@@ -81,11 +82,13 @@ namespace Booyco_HMI_Utility
             DataGridLogs.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, SelectAll_Executed));
             FilterManager = new FilterManagement();
             DataLogIsExpanded = new bool();
-
         }
-
-
-        int counter;
+          
+        /// <summary>
+        /// SelectAll_Executed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SelectAll_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             DataGrid dataGrid = sender as DataGrid;
@@ -94,15 +97,7 @@ namespace Booyco_HMI_Utility
             else //and unselect on every other click
                 dataGrid.UnselectAll();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void OpenFile()
-        {
-
-
-        }
+         
         private void ProcessLogFile(object sender, DoWorkEventArgs e)
         {
             dataLogManager.ReadFile(logFilename);
@@ -119,8 +114,6 @@ namespace Booyco_HMI_Utility
 
         public void backgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-
-
             if (e.ProgressPercentage > 100)
             {
                 DataLogs.Clear();
