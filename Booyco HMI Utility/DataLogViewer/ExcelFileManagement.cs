@@ -159,7 +159,8 @@ namespace Booyco_HMI_Utility
                             enumVal = Convert.ToInt16(_row.ItemArray[6]),
                             Group = Convert.ToString(_row.ItemArray[7]),
                             SubGroup = Convert.ToString(_row.ItemArray[8]),
-                            Description = Convert.ToString(_row.ItemArray[9])
+                            Description = Convert.ToString(_row.ItemArray[9]),
+                            AccessLevel = Convert.ToInt16(_row.ItemArray[10])
 
                         });
 

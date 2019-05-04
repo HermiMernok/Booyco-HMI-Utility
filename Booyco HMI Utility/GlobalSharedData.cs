@@ -28,7 +28,12 @@ namespace Booyco_HMI_Utility
         AudioFilesView,
         ImageFilesView
     }
-
+    public enum AccessLevelEnum
+    {
+        Limited,
+        Basic,
+        Full            
+    }
 
     public static class ProgramFlow
     {
@@ -37,9 +42,9 @@ namespace Booyco_HMI_Utility
     }
 
     public static class GlobalSharedData
-    {
-
-     
+    { 
+        public static int AccessLevel = (int)AccessLevelEnum.Basic;
+       
         public static string ServerStatus { get; set; }
         public static byte[] ServerMessageSend { get; set; }
         public static bool BroadCast { get; set; }

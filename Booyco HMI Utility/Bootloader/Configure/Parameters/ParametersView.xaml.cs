@@ -308,6 +308,13 @@ namespace Booyco_HMI_Utility
 
                 }
 
+                if(parameters[i].AccessLevel == (int)AccessLevelEnum.Full && GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
+                {
+                    EditLbl = true;
+                    btnvisibility = Visibility.Collapsed;
+                    drpDwnVisibility = Visibility.Collapsed;
+                }
+
                 if (!parameters[i].Name.Contains("Name") && !parameters[i].Name.Contains("Reserved") && !parameters[i].Name.Contains("SSID") && !parameters[i].Name.Contains("Password")
                     && !parameters[i].Name.Contains("Unit IP") && !parameters[i].Name.Contains("Server IP") && !parameters[i].Name.Contains("Gateway IP") && !parameters[i].Name.Contains("Subnet Mask"))
                 {

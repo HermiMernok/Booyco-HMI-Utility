@@ -18,6 +18,8 @@ namespace Booyco_HMI_Utility
         public string Group;
         public string SubGroup;
         public int Ptype;
+        public int AccessLevel;
+        
         public int enumVal;
         public List<string> parameterEnums;
         public string Description;
