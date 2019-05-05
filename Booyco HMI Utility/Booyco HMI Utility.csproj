@@ -250,6 +250,15 @@
     </Compile>
     <Compile Include="DataLogViewer\CustomMarker\CustomMarkerPoint.xaml.cs" />
     <Compile Include="DataLogViewer\CustomMarker\MarkerEntry.cs" />
+    <Compile Include="FileExplorer\FileMenuView.xaml.cs">
+      <DependentUpon>FileMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileExplorer\DataLogFileView.xaml.cs">
+      <DependentUpon>DataLogFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileExplorer\ParameterFileView.xaml.cs">
+      <DependentUpon>ParameterFileView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GeneralFunctions\CustomObservableCollection\RangeObservableCollection.cs" />
     <Compile Include="DataLogViewer\DataLogView.xaml.cs">
       <DependentUpon>DataLogView.xaml</DependentUpon>
@@ -353,6 +362,18 @@
     <Page Include="DataLogViewer\HMIDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileExplorer\FileMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileExplorer\DataLogFileView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileExplorer\ParameterFileView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Icons\UserControlSpinnerLoad.xaml">
       <SubType>Designer</SubType>

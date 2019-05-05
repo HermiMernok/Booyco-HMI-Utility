@@ -27,7 +27,7 @@ namespace Booyco_HMI_Utility
 
         private void BtnFile_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.File;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.FileMenuView;
         }
 
         private void BtnWiFi_Click(object sender, RoutedEventArgs e)

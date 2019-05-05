@@ -173,7 +173,20 @@ namespace Booyco_HMI_Utility
             {
                 GetDefaultParametersFromFile();
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+                {
                     WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+                    ButtonNext.Visibility = Visibility.Visible;
+                    ButtonPrevious.Visibility = Visibility.Visible;
+                    ConfigRefreshButton.Visibility = Visibility.Visible;
+                    SendFileButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ConfigRefreshButton.Visibility = Visibility.Collapsed;
+                    SendFileButton.Visibility = Visibility.Collapsed;
+                    ButtonNext.Visibility = Visibility.Collapsed;
+                    ButtonPrevious.Visibility = Visibility.Collapsed;
+                }
 
                 dispatcherTimer = new DispatcherTimer();
                 dispatcherTimer.Tick += new EventHandler(InfoUpdater);
@@ -854,8 +867,7 @@ namespace Booyco_HMI_Utility
         public static void ConfigReceiveParamsParse(byte[] message, EndPoint endPoint)
         {
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'a'))
-            {
-                int test = 0;
+            {                
                 ParamsRequestStarted = true;
             }
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'D'))
@@ -1038,7 +1050,7 @@ namespace Booyco_HMI_Utility
             }
 
             string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
-            string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files" + "\\" + "Parameters.mer";
+            string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\\\Saved Files\\Parameters" + "\\" + "Parameters.mer";
             File.WriteAllText(_savedFilesPath, hex);
 
             int fileChunck = 512;
@@ -1300,7 +1312,7 @@ namespace Booyco_HMI_Utility
 
         private void ButtonNext_Click(object sender, RoutedEventArgs e)
         {
-
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.ImageFilesView;
         }
 
         private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
@@ -1308,6 +1320,32 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.AudioFilesView;
    
         }
+
+
+        private void ButtonNext_MouseEnter(object sender, MouseEventArgs e)
+        {
+            RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(60, 6, 6));
+            ImageParameter.Opacity = 1;
+        }
+
+        private void ButtonNext_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
+            ImageParameter.Opacity = 0.6;
+        }
+
+        private void ButtonPrevious_MouseEnter(object sender, MouseEventArgs e)
+        {
+            RectangleArrowLeft.Fill = new SolidColorBrush(Color.FromRgb(60, 6, 6));
+            ImagePicture.Opacity = 1;
+        }
+
+        private void ButtonPrevious_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RectangleArrowLeft.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
+            ImagePicture.Opacity = 0.6;
+        }
+
     }
 }
 

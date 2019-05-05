@@ -23,22 +23,50 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private string _Name;
-        public string Name
+        private string _FileName;
+        public string FileName
         {
             get
             {
-                return _Name;
+                return _FileName;
             }
             set
             {
-                _Name = value;
-                OnPropertyChanged("Name");
+                _FileName = value;
+                OnPropertyChanged("FileName");
+            }
+        }
+        
+
+     private string _DateTimeCreated;
+        public string DateTimeCreated
+        {
+            get
+            {
+                return _DateTimeCreated;
+            }
+            set
+            {
+                _DateTimeCreated = value;
+                OnPropertyChanged("DateTimeCreated");
             }
         }
 
-        private UInt32 _Size;
-        public UInt32 Size
+        private string _Path;
+        public string Path
+        {
+            get
+            {
+                return _Path;
+            }
+            set
+            {
+                _Path = value;
+                OnPropertyChanged("Path");
+            }
+        }
+        private long _Size;
+        public long Size
         {
             get
             {

@@ -22,12 +22,12 @@ namespace Booyco_HMI_Utility
     /// <summary>
     /// Interaction logic for FileView.xaml
     /// </summary>
-    public partial class FileView : UserControl
+    public partial class DataLogFileView : UserControl
     {
         string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
         private RangeObservableCollection<FileEntry> FileList;
 
-        public FileView()
+        public DataLogFileView()
         {
             InitializeComponent();     
             FileList = new RangeObservableCollection<FileEntry>();
@@ -39,11 +39,13 @@ namespace Booyco_HMI_Utility
 
         private void ButtonDataViewer_Click(object sender, RoutedEventArgs e)
         {
+            GlobalSharedData.FilePath = FileList.ElementAt(DataGridFiles.SelectedIndex).Path;
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
         }
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Startup;
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.FileMenuView;
+            this.Visibility = Visibility.Collapsed;
         }
 
         private void ButtonConfigViewer_Click(object sender, RoutedEventArgs e)
@@ -109,44 +111,30 @@ namespace Booyco_HMI_Utility
                 {
                     Button_Delete.IsEnabled = true;
                     Button_Save.IsEnabled = true;
+                   
                 }
                 else
                 {
                     Button_Delete.IsEnabled = false;
                     Button_Save.IsEnabled = false;
+                  
                 }
 
-                var _selectedItems = DataGridFiles.SelectedItems;
-              
-                               
-                if (_selectedItems.Count > 1)
+                if(_dataGrid.SelectedItems.Count == 1)
                 {
-                    ButtonDataViewer.IsEnabled = false;
-                }
-                else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "DataLog")
-                {
-                    ButtonDataViewer.IsEnabled = true;
-                    ButtonConfigViewer.IsEnabled = true;
-                    GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
-
-                }
-                else if (FileList.ElementAt(_dataGrid.SelectedIndex).Type == "Parameter")
-                {
-                    ButtonDataViewer.IsEnabled = false;
-                    ButtonConfigViewer.IsEnabled = true;
+                    ButtonOpen.IsEnabled = true;
                     GlobalSharedData.FilePath = FileList.ElementAt(_dataGrid.SelectedIndex).Path;
                 }
                 else
                 {
-                    ButtonDataViewer.IsEnabled = false;
-                    ButtonConfigViewer.IsEnabled = true;
+                    ButtonOpen.IsEnabled = false;
                 }
 
             }
             catch
             {
-                ButtonDataViewer.IsEnabled = false;
-                ButtonConfigViewer.IsEnabled = true;
+                ButtonOpen.IsEnabled = false;
+              
             }
         }
 

@@ -26,7 +26,10 @@ namespace Booyco_HMI_Utility
         Mapview,
         HMIDisplayView,
         AudioFilesView,
-        ImageFilesView
+        ImageFilesView,
+        FileMenuView,
+        DataLogFileView,
+        ParameterFileView
     }
     public enum AccessLevelEnum
     {

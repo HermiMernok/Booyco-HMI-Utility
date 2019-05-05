@@ -95,15 +95,21 @@ namespace Booyco_HMI_Utility
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
                  
             }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.FileMenuView)
+            {
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = Visibility.Collapsed;
+                FileMenuView.Visibility = Visibility.Visible;
+                ProgramFlow.SourseWindow = (int)ProgramFlowE.FileMenuView;
+            }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.WiFi)
             {
-                USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileMenuView.Visibility = Visibility.Collapsed;
                 WiFiView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.WiFi;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.USB)
             {
-                WiFiView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
+                WiFiView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileMenuView.Visibility = Visibility.Collapsed;
                 USBView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.USB;
             }
@@ -111,8 +117,21 @@ namespace Booyco_HMI_Utility
             {
                 WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = Visibility.Collapsed;
                 FileView.Visibility = Visibility.Visible;
-                ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
+                //ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
             }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.DataLogFileView)
+            {
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = Visibility.Collapsed;
+                DataLogFileView.Visibility = Visibility.Visible;
+                //ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
+            }
+            else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.ParameterFileView)
+            {
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = Visibility.Collapsed;
+                ParameterFileView.Visibility = Visibility.Visible;
+                //ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
+            }
+            
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Bluetooth)
             {
                 WiFiView.Visibility = USBView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
