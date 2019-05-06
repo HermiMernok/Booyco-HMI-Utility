@@ -79,8 +79,8 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private UInt16 _Progress;
-        public UInt16 Progress
+        private int _Progress;
+        public int Progress
         {
             get
             {

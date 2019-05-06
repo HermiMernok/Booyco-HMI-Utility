@@ -47,7 +47,10 @@
                 <DataGridTemplateColumn Width="3*"   Header="Progress">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate >
-                            <ProgressBar Value="{Binding Progress}"></ProgressBar>
+                            <Grid>
+                                <ProgressBar Value="{Binding Progress}" Foreground="#8c0909" Background="SlateGray"></ProgressBar>
+                                <Label Content="{Binding Progress}" FontSize="10" HorizontalContentAlignment="Center"></Label>
+                            </Grid>
                         </DataTemplate >
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

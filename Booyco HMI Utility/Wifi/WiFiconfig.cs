@@ -491,6 +491,22 @@ namespace Booyco_HMI_Utility
                             messageReceived = true;
                             totalCount = 522;
                         }
+                        else if (i == 12 && data2[0] == '[' && data2[1] == '&' && data2[11] == ']')
+                        {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                            Array.Copy(data2, Buffer, 12);
+                            messagecount++;
+                            messageReceived = true;
+                            totalCount = 12;
+                        }
+                        else if (i == 11 && data2[0] == '[' && data2[1] == '&' && data2[10] == ']')
+                        {
+                            Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
+                            Array.Copy(data2, Buffer, 11);
+                            messagecount++;
+                            messageReceived = true;
+                            totalCount = 11;
+                        }
                         else if (i == 10 && data2[0] == '[' && data2[1] == '&' && data2[9] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];

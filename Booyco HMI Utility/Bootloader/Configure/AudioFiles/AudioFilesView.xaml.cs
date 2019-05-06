@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Booyco_HMI_Utility
 {
@@ -27,10 +29,18 @@ namespace Booyco_HMI_Utility
         string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files\\Audio";
         static private RangeObservableCollection<AudioEntry> AudioFileList;
         private uint SelectVID = 0;
-        static private uint TotalAudioFiles = 0;
+        static private UInt16 TotalAudioFiles = 0;
         private static int ReceivedAudioFileNumber = 0;
-        private static int CurrentAudioFileNumber = 1;
-        static private uint TotalCount = 0;
+        private static UInt16 CurrentAudioFileNumber = 1;
+        private static UInt16 PreviousAudioFileNumber = 1;
+        static private UInt16 TotalCount = 0;
+        static bool SendingComplete = false;
+        static bool SendingStarted = false;
+        static int TotalSize = 522;
+        static int DataSize = TotalSize - 14;
+   
+
+        DispatcherTimer updateDispatcherTimer;
         public AudioFilesView()
         {
             InitializeComponent();
@@ -41,12 +51,27 @@ namespace Booyco_HMI_Utility
             ReadAudioFiles();
             StoreAudioFile(1);
 
+            updateDispatcherTimer = new DispatcherTimer();
+            updateDispatcherTimer.Tick += new EventHandler(InfoUpdater);
+            updateDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        }
 
+        void InfoUpdater(object sender, EventArgs e)
+        {
+            if(SendingStarted)
+            {
+                ProgressBar_AudioFiles.Maximum = TotalAudioFiles * 100;
+                if (TotalCount > 0)
+                {
+                    ProgressBar_AudioFiles.Value = (int)((DataIndex * 100) / TotalCount) + (CurrentAudioFileNumber - 1) * 100;
+                }
+            }
+           
         }
 
         void ReadAudioFiles()
         {
-            //FileList.Clear();
+            AudioFileList.Clear();
             if (Directory.Exists(_savedFilesPath))
             {
                 DirectoryInfo d = new DirectoryInfo(_savedFilesPath);               
@@ -55,7 +80,6 @@ namespace Booyco_HMI_Utility
                 ushort count = 0;
                 foreach (FileInfo file in FilesWav)
                 {
-
                      count++;
 
                     AudioFileList.Add(new AudioEntry
@@ -66,28 +90,57 @@ namespace Booyco_HMI_Utility
                         Path = file.FullName,
                         Size = file.Length,
                         Progress = 0
-
                     });                 
                 }
-
                 TotalAudioFiles = count;
-
             }
             else
             {
                 Directory.CreateDirectory(_savedFilesPath);
             }
         }
-
-        static int TotalFilesCount = 0;
-        static int DataIndex = 0;
+        
+        static bool ValidAudioSizes(RangeObservableCollection<AudioEntry> DeviceAudioFileList)
+        {
+            if(DeviceAudioFileList.Count == AudioFileList.Count)
+            {
+                int index = 0;
+                foreach(AudioEntry item in DeviceAudioFileList)
+                {                    
+                    if(item.Size != AudioFileList.ElementAt(index).Size)
+                    {
+                        return false;
+                    }
+                    index++;
+                }
+                return true;
+            }
+            return false;
+        }
+        static UInt16 TotalFilesCount = 0;
+        static UInt16 DataIndex = 0;
         static bool AudioFileRequestStarted = false;
         public static void AudioFileSendParse(byte[] message, EndPoint endPoint)
         {
+            if (TotalCount > 0)
+            {
+               
+
+                if(PreviousAudioFileNumber < CurrentAudioFileNumber)
+                {
+                    AudioFileList.ElementAt(PreviousAudioFileNumber - 1).Progress = 100;
+                    PreviousAudioFileNumber = CurrentAudioFileNumber;
+                }
+                else
+                {
+                    AudioFileList.ElementAt(CurrentAudioFileNumber - 1).Progress = (int)((DataIndex * 100) / TotalCount);
+                }
+               
+            }
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'A'))
             {
-                // === Check if it is Ready packet. The device is ready to ===             
-                if ((message[3] == 'a') &&  (message[522] == ']'))
+                // === Check if it is Ready packet. The device is ready ===             
+                if ((message[3] == 'a') &&  (message[521] == ']'))
                 {
                     AudioFileRequestStarted = true;
                     TotalFilesCount = BitConverter.ToUInt16(message, 4);
@@ -101,19 +154,27 @@ namespace Booyco_HMI_Utility
                             Size = (long)BitConverter.ToUInt32(message, 6 + i * 4)
                         });
                     }
+
+                    // ===TODO: do something with return value ===
+                    ValidAudioSizes(DeviceAudioFileList);
+
                     SendAudioFile(CurrentAudioFileNumber);
+
+                    Console.WriteLine("Audio - Received Packet ready");
                 }
                                
                 // === Check if it is an acknowdlegement packet. The device has received the previous packet, and is ready to receive next chunk ===
-                if ((message[3] == 'd') && (message[4] == 'a') && (message[11] == ']'))
+                else if ((message[3] == 'D') && (message[4] == 'a') && (message[11] == ']'))
                 {
                     DataIndex = BitConverter.ToUInt16(message, 5);
+                    DataIndex++;
                     ReceivedAudioFileNumber = BitConverter.ToUInt16(message, 7);
                     SendAudioFile(ReceivedAudioFileNumber);
+                    Console.WriteLine("Audio - Ready to receive next chunk -" + DataIndex.ToString() + ":" + TotalCount.ToString() + "-" + CurrentAudioFileNumber.ToString());
                 }
 
                 // === Check if it is an error packet. The device request previous packet to be sent again ===
-                if ((message[3] == 'e')  && (message[10] == ']'))
+                else if((message[3] == 'e')  && (message[10] == ']'))
                 {
                     DataIndex = BitConverter.ToUInt16(message, 4);
                     ReceivedAudioFileNumber = BitConverter.ToUInt16(message, 6);
@@ -121,7 +182,7 @@ namespace Booyco_HMI_Utility
                 }
 
                 // === Check if it is a complete packet. The device has received all packets ===
-                if ((message[3] == 's') && (message[8] == ']'))
+                else if ((message[3] == 's') && (message[8] == ']'))
                 {
                     ReceivedAudioFileNumber = BitConverter.ToUInt16(message, 4);
                     if (ReceivedAudioFileNumber + 1 < TotalAudioFiles)
@@ -138,42 +199,58 @@ namespace Booyco_HMI_Utility
         }
         static void SendAudioFile(int AudioFileNumber)
         {
-
-            if(CurrentAudioFileNumber != AudioFileNumber)
+            if (AudioFileNumber == 0)
             {
-                CurrentAudioFileNumber = AudioFileNumber;               
+                AudioFileNumber = 1;
             }
-            StoreAudioFile(CurrentAudioFileNumber);
 
-            byte[] AudioFileChunk = Enumerable.Repeat((byte)0xFF, 522).ToArray();
-            byte[] SentIndexArray = BitConverter.GetBytes(DataIndex);
-            byte[] TotalCountArray = BitConverter.GetBytes(TotalCount);
-            byte[] FileNumberArray = BitConverter.GetBytes(CurrentAudioFileNumber);
-            byte[] FileTotalArray = BitConverter.GetBytes(TotalAudioFiles);
+            if (DataIndex > 60000)
+            {
+                DataIndex = 0;
+            }
+            if(DataIndex == TotalCount)
+            {
+                CurrentAudioFileNumber++;
+                DataIndex = 0;
+                TotalCount = 0;
+            }
+            if(CurrentAudioFileNumber == TotalAudioFiles)
+            {
+                SendingComplete = true;
+            }
+            if (!SendingComplete)
+            {
+                StoreAudioFile(CurrentAudioFileNumber);
 
-            AudioFileChunk[0] = (byte)'[';
-            AudioFileChunk[1] = (byte)'&';
-            AudioFileChunk[2] = (byte)'A';
-            AudioFileChunk[3] = (byte)'D';       
-            AudioFileChunk[4] = SentIndexArray[0]; // === SentIndex ===
-            AudioFileChunk[5] = SentIndexArray[1];
-            AudioFileChunk[7] = TotalCountArray[0]; // === TotalCount ===
-            AudioFileChunk[8] = SentIndexArray[1];
-            AudioFileChunk[9] = FileNumberArray[0]; // === FileNumber ===
-            AudioFileChunk[10] = FileNumberArray[1]; 
-            AudioFileChunk[11] = FileTotalArray[0]; // === FileTotal ===
-            AudioFileChunk[12] = FileTotalArray[1];
-            Buffer.BlockCopy(CurrentAudioFileArray, 508 * DataIndex, AudioFileChunk, 12, 508);
+                byte[] AudioFileChunk = Enumerable.Repeat((byte)0xFF, DataSize+14).ToArray();
+                byte[] SentIndexArray = BitConverter.GetBytes(DataIndex);
+                byte[] TotalCountArray = BitConverter.GetBytes(TotalCount);
+                byte[] FileNumberArray = BitConverter.GetBytes(CurrentAudioFileNumber);
+                byte[] FileTotalArray = BitConverter.GetBytes(TotalAudioFiles);
 
-            AudioFileChunk[521] = (byte)']';
+                AudioFileChunk[0] = (byte)'[';
+                AudioFileChunk[1] = (byte)'&';
+                AudioFileChunk[2] = (byte)'A';
+                AudioFileChunk[3] = (byte)'D';
+                AudioFileChunk[4] = SentIndexArray[0]; // === SentIndex ===
+                AudioFileChunk[5] = SentIndexArray[1];
+                AudioFileChunk[6] = TotalCountArray[0]; // === TotalCount ===
+                AudioFileChunk[7] = SentIndexArray[1];
+                AudioFileChunk[8] = FileNumberArray[0]; // === FileNumber ===
+                AudioFileChunk[9] = FileNumberArray[1];
+                AudioFileChunk[10] = FileTotalArray[0]; // === FileTotal ===
+                AudioFileChunk[11] = FileTotalArray[1];
+                Buffer.BlockCopy(CurrentAudioFileArray, DataSize * DataIndex, AudioFileChunk, 12, DataSize);
 
-            GlobalSharedData.ServerMessageSend = AudioFileChunk;
+                AudioFileChunk[TotalSize - 1] = (byte)']';
 
+                GlobalSharedData.ServerMessageSend = AudioFileChunk;
+            }
         }
 
         static byte[] CurrentAudioFileArray = { 0 };
         static void StoreAudioFile(int FileNumber)
-        {
+        {           
             AudioEntry _SelectedFile = AudioFileList.FirstOrDefault(t => t.ID == FileNumber);
 
             if (_SelectedFile != null)
@@ -182,6 +259,8 @@ namespace Booyco_HMI_Utility
                 //string _logInfoRaw = System.IO.File.ReadAllText(Log_Filename, Encoding.Default);          
                 BinaryReader _breader = new BinaryReader(File.OpenRead(_SelectedFile.Path));
                 CurrentAudioFileArray = _breader.ReadBytes((int)_SelectedFile.Size);
+              
+                TotalCount = (UInt16)(CurrentAudioFileArray.Length/ DataSize);
                 _breader.Dispose();
                 _breader.Close();
             }
@@ -191,7 +270,12 @@ namespace Booyco_HMI_Utility
             // === Send start datalog informaiton ===      
             
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&AA00]");
-            
+            CurrentAudioFileNumber = 1;
+            DataIndex = 0;
+            ButtonNew.IsEnabled = false;
+            SendingComplete = false;
+            SendingStarted = true; 
+
         }
 
         private void ButtonAppend_Click(object sender, RoutedEventArgs e)
@@ -201,15 +285,24 @@ namespace Booyco_HMI_Utility
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+            if (ButtonNew.IsEnabled)
             {
-                ProgramFlow.ProgramWindow = (int)ProgramFlowE.ConfigureMenuView;
+                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+                {
+                    ProgramFlow.ProgramWindow = (int)ProgramFlowE.ConfigureMenuView;
+                }
+                else
+                {
+                    ProgramFlow.ProgramWindow = (int)ProgramFlowE.FileMenuView;
+                    this.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
-                ProgramFlow.ProgramWindow = (int)ProgramFlowE.FileMenuView;
-                this.Visibility = Visibility.Collapsed;
+                ButtonNew.IsEnabled = true;
             }
+
+
         }
 
         private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
@@ -260,6 +353,9 @@ namespace Booyco_HMI_Utility
                     ButtonPrevious.Visibility = Visibility.Visible;
                     WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
                     SelectVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
+                    updateDispatcherTimer.Start();
+                    ReadAudioFiles();
+                    ProgressBar_AudioFiles.Value = 0;
                 }
                 else
                 {
