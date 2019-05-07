@@ -24,6 +24,8 @@ namespace Booyco_HMI_Utility
         public string WiFiHotspotSSID = "BooycoHMIUtility";
         public string WiFiKey = "BC123456";
 
+        public static bool Heartbeat = false;
+
         static DateTime timestamp;
         static bool FailFlag = false;
 
@@ -326,7 +328,7 @@ namespace Booyco_HMI_Utility
                     IPEndPoint clientep = (IPEndPoint)clients[clientnum].Client.RemoteEndPoint;
 
                     Console.WriteLine("Connected with {0} at port {1}", clientep.Address, clientep.Port);
-                    GlobalSharedData.ServerStatus = "Connected with " + clientep.Address + " at port " + clientep.Port;
+               
                     ClientLsitChanged(TCPclients);
                     TCPclients.Last().Heartbeat_Colour = WiFiView.HBConnectingColour;
                     if (!endAll)
@@ -662,7 +664,7 @@ namespace Booyco_HMI_Utility
 
                                     stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client  
 
-
+                                    Heartbeat = true;
                                     DataExtractorView.Heartbeat = true;                                                            //Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
                                 }
                                 #endregion
@@ -755,7 +757,7 @@ namespace Booyco_HMI_Utility
 
                 byte[] data = new byte[HeartbeatMessage.Length];
                 int counter = 0;
-                while (clientR[0].Connected && !endAll /*&& !clientR[0].Client.Poll(20, SelectMode.SelectRead)*/)
+                while (true/*clientR[0].Connected && !endAll*/ /*&& !clientR[0].Client.Poll(20, SelectMode.SelectRead)*/)
                 {
                     try
                     {

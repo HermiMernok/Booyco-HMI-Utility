@@ -53,6 +53,9 @@ namespace Booyco_HMI_Utility
         public static bool BroadCast { get; set; }
         public static List<NetworkDevice> NetworkDevices = new List<NetworkDevice>();
         public static int SelectedDevice { get; set; }
+        public static uint SelectedVID = 0;
+        public static bool ActiveDevice= false;
+
         public static string WiFiApStatus;
         public static bool  ViewMode = false;
         public static string FilePath = "";

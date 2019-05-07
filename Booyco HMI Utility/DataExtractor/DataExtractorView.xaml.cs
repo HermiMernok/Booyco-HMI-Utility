@@ -26,7 +26,7 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class DataExtractorView : UserControl
     {
- 
+      
         // === Public Variables ===
         public const int DATALOG_RX_SIZE = 8192;
         public static bool Heartbeat = false;
@@ -54,7 +54,7 @@ namespace Booyco_HMI_Utility
         public DataExtractorView()
         {           
             InitializeComponent();
-            Label_StatusView.Content = "Waiting instructions..";
+            Label_StatusView.Content = "Waiting for user command..";
             updateDispatcherTimer = new DispatcherTimer();
             updateDispatcherTimer.Tick += new EventHandler(InfoUpdater);
             updateDispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
@@ -201,7 +201,7 @@ namespace Booyco_HMI_Utility
                     _fileCreated = false;
                     StartDataReceiving = false;
                     ProgressBar_DataLogExtract.Value = 0;
-                    Label_StatusView.Content = "Waiting instructions..";
+                    Label_StatusView.Content = "Waiting for user command..";
                 }
             }
 
@@ -456,7 +456,7 @@ namespace Booyco_HMI_Utility
                 Label_DeviceVID.Content = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
                 SelectVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
                 Label_Firmware.Content = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev + "." + WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmSubRev;
-                Label_StatusView.Content = "Waiting instructions..";
+                Label_StatusView.Content = "Waiting for user command..";
                 ProgressBar_DataLogExtract.Value = 0 ;
                 Label_ProgressStatusPercentage.Content = "";
                 StoredIndex = -1;

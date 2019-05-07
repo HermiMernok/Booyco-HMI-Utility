@@ -93,6 +93,22 @@ namespace Booyco_HMI_Utility
             }
         }
 
+        private string _ProgressString;
+        public string ProgressString
+        {
+            get
+            {
+                return _ProgressString;
+            }
+            set
+            {
+                _ProgressString = value;
+                OnPropertyChanged("ProgressString");
+            }
+        }
+
+
+
         public event PropertyChangedEventHandler PropertyChanged;
     public void OnPropertyChanged(string propertyName)
     {

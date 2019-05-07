@@ -52,9 +52,39 @@ namespace Booyco_HMI_Utility
 
         private void ClientListUpdater(object sender, EventArgs e)
         {
+            
+            if (DGTCPclientList.SelectedIndex > 0)
+            {
+                SelectionUpdate();
+            }
 
+            bool VIDCheck = false;
+            if (TCPclients != null && TCPclients.Count > 0)
+            {
+                foreach (TCPclientR item in TCPclients)
+                {
+                    if (item.VID == GlobalSharedData.SelectedVID)
+                    {
+                        VIDCheck = true;
+                    }
+                }
+                GlobalSharedData.ActiveDevice = VIDCheck;
 
-           
+                if (GlobalSharedData.ActiveDevice)
+                {
+                    GlobalSharedData.ServerStatus = "Connected to VID:" + GlobalSharedData.SelectedVID;
+                }
+                else
+                {
+                    GlobalSharedData.ServerStatus = "";
+                }
+            }
+            else
+            {
+                GlobalSharedData.ActiveDevice = false;
+                GlobalSharedData.ServerStatus = "";
+            }
+
 
             ServerStatusView = GlobalSharedData.ServerStatus;
             NetworkDevicesp = GlobalSharedData.NetworkDevices;
@@ -173,52 +203,57 @@ namespace Booyco_HMI_Utility
         {
             if (DGTCPclientList.SelectedIndex != -1)
             {
-                TCPclientR _selectedItem = (TCPclientR)DGTCPclientList.SelectedItem;
-                GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
-
-                if (_selectedItem.HeartCount < 1)
-                {
-                    BtnBootload.IsEnabled = false;
-                    BtnConfig.IsEnabled = false;
-                    BtnDatView.IsEnabled = false;
-                  
-                }
-                else if (_selectedItem.ApplicationState == "Bootloader")
-                {
-                    BtnBootload.IsEnabled = true;
-                    BtnConfig.IsEnabled = false;
-                    BtnDatView.IsEnabled = false;
-                   
-                }
-                else if ((_selectedItem.ApplicationState == "Application"))
-                {
-                    BtnBootload.IsEnabled = true;
-                    BtnConfig.IsEnabled = true;
-                    BtnDatView.IsEnabled = true;
-                  
-                }
-                else if ((_selectedItem.ApplicationState == "ERB Bootloader"))
-                {
-                    BtnBootload.IsEnabled = true;
-                    BtnConfig.IsEnabled = false;
-                    BtnDatView.IsEnabled = false;                   
-                }
-
+                SelectionUpdate();
             }
-             else 
+            else
             {
                 BtnConfig.IsEnabled = false;
                 BtnDatView.IsEnabled = false;
-                BtnBootload.IsEnabled = false;
+                BtnBootload.IsEnabled = false;             
             }
-        
 
-           
-              
-           
         }
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        void SelectionUpdate()
+        {
+            TCPclientR _selectedItem = (TCPclientR)DGTCPclientList.SelectedItem;
+            GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
+            GlobalSharedData.SelectedVID = _selectedItem.VID;
+            GlobalSharedData.ServerStatus = "Connected to VID:" + GlobalSharedData.SelectedVID;
+       
+            if (_selectedItem.HeartCount < 1)
+            {
+                BtnBootload.IsEnabled = false;
+                BtnConfig.IsEnabled = false;
+                BtnDatView.IsEnabled = false;
+
+            }
+            else if (_selectedItem.ApplicationState == "Bootloader")
+            {
+                BtnBootload.IsEnabled = true;
+                BtnConfig.IsEnabled = false;
+                BtnDatView.IsEnabled = false;
+
+            }
+            else if ((_selectedItem.ApplicationState == "Application"))
+            {
+                BtnBootload.IsEnabled = true;
+                BtnConfig.IsEnabled = true;
+                BtnDatView.IsEnabled = true;
+
+            }
+            else if ((_selectedItem.ApplicationState == "ERB Bootloader"))
+            {
+                BtnBootload.IsEnabled = true;
+                BtnConfig.IsEnabled = false;
+                BtnDatView.IsEnabled = false;
+            }
+
+        
+            
+}
+
+private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if(this.Visibility == Visibility.Visible)
             {
