@@ -1,4 +1,4 @@
-﻿using Booyco_HMI_Utility.CustomObservableCollection;
+﻿
 using GMap.NET.WindowsPresentation;
 using GMap.NET;
 using ProximityDetectionSystemInfo;
@@ -19,7 +19,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
-using Booyco_HMI_Utility.CustomMarker;
 using OfficeOpenXml;
 using ProximityDetectionSystemInfo;
 

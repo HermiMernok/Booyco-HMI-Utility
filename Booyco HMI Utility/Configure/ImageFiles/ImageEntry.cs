@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booyco_HMI_Utility.Configure.ImageFiles
+namespace Booyco_HMI_Utility
 {
     class ImageEntry:INotifyPropertyChanged
     {

@@ -1,7 +1,7 @@
 ﻿<UserControl
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	x:Class="Demo.WindowsPresentation.CustomMarkers.CustomMarkerPoint"
+	x:Class="Booyco_HMI_Utility.CustomMarkers.CustomMarkerPoint"
 	Height="2000" Width="2000">
     <Grid>
         <Grid Margin="1018,1016,2,0">

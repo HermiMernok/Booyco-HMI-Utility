@@ -1,8 +1,9 @@
-﻿using Booyco_HMI_Utility.CustomObservableCollection;
+﻿
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -19,6 +20,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+
+
 namespace Booyco_HMI_Utility
 {
     /// <summary>
@@ -29,8 +32,7 @@ namespace Booyco_HMI_Utility
         string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files\\Audio";
         static private RangeObservableCollection<AudioEntry> AudioFileList;
         private uint SelectVID = 0;
-        static private UInt16 TotalAudioFiles = 0;
-       
+        static private UInt16 TotalAudioFiles = 0;       
         private static UInt16 CurrentAudioFileNumber = 1;
         private static UInt16 PreviousAudioFileNumber = 1;
         static private UInt16 TotalCount = 0;
@@ -98,9 +100,6 @@ namespace Booyco_HMI_Utility
                 }
             }
            
-
-           
-
         }
 
         void ReadAudioFiles()
@@ -109,9 +108,9 @@ namespace Booyco_HMI_Utility
             if (Directory.Exists(_savedFilesPath))
             {
                 DirectoryInfo d = new DirectoryInfo(_savedFilesPath);               
-                FileInfo[] FilesWav = d.GetFiles("*.wav");                     
-
+                FileInfo[] FilesWav = d.GetFiles("*.wav");
                 ushort count = 0;
+
                 foreach (FileInfo file in FilesWav)
                 {
                      count++;
@@ -125,7 +124,7 @@ namespace Booyco_HMI_Utility
                         Size = file.Length,
                         Progress = 0,
                         ProgressString = ""
-                });                 
+                    });                 
                 }
                 TotalAudioFiles = count;
             }
@@ -200,7 +199,6 @@ namespace Booyco_HMI_Utility
                         SendAudioFile(CurrentAudioFileNumber);
                         Console.WriteLine("Audio - Received Packet ready");
 
-
                     }
 
                     // === Check if it is an acknowdlegement packet. The device has received the previous packet, and is ready to receive next chunk ===
@@ -231,9 +229,9 @@ namespace Booyco_HMI_Utility
                          
                     //}
                 }
-            }
-          
+            }          
         }
+
         static void SendAudioFile(int AudioFileNumber)
         {
             if (AudioFileNumber == 0)
@@ -295,7 +293,6 @@ namespace Booyco_HMI_Utility
 
                 GlobalSharedData.ServerMessageSend = AudioFileChunk;
                 }
-
             }
 
         }
@@ -338,13 +335,13 @@ namespace Booyco_HMI_Utility
                 item.Progress = 0;
                 item.ProgressString = "0%";
             }
-
-
         }
 
         private void ButtonAppend_Click(object sender, RoutedEventArgs e)
         {
-
+            AudioEntry _item = (AudioEntry)DataGridAudioFiles.SelectedItem;
+            SoundPlayer snd = new SoundPlayer(_item.Path);
+            snd.Play();            
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
@@ -357,7 +354,6 @@ namespace Booyco_HMI_Utility
                 ClearInfo();
                 ButtonNext.IsEnabled = true;
                 ButtonPrevious.IsEnabled = true;
-
             }
             else
             {               
@@ -366,19 +362,16 @@ namespace Booyco_HMI_Utility
                     ProgramFlow.ProgramWindow = (int)ProgramFlowE.ConfigureMenuView;
                 }
                 else
-                {
-                   
+                {                   
                     ProgramFlow.ProgramWindow = (int)ProgramFlowE.FileMenuView;
                     this.Visibility = Visibility.Collapsed;
                     ClearInfo();
                 }
             }
-
         }
 
         void ClearInfo()
-        {
-         
+        {         
             Label_StatusView.Content = "Waiting for user command..";
             Label_ProgressStatusPercentage.Content = "";
             ProgressBar_AudioFiles.Value = 0;

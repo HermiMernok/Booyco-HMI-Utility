@@ -52,7 +52,7 @@ namespace Booyco_HMI_Utility
         public static int DataIndex { get; set; }
         public static int TotalCount { get; set; }
 
-        #region OnProperty Changed
+      
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -60,7 +60,7 @@ namespace Booyco_HMI_Utility
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         /////////////////////////////////////////////////////////////
-        #endregion
+     
 
         public ParametersView()
         {
@@ -81,6 +81,7 @@ namespace Booyco_HMI_Utility
         {
             if (this.Visibility == Visibility.Visible)
             {
+
                 SureMessageVis = Visibility.Collapsed;
                 ParamsRequestStarted = false;
                 ParamsReceiveComplete = false;
@@ -93,14 +94,16 @@ namespace Booyco_HMI_Utility
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
                 {
                     SendFileButton.Visibility = Visibility.Collapsed;
-                    ConfigRefreshButton.Visibility = Visibility.Collapsed;
+                    ButtonConfigRefresh.Visibility = Visibility.Collapsed;
                 }
                 else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
                 {
                     //ConfigRefreshButton.Content = "Refresh";
                     SendFileButton.Visibility = Visibility.Visible;
-                    ConfigRefreshButton.Visibility = Visibility.Visible;
+                    ButtonConfigRefresh.Visibility = Visibility.Visible;
                 }
+
+                ButtonConfigRefresh_Click(null,null);
             }
             else
             {
@@ -110,8 +113,6 @@ namespace Booyco_HMI_Utility
                 ConfigSendStop = true;
             }
         }
-
-        #region Parameter Display Management
 
         private void InfoDelayFunc(object sender, EventArgs e)
         {
@@ -134,6 +135,7 @@ namespace Booyco_HMI_Utility
                     //updateDispatcherTimer.Stop();
                     ParamsReceiveComplete = false;
                     ParamsRequestStarted = false;
+                    ButtonState(true);
                     InfoDelay.Start();
                 }
             }
@@ -152,6 +154,7 @@ namespace Booyco_HMI_Utility
                     Label_StatusView.Content = "Loading of parameters to device completed...";
                     ParamsTransmitComplete = false;
                     ParamsSendStarted = false;
+                    ButtonState(true);
                     //updateDispatcherTimer.Stop();
                     InfoDelay.Start();
                 }
@@ -177,12 +180,12 @@ namespace Booyco_HMI_Utility
                     WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
                     ButtonNext.Visibility = Visibility.Visible;
                     ButtonPrevious.Visibility = Visibility.Visible;
-                    ConfigRefreshButton.Visibility = Visibility.Visible;
+                    ButtonConfigRefresh.Visibility = Visibility.Visible;
                     SendFileButton.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    ConfigRefreshButton.Visibility = Visibility.Collapsed;
+                    ButtonConfigRefresh.Visibility = Visibility.Collapsed;
                     SendFileButton.Visibility = Visibility.Collapsed;
                     ButtonNext.Visibility = Visibility.Collapsed;
                     ButtonPrevious.Visibility = Visibility.Collapsed;
@@ -508,9 +511,9 @@ namespace Booyco_HMI_Utility
             return newDisp_Parameter_value;
         }
 
-        #endregion
 
-        #region properties
+
+      
         private List<Parameters> parameters;
 
         public List<Parameters> Parameters
@@ -534,10 +537,8 @@ namespace Booyco_HMI_Utility
             get { return disp_parameters; }
             set { disp_parameters = value; OnPropertyChanged("Disp_Parameters"); }
         }
-        #endregion
-
-        #region Datagrid functions
-
+    
+        
         private int FindDispParIndex(int ParameterIndex)
         {
             int j = 0;
@@ -670,10 +671,10 @@ namespace Booyco_HMI_Utility
                 SortedIndex = tempPar.OriginIndx;
             }
 
-            #region StringConditioners
+           
             if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 4)
             {
-                #region Vehicle Name
+           
                 if (tempPar.Name == "Name")
                 {
                     TextBox textBox = (TextBox)sender;
@@ -691,8 +692,8 @@ namespace Booyco_HMI_Utility
                             parameters[SortedIndex - i].CurrentValue = (byte)' ';
                     }
                 }
-                #endregion
-                #region WiFi IP Conditioning
+              
+            
                 else if ((tempPar.Name == "WiFi Unit IP") || (tempPar.Name == "WiFi Server IP") || (tempPar.Name == "WiFi Gateway IP") || (tempPar.Name == "WiFi Subnet Mask"))
                 {
                     TextBox textBox = (TextBox)sender;
@@ -708,8 +709,8 @@ namespace Booyco_HMI_Utility
                             parameters[SortedIndex - i].CurrentValue = (byte)' ';
                     }
                 }
-                #endregion
-                #region WiFi Password and SSID
+         
+               
                 else if ((tempPar.Name == "WiFi Password") || (tempPar.Name == "WiFi SSID"))
                 {
                     TextBox textBox = (TextBox)sender;
@@ -725,11 +726,11 @@ namespace Booyco_HMI_Utility
                             parameters[SortedIndex - i].CurrentValue = (byte)' ';
                     }
                 }
-                #endregion
+               
             }
-            #endregion
+           
 
-            #region ValueCondtioners
+           
             else if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 0)
             {
                 TextBox textBox = (TextBox)sender;
@@ -759,7 +760,7 @@ namespace Booyco_HMI_Utility
                 }
 
             }
-            #endregion
+     
         }
 
         private void ComboBox_DropDownClosed(object sender, EventArgs e)
@@ -776,15 +777,15 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        #endregion
+     
 
-        #region Communication
+       
         public static void ConfigSendParse(byte[] message, EndPoint endPoint)
         {
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'P'))
             {
 
-                #region Configure ready to start
+
                 if (message[3] == 'a' && message[6] == ']')
                 {
                     ConfigSendReady = true;
@@ -796,9 +797,9 @@ namespace Booyco_HMI_Utility
                     GlobalSharedData.BroadCast = false;
                     WiFiconfig.SelectedIP = endPoint.ToString();
                 }
-                #endregion
+             
 
-                #region Configure next index
+
                 if (message[3] == 'D')
                 {
                     if (message[4] == 'a' && message[9] == ']')
@@ -809,9 +810,9 @@ namespace Booyco_HMI_Utility
 
                     }
                 }
-                #endregion
+         
 
-                #region Configure complete message
+        
                 if (message[3] == 's' && message[6] == ']')
                 {
                     ConfigStatus = "Device config read done...";
@@ -824,9 +825,9 @@ namespace Booyco_HMI_Utility
                     //GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
                     //GlobalSharedData.ServerStatus = "Config paramaters sent message recieved";
                 }
-                #endregion
+          
 
-                #region Configure error message
+        
                 if (message[3] == 'e' && message[8] == ']')
                 {
                     if (BitConverter.ToUInt16(message, 4) == 0xFFFF)
@@ -846,14 +847,14 @@ namespace Booyco_HMI_Utility
                     }
 
                 }
-                #endregion
+           
 
-                #region Configure Exit message
+      
                 if (message[3] == 'x' && message[6] == ']')
                 {
                     backBtner = true;
                 }
-                #endregion
+            
                 Console.WriteLine("Packet Index:" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
             }
             else
@@ -866,46 +867,49 @@ namespace Booyco_HMI_Utility
 
         public static void ConfigReceiveParamsParse(byte[] message, EndPoint endPoint)
         {
+            if(ParamsRequestStarted)
+            { 
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'a'))
             {                
                 ParamsRequestStarted = true;
             }
-            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'D'))
-            {
-                DataIndex = BitConverter.ToUInt16(message, 4);
-                TotalCount = BitConverter.ToUInt16(message, 6);
-
-                Array.Copy(message, 8, ParamReceiveBytes, (DataIndex - 1) * 512, 512);
-
-                ParamReceiveProgress = (DataIndex * 100) / TotalCount;
-
-                if (DataIndex < TotalCount && DataIndex > StoredIndex)
+                if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'D'))
                 {
-                    byte[] ParamsReceivechunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+                    DataIndex = BitConverter.ToUInt16(message, 4);
+                    TotalCount = BitConverter.ToUInt16(message, 6);
 
-                    ParamsReceivechunk[0] = (byte)'[';
-                    ParamsReceivechunk[1] = (byte)'&';
-                    ParamsReceivechunk[2] = (byte)'p';
-                    ParamsReceivechunk[3] = (byte)'D';
-                    ParamsReceivechunk[4] = (byte)'a';
-                    ParamsReceivechunk[5] = message[4];
-                    ParamsReceivechunk[6] = message[5];
-                    ParamsReceivechunk[7] = 0;
-                    ParamsReceivechunk[8] = 0;
-                    ParamsReceivechunk[9] = (byte)']';
+                    Array.Copy(message, 8, ParamReceiveBytes, (DataIndex - 1) * 512, 512);
 
-                    GlobalSharedData.ServerMessageSend = ParamsReceivechunk;
-                    Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+                    ParamReceiveProgress = (DataIndex * 100) / TotalCount;
 
+                    if (DataIndex < TotalCount && DataIndex > StoredIndex)
+                    {
+                        byte[] ParamsReceivechunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+
+                        ParamsReceivechunk[0] = (byte)'[';
+                        ParamsReceivechunk[1] = (byte)'&';
+                        ParamsReceivechunk[2] = (byte)'p';
+                        ParamsReceivechunk[3] = (byte)'D';
+                        ParamsReceivechunk[4] = (byte)'a';
+                        ParamsReceivechunk[5] = message[4];
+                        ParamsReceivechunk[6] = message[5];
+                        ParamsReceivechunk[7] = 0;
+                        ParamsReceivechunk[8] = 0;
+                        ParamsReceivechunk[9] = (byte)']';
+
+                        GlobalSharedData.ServerMessageSend = ParamsReceivechunk;
+                        Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+
+                    }
+                    else if (DataIndex == TotalCount)
+                    {
+                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&ps00]");
+                        Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+                        ParamsReceiveComplete = true;
+                    }
+
+                    StoredIndex = DataIndex;
                 }
-                else if (DataIndex == TotalCount)
-                {
-                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&ps00]");
-                    Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
-                    ParamsReceiveComplete = true;
-                }
-
-                StoredIndex = DataIndex;
             }
             else
             {
@@ -994,9 +998,7 @@ namespace Booyco_HMI_Utility
         }
 
 
-        #endregion
-
-        #region Config Send properties
+       
         List<byte[]> ConfigSendList = new List<byte[]>();
 
         public static string ConfigStatus { get; set; }
@@ -1015,9 +1017,7 @@ namespace Booyco_HMI_Utility
 
         public static int ConfigSentAckIndex { get; set; }
 
-        #endregion
-
-        #region Parameter File Management
+        
         static int Configchunks = 0;
         private void GetDefaultParametersFromFile()
         {
@@ -1178,9 +1178,8 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        #endregion
+ 
 
-        #region Data Conditioning
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
@@ -1229,18 +1228,26 @@ namespace Booyco_HMI_Utility
             //IP = IP1 + "." + IP2 + "." + IP3 + "." + IP4;
             return IP1 + "." + IP2 + "." + IP3 + "." + IP4;
         }
-        #endregion
-
-        
-
-        #region Buttons
+       
+      
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
-            //            else
+            if ((string)ButtonBack.Content == "Back")
+            {
+                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
+                //            else
 
-            backBtner = true;
+                backBtner = true;
+            }
+            else
+            {
+                InfoDelay.Start();
+                ButtonState(true);
+                ParamsRequestStarted = false;
+                ParamsSendStarted = false;
+            }
+
         }
 
         private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
@@ -1251,6 +1258,8 @@ namespace Booyco_HMI_Utility
         private static Thread ConfigureThread;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+           
+            ButtonState(false);
             Save_ParaMetersToFile();
             ConfigSendReady = false;
             ConfigSendStop = false;
@@ -1279,7 +1288,7 @@ namespace Booyco_HMI_Utility
             updateDispatcherTimer.Start();
         }
 
-        private void ConfigRefreshButton_Click(object sender, RoutedEventArgs e)
+        private void ButtonConfigRefresh_Click(object sender, RoutedEventArgs e)
         {
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
             StoredIndex = -1;
@@ -1288,8 +1297,29 @@ namespace Booyco_HMI_Utility
 
             ParamsTransmitComplete = false;
             ParamsSendStarted = false;
-
+            ButtonState(false);
             updateDispatcherTimer.Start();
+            ParamReceiveProgress = 0;
+        }
+
+        void ButtonState(bool State)
+        {
+            if (State)
+            {
+                ButtonConfigRefresh.IsEnabled = true;
+                SendFileButton.IsEnabled = true;
+                OpenFileButton.IsEnabled = true;
+                ButtonBack.Content = "Back";
+
+
+            }
+            else
+            {
+                ButtonConfigRefresh.IsEnabled = false;
+                SendFileButton.IsEnabled = false;
+                OpenFileButton.IsEnabled = false;
+                ButtonBack.Content = "Cancel";
+            }
         }
 
         private void ButtonClose_Click(object sender, RoutedEventArgs e)
@@ -1308,8 +1338,7 @@ namespace Booyco_HMI_Utility
             SaveParameterFile();
             SureMessageVis = Visibility.Collapsed;
         }
-        #endregion
-
+     
         private void ButtonNext_Click(object sender, RoutedEventArgs e)
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.ImageFilesView;

@@ -1,4 +1,4 @@
-﻿using Booyco_HMI_Utility.CustomMarker;
+﻿
 using GMap.NET.WindowsPresentation;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace Booyco_HMI_Utility
     public enum ProgramFlowE
     {
         Startup,
+        LoginView,
         WiFi,
         USB,
         File,
@@ -47,7 +48,7 @@ namespace Booyco_HMI_Utility
     public static class GlobalSharedData
     { 
         public static int AccessLevel = (int)AccessLevelEnum.Basic;
-       
+        public static bool CommunicationSent = false;
         public static string ServerStatus { get; set; }
         public static byte[] ServerMessageSend { get; set; }
         public static bool BroadCast { get; set; }
@@ -57,6 +58,9 @@ namespace Booyco_HMI_Utility
         public static bool ActiveDevice= false;
 
         public static string WiFiApStatus;
+        public static bool WiFiConnectionStatus;
+
+        
         public static bool  ViewMode = false;
         public static string FilePath = "";
         public static List<MarkerEntry> PDSMapMarkers = new List<MarkerEntry>();

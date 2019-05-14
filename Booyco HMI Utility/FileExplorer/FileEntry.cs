@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booyco_HMI_Utility.FileExplorer
+namespace Booyco_HMI_Utility
 {
     class FileEntry : INotifyPropertyChanged
     {

@@ -305,7 +305,7 @@ namespace Booyco_HMI_Utility
             // === Check if device is busy moving logs ===
             if((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'k'))
             {               
-                DataLogProgress = (150 * message[4]) / message[5];
+                DataLogProgress = (50 * message[4]) / message[5];
                 Console.WriteLine(message[4].ToString() + "-" + message[5].ToString() + "-" + DataLogProgress.ToString());
                 if (!StartDataReceiving)
                 {
@@ -347,7 +347,7 @@ namespace Booyco_HMI_Utility
                 StartDataReceiving = true;
                 DataIndex =  BitConverter.ToUInt16(message, 4);               
                 TotalCount= BitConverter.ToUInt16(message, 6);
-                DataLogProgress = (DataIndex * 750) / TotalCount+150;
+                DataLogProgress = (DataIndex * 850) / TotalCount+50;
                
                 // === check if datalog extraction has not started ===
                 if (!DatalogsBusy)

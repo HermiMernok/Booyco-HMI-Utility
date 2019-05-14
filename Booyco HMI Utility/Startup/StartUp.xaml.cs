@@ -49,5 +49,22 @@ namespace Booyco_HMI_Utility
         {
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.GPRS;
         }
+
+        private void ButtonNext_Click(object sender, RoutedEventArgs e)
+        {
+            ProgramFlow.ProgramWindow = (int)ProgramFlowE.LoginView;
+        }
+
+        private void ButtonNext_MouseEnter(object sender, MouseEventArgs e)
+        {
+            RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(60, 6, 6));
+            ImageParameter.Opacity = 1;
+        }
+
+        private void ButtonNext_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
+            ImageParameter.Opacity = 0.6;
+        }
     }
 }

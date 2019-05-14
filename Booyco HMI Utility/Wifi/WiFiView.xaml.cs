@@ -37,7 +37,6 @@ namespace Booyco_HMI_Utility
         public static SolidColorBrush HBConnectingColour;
         public static SolidColorBrush HBLostColour;
         private DispatcherTimer dispatcherTimer;
-
         WiFiconfig WiFiconfig;
 
         public WiFiView()
@@ -51,8 +50,7 @@ namespace Booyco_HMI_Utility
         }
 
         private void ClientListUpdater(object sender, EventArgs e)
-        {
-            
+        {            
             if (DGTCPclientList.SelectedIndex > 0)
             {
                 SelectionUpdate();
@@ -84,14 +82,12 @@ namespace Booyco_HMI_Utility
                 GlobalSharedData.ActiveDevice = false;
                 GlobalSharedData.ServerStatus = "";
             }
-
-
+            
             ServerStatusView = GlobalSharedData.ServerStatus;
             NetworkDevicesp = GlobalSharedData.NetworkDevices;
             TCPclients = WiFiconfig.ClientLsitChanged(TCPclients);
             if (WiFiconfig.clients != null)
             {
-
                 TCPclientR _removeItem = new TCPclientR();
                 foreach (TCPclientR item in TCPclients)
                 {
@@ -122,8 +118,7 @@ namespace Booyco_HMI_Utility
             if (DGTCPclientList.Items.Count == 1)
                 GlobalSharedData.SelectedDevice = 0;
         }
-
-        #region DisplayHandler
+            
         private void BtnMain_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
@@ -148,9 +143,7 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.ConfigureMenuView;
 
         }
-        #endregion
-
-        #region Properties
+  
         private List<TCPclientR> _TCPclients;
         public List<TCPclientR> TCPclients
         {
@@ -195,10 +188,7 @@ namespace Booyco_HMI_Utility
             get { return _ServerStatusView; }
             set { _ServerStatusView = value; OnPropertyChanged("ServerStatusView"); }
         }
-
-
-        #endregion
-
+             
         private void DGTCPclientList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DGTCPclientList.SelectedIndex != -1)
@@ -211,7 +201,6 @@ namespace Booyco_HMI_Utility
                 BtnDatView.IsEnabled = false;
                 BtnBootload.IsEnabled = false;             
             }
-
         }
 
         void SelectionUpdate()
@@ -219,21 +208,20 @@ namespace Booyco_HMI_Utility
             TCPclientR _selectedItem = (TCPclientR)DGTCPclientList.SelectedItem;
             GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
             GlobalSharedData.SelectedVID = _selectedItem.VID;
+
             GlobalSharedData.ServerStatus = "Connected to VID:" + GlobalSharedData.SelectedVID;
-       
+  
             if (_selectedItem.HeartCount < 1)
             {
                 BtnBootload.IsEnabled = false;
                 BtnConfig.IsEnabled = false;
                 BtnDatView.IsEnabled = false;
-
             }
             else if (_selectedItem.ApplicationState == "Bootloader")
             {
                 BtnBootload.IsEnabled = true;
                 BtnConfig.IsEnabled = false;
                 BtnDatView.IsEnabled = false;
-
             }
             else if ((_selectedItem.ApplicationState == "Application"))
             {
@@ -248,9 +236,6 @@ namespace Booyco_HMI_Utility
                 BtnConfig.IsEnabled = false;
                 BtnDatView.IsEnabled = false;
             }
-
-        
-            
 }
 
 private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -274,10 +259,9 @@ private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChang
                 TCPclients = new List<TCPclientR>();
                 WiFiconfig.ServerStop();
                 try
-                {
-                   
+                {                   
                 //    WiFiconfig.WirelessHotspot(null, null, false);
-               //    var prc = new ProcManager();
+                //    var prc = new ProcManager();
                 //    prc.KillByPort(13000);
                 }
                 catch

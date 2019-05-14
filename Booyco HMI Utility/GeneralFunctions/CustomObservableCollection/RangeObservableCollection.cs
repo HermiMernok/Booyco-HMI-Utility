@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Booyco_HMI_Utility.CustomObservableCollection
+namespace Booyco_HMI_Utility
 {
     public class RangeObservableCollection<T> : ObservableCollection<T>
     {

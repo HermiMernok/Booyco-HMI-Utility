@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booyco_HMI_Utility.CustomMarker
+namespace Booyco_HMI_Utility
 {
 
     public enum MarkerType

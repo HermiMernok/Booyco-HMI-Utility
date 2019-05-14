@@ -20,6 +20,7 @@ using System.Security.Principal;
 using System.Management;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Media.Animation;
 
 namespace Booyco_HMI_Utility
 {
@@ -93,7 +94,11 @@ namespace Booyco_HMI_Utility
             {
                 BootView.Visibility = DataLogView.Visibility = ParametersView.Visibility = WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.Startup;
-                 
+                LoginView.Visibility = Visibility.Collapsed;
+            }
+            else if(ProgramFlow.ProgramWindow == (int)ProgramFlowE.LoginView)
+            {
+                LoginView.Visibility = Visibility.Visible;
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.FileMenuView)
             {
@@ -230,17 +235,47 @@ namespace Booyco_HMI_Utility
                 HeartbeatCount = "";
                 WiFiApStatus = "";
             }
-            else
+            else if(ProgramFlow.ProgramWindow == (int)ProgramFlowE.WiFi)
             {
-                #endregion
                 HeartbeatCount = GlobalSharedData.ServerStatus;
                 WiFiApStatus = GlobalSharedData.WiFiApStatus;
+                Label_StatusFixText.Content = "";
+                WiFiApStatusColor =  System.Windows.Media.Brushes.Black;
+            }
+            else
+            {
+
+                #endregion
+                Label_StatusFixText.Content = "Connection Status: ";
+                HeartbeatCount = GlobalSharedData.ServerStatus;
+      
+          
+                if(GlobalSharedData.WiFiConnectionStatus)
+                {
+                    WiFiApStatus = "Active";
+                    WiFiApStatusColor = System.Windows.Media.Brushes.Green;
+                }
+                else
+                {
+                    WiFiApStatus = "Disconnected";
+                    WiFiApStatusColor = System.Windows.Media.Brushes.Red;
+                }
+
+              
+
             }
 
             if(ErrorView)
             {
                 ErrorView = false;
                 Error_messageView.Visibility = Visibility.Visible;
+            }
+
+            if(GlobalSharedData.CommunicationSent)
+            {
+                Storyboard s = (Storyboard)TryFindResource("sb_com_activity");
+                s.Begin();
+                GlobalSharedData.CommunicationSent = false;
             }
 
         
@@ -276,19 +311,26 @@ namespace Booyco_HMI_Utility
         #endregion
 
         private string _HeartbeatCount;
-
+      
         public string HeartbeatCount
         {
             get { return _HeartbeatCount; }
             set { _HeartbeatCount = value; OnPropertyChanged("HeartbeatCount"); }
         }
-
+        
         private string _WiFiApStatus;
 
         public string WiFiApStatus
         {
             get { return _WiFiApStatus; }
             set { _WiFiApStatus = value; OnPropertyChanged("WiFiApStatus"); }
+        }
+        private System.Windows.Media.Brush _WiFiApStatusColor;
+
+        public System.Windows.Media.Brush WiFiApStatusColor
+        {
+            get { return _WiFiApStatusColor; }
+            set { _WiFiApStatusColor = value; OnPropertyChanged("WiFiApStatusColor"); }
         }
 
         public bool ErrorView { get; private set; }

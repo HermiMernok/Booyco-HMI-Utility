@@ -13,8 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Booyco_HMI_Utility.CustomMarker;
-using Demo.WindowsPresentation.CustomMarkers;
+using Booyco_HMI_Utility.CustomMarkers;
 using GMap.NET;
 
 using GMap.NET.WindowsPresentation;

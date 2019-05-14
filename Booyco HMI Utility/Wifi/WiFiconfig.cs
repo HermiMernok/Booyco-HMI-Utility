@@ -293,6 +293,7 @@ namespace Booyco_HMI_Utility
             int clientslot = 0;
             GlobalSharedData.ServerStatus = " Server running. Waiting for a client...";
 
+   
             while (clientnum < 10 && !endAll)
             {
 
@@ -641,7 +642,13 @@ namespace Booyco_HMI_Utility
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Licensed = Convert.ToBoolean(Buffer[28]);
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Heartbeat_Colour = WiFiView.HBReceiveColour;
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).HeartbeatTimestamp = DateTime.Now;
-                                        
+                                    
+                                        if (GlobalSharedData.SelectedVID == (uint)TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID)
+                                        {
+                                            GlobalSharedData.WiFiConnectionStatus = true;   
+                                        }
+
+
                                     }
                                     catch
                                     {
@@ -725,11 +732,17 @@ namespace Booyco_HMI_Utility
                     //Console.WriteLine(e.ToString());
                     break;
                 }
+              
             }
             Console.WriteLine("-------------- {0} closed recieve", clientnumr);
 
             try
             {
+                if (GlobalSharedData.SelectedVID == TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID)
+                {
+                    GlobalSharedData.WiFiConnectionStatus = false;
+                   
+                }
                 IPEndPoint clientel = (IPEndPoint)clientR[0].Client.RemoteEndPoint;
                 if (clients.Where(t => t.Client.RemoteEndPoint.ToString().Contains(clientel.Address.ToString())).ToList().Count() != 0)
                 {
@@ -749,15 +762,17 @@ namespace Booyco_HMI_Utility
         private void ClientSendBytes(EndPoint clientnumr, int remover)
         {
             List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList(); ;
+        
             try
-            {
+            { 
+
                 NetworkStream stream = clientR[0].GetStream();
 
                 stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length);
 
                 byte[] data = new byte[HeartbeatMessage.Length];
                 int counter = 0;
-                while (true/*clientR[0].Connected && !endAll*/ /*&& !clientR[0].Client.Poll(20, SelectMode.SelectRead)*/)
+                while (clientR[0].Connected && !endAll /*&& !clientR[0].Client.Poll(20, SelectMode.SelectRead)*/)
                 {
                     try
                     {
@@ -784,7 +799,8 @@ namespace Booyco_HMI_Utility
                             }
 
                             //ServerStatus = "Sent: " + ServerMessageSend + " to " + clientR[0].RemoteEndPoint;
-                            GlobalSharedData.ServerStatus = "Message sent";
+                            //GlobalSharedData.ServerStatus = "Message sent";
+                            GlobalSharedData.CommunicationSent = true;
                             //Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
                             Console.WriteLine("Sent: " + Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend, 0, 5) + "       Time: " + DateTime.Now.ToLongTimeString());
                             GlobalSharedData.ServerMessageSend = null;
@@ -816,11 +832,13 @@ namespace Booyco_HMI_Utility
             }
             catch
             {
+               
                 Console.WriteLine("-------------- {0} closed send due to error", clientnumr);
                 //clientR[0].Close();
                 //ClientLsitChanged(TCPclients);
                 return;
             }
+           
 
             Console.WriteLine("-------------- {0} closed send", clientnumr);
             //clientR[0].Close();

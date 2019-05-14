@@ -10,9 +10,9 @@ using System.Windows.Shapes;
 using System;
 using System.ComponentModel;
 using Booyco_HMI_Utility;
-using Booyco_HMI_Utility.CustomMarker;
 
-namespace Demo.WindowsPresentation.CustomMarkers
+
+namespace Booyco_HMI_Utility.CustomMarkers
 {
    /// <summary>
    /// Interaction logic for CustomMarkerDemo.xaml

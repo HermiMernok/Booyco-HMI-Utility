@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
         xmlns:local="clr-namespace:Booyco_HMI_Utility"
         mc:Ignorable="d"
-        Title="Booyco HMI Utility V1.03c" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
+        Title="Booyco HMI Utility V1.03d" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
 
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
@@ -39,6 +39,12 @@
             </Style.Triggers>
         </Style>
 
+        <Storyboard x:Key="sb_com_activity">
+            <DoubleAnimation Storyboard.TargetName="ComActivity" 
+          Storyboard.TargetProperty="Opacity" From="1" To="0" 
+          Duration="0:0:0.2" BeginTime="0:0:0"/>
+        </Storyboard>
+
     </Window.Resources>
 
     <Viewbox Stretch="Fill" >
@@ -55,33 +61,47 @@
                 <ColumnDefinition Width="5"/>
             </Grid.ColumnDefinitions>
             <local:StartUp x:Name="StartUpView"  Grid.Row="1" Grid.Column="1" Loaded="StartUpView_Loaded"/>
-            
-                <local:BluetoothView x:Name="BluetoothView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
-              
+            <local:LoginView x:Name="LoginView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+            <local:BluetoothView x:Name="BluetoothView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+
             <local:FileMenuView x:Name="FileMenuView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:USBView x:Name="USBView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-                <local:WiFiView x:Name="WiFiView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>          
-                <local:Bootloader x:Name="BootView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
+            <local:WiFiView x:Name="WiFiView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+            <local:Bootloader x:Name="BootView"  Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
             <local:FileView x:Name="FileView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:DataLogFileView x:Name="DataLogFileView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ParameterFileView x:Name="ParameterFileView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:DataLogView x:Name="DataLogView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-                    <local:MapView x:Name="MapView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-                    <local:HMIDisplayView x:Name="HMIDisplayView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>   
+            <local:MapView x:Name="MapView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+            <local:HMIDisplayView x:Name="HMIDisplayView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:DataExtractorView x:Name="DataExtractorView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-                    <local:ParametersView x:Name="ParametersView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-                    <local:AudioFilesView x:Name="AudioFilesView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-                    <local:ImageFilesView x:Name="ImageFilesView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+            <local:ParametersView x:Name="ParametersView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+            <local:AudioFilesView x:Name="AudioFilesView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
+            <local:ImageFilesView x:Name="ImageFilesView"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ProgrammingDone x:Name="ProgrammingDone"  Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:Error_messageView x:Name="Error_messageView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
             <local:ConfigureMenuView x:Name="ConfigureMenuView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
-         
-            <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>           
+
+            <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>
             <Label Content="Booyco HMI Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
             <Label Content="{Binding HeartbeatCount, FallbackValue=0}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Top" />
-            <Label Content="{Binding WiFiApStatus, FallbackValue=0}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Center" />
-          
+            <Grid Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>                   
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="Label_StatusFixText" Content="Connection Status:" Grid.Column="0"  FontSize="12" Foreground="Black" VerticalContentAlignment="Center" />
+                <Label Foreground="{Binding WiFiApStatusColor}" Content="{Binding WiFiApStatus, FallbackValue=0}" Grid.Column="1"  FontSize="12"  VerticalContentAlignment="Center" />
+            </Grid>
+            <Ellipse Name="ComActivity" Width="18" HorizontalAlignment="Right" Opacity="0" Margin="0,5,315,47" Grid.Row="2" RenderTransformOrigin="0.964,0.393" Grid.Column="1">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#FF009BC9" Offset="0.309"/>
+                        <GradientStop Color="#99DBFAFB" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
         </Grid>
     </Viewbox>
-    
+
 </Window>

@@ -6,9 +6,9 @@ using System.Windows.Media;
 using GMap.NET.WindowsPresentation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Booyco_HMI_Utility.CustomMarker;
 
-namespace Demo.WindowsPresentation.CustomMarkers
+
+namespace Booyco_HMI_Utility.CustomMarkers
 {
     /// <summary>
     /// Interaction logic for Cross.xaml
