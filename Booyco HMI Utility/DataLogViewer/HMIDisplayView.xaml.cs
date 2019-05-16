@@ -147,9 +147,8 @@ namespace Booyco_HMI_Utility
 
             for(int i = 0; i <numberSegements; i++)
             {
-                int segement= 0;
-
-                if(startPos+i>24)
+                int segement;
+                if (startPos+i>24)
                 {
                     segement = startPos + i - 24;
                 }

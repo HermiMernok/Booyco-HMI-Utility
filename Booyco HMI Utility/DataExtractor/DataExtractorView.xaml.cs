@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,7 +27,7 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class DataExtractorView : UserControl
     {
-      
+
         // === Public Variables ===
         public const int DATALOG_RX_SIZE = 8192;
         public static bool Heartbeat = false;
@@ -35,18 +36,31 @@ namespace Booyco_HMI_Utility
         public static int TotalCount { get; set; }
         private uint SelectVID = 0;
 
+        private enum TransferStatusEnum
+        {
+            None,
+            Initialize,
+            MovingLogs,
+            ReadytoReceive,
+            ReceivingLogs,             
+            Complete,
+            Cancel
+
+        }
+        private static int TransferStatus = (int)TransferStatusEnum.None;
         // === Static Variables ===
-        static bool DatalogsBusy = false;
-        static bool MovingLogs = false;
+          
         static string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
         static string _newLogFilePath = "";
         static int StoredIndex = 0;
-        static bool DataExtractorComplete = false;
+ 
         bool ConnectionLost = false;
         private DispatcherTimer updateDispatcherTimer;       
         private static int  DataLogProgress = 0;       
         private uint _heartBeatDelay = 0;
         static bool StartDataReceiving = false;
+        private DateTime ExtractionStartTimeStamp ;
+        private DateTime ExtractionEndTimeStamp;
         /// <summary>
         /// DataExtractorView: The constructor function
         /// Setup required variables 
@@ -99,24 +113,18 @@ namespace Booyco_HMI_Utility
                 if (Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
                 {
                     WiFiconfig.BusyReconnecting = true;
-                    // WiFiconfig.ConnectionError = true;
-                    //if (File.Exists(_newLogFilePath) && !DataExtractorComplete)
-                    //{
-                    //    File.Delete(_newLogFilePath);
-                    //}
-                    DataExtractorComplete = false;
-                    Button_Extract.Content = "Extract";
-                   // DatalogsBusy = false;
-                   // Button_Back.Content = "Back";
-                   // StoredIndex = -1;
+               
+                    TransferStatus = (int)TransferStatusEnum.None;
+                 
+                    Button_Extract.Content = "Extract";              
                     ConnectionLost = true;
-                    // Button_Back_Click(null, null);               
+                           
                 }
                 // === check if datalogs started, busy with extraction ===
-                if (DatalogsBusy)
+                if (TransferStatus != (int)TransferStatusEnum.Cancel && TransferStatus != (int)TransferStatusEnum.Complete && TransferStatus != (int)TransferStatusEnum.None)
                 {
                     // === check if datalogs are busy moving ===
-                    if (MovingLogs)
+                    if (TransferStatus == (int)TransferStatusEnum.MovingLogs)
                     {
                         ProgressBar_DataLogExtract.Value = DataLogProgress;
                         Label_ProgressStatusPercentage.Content = (DataLogProgress / 10).ToString() + "%";
@@ -134,7 +142,7 @@ namespace Booyco_HMI_Utility
                     if (Heartbeat)
                     {
                        
-                        if (StartDataReceiving)
+                        if (TransferStatus == (int)TransferStatusEnum.ReceivingLogs)
                         {
                             _heartBeatDelay++;
 
@@ -144,8 +152,8 @@ namespace Booyco_HMI_Utility
                                 // === clear heartbeat information and start over ===
                                 Heartbeat = false;
                                 _heartBeatDelay = 0;
-                            
-                                   Console.WriteLine("DataIndex: " + DataIndex.ToString());
+
+                                Debug.WriteLine("DataIndex: " + DataIndex.ToString());
 
                             }
                         }
@@ -172,25 +180,28 @@ namespace Booyco_HMI_Utility
                         Button_Extract.IsEnabled = true;
                     }
                         // === if the extrection failed ===
-                        if (!DataExtractorComplete)
-                    {
-                        
+                        if (TransferStatus == (int)TransferStatusEnum.Cancel)
+                    {                        
                         // == clear information, show failed message, and delete half downloaded log file ===
                         Label_ProgressStatusPercentage.Content = "";
 
                         if (File.Exists(_newLogFilePath))
                         {
+                            TransferStatus = (int)TransferStatusEnum.None;
                             Label_ProgressStatusPercentage.Content = "Process Cancelled...";
                             File.Delete(_newLogFilePath);
                         }
                     }
                     // === else the extraction was successful ===
-                    else
+                    if (TransferStatus == (int)TransferStatusEnum.Complete)
                     {
                         // === update information and save filepath for file view ===
                         Label_ProgressStatusPercentage.Content = "File Completed...";
+                        TransferStatus = (int)TransferStatusEnum.None;
                         Button_ViewLogs.Visibility = Visibility.Visible;
                         GlobalSharedData.FilePath = _newLogFilePath;
+                        ExtractionEndTimeStamp = DateTime.Now;
+                        Debug.Write("Complete Time: " + new TimeSpan(ExtractionEndTimeStamp.Ticks - ExtractionStartTimeStamp.Ticks).ToString());
                     }
 
                     // === infromation to be cleared regardless if the logs extraction status ===
@@ -219,14 +230,17 @@ namespace Booyco_HMI_Utility
         private void Button_Back_Click(object sender, RoutedEventArgs e)
         {   
             // === if datalogs are busy extracting ===
-            if (DatalogsBusy)
+            if (TransferStatus != (int)TransferStatusEnum.Complete && TransferStatus != (int)TransferStatusEnum.Cancel && TransferStatus != (int)TransferStatusEnum.None)
             {
                 // Cancel datalogs and change text from cancel to back
-                DatalogsBusy = false;
+                ExtractionEndTimeStamp = DateTime.Now;
+                TransferStatus = (int)TransferStatusEnum.Cancel;                
                 Button_Back.Content = "Back";
                 GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
                 StartDataReceiving = false;
                 StoredIndex = -1;
+
+                Debug.Write("Cancel Time: " + new TimeSpan(ExtractionEndTimeStamp.Ticks - ExtractionStartTimeStamp.Ticks).ToString());
                
             }
             // === else if datalogs are not busy extracting ===
@@ -245,12 +259,13 @@ namespace Booyco_HMI_Utility
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Button_Extract_Click(object sender, RoutedEventArgs e)
-        {  
-            // === Update information and buttons ===
-            Button_Extract.IsEnabled = false;
-            Button_Back.Content = "Cancel";
-            DatalogsBusy = true;
-            MovingLogs = false;
+        {
+            TransferStatus = (int)TransferStatusEnum.Initialize;
+
+            ExtractionStartTimeStamp = DateTime.Now;       
+        // === Update information and buttons ===
+        Button_Extract.IsEnabled = false;
+            Button_Back.Content = "Cancel";         
             StartDataReceiving = false;
             Button_ViewLogs.Visibility = Visibility.Hidden;
 
@@ -302,125 +317,31 @@ namespace Booyco_HMI_Utility
          /// <param name="endPoint"></param>
         public static void DataExtractorParser(byte[] message, EndPoint endPoint)
         {
-            // === Check if device is busy moving logs ===
-            if((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'k'))
-            {               
-                DataLogProgress = (50 * message[4]) / message[5];
-                Console.WriteLine(message[4].ToString() + "-" + message[5].ToString() + "-" + DataLogProgress.ToString());
-                if (!StartDataReceiving)
+            if (TransferStatus != (int)TransferStatusEnum.None)
+            {
+                // === Check if device is busy moving logs ===
+                if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'k'))
                 {
-                    MovingLogs = true;
-                }
-            }
-
-            // === Check if device is ready to receive ===
-            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'a'))
-            {
-               
-                MovingLogs = false;        
-            }
-
-            // === Check if device is ready to receive ===
-            if ((message.Length >= 9) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'c'))
-            {
-              
-                byte[] StoredIndexBytes = BitConverter.GetBytes(StoredIndex);
-                byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
-                Logchunk[0] = (byte)'[';
-                Logchunk[1] = (byte)'&';
-                Logchunk[2] = (byte)'L';
-                Logchunk[3] = (byte)'D';
-                Logchunk[4] = (byte)'a';
-                Logchunk[5] = StoredIndexBytes[0];
-                Logchunk[6] = StoredIndexBytes[1];
-                Logchunk[7] = 0;
-                Logchunk[8] = 0;
-                Logchunk[9] = (byte)']';
-
-                GlobalSharedData.ServerMessageSend = Logchunk;
-            }
-
-            // === Check if device is ready to send datalog file ===
-            if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'D'))
-            {
-                MovingLogs = false;
-                StartDataReceiving = true;
-                DataIndex =  BitConverter.ToUInt16(message, 4);               
-                TotalCount= BitConverter.ToUInt16(message, 6);
-                DataLogProgress = (DataIndex * 850) / TotalCount+50;
-               
-                // === check if datalog extraction has not started ===
-                if (!DatalogsBusy)
-                {                   
-                    // === Send  stop request ===
-                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
-                }
-
-                //else if (DataIndex < TotalCount && DataIndex > StoredIndex) 
-                // === Check if received packet number is one more than the stored previous packet number ===
-                if (DataIndex == (StoredIndex+1))
-                {                
-                    
-                    using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
+                    DataLogProgress = (50 * message[4]) / message[5];
+                    Debug.WriteLine(message[4].ToString() + "-" + message[5].ToString() + "-" + DataLogProgress.ToString());
+                    if (!StartDataReceiving)
                     {
-                        stream.Write(message, 8, DATALOG_RX_SIZE);
+                        TransferStatus = (int)TransferStatusEnum.MovingLogs;
+
                     }
-                    
-                    byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
-                    
-                    Logchunk[0] = (byte)'[';
-                    Logchunk[1] = (byte)'&';
-                    Logchunk[2] = (byte)'L';
-                    Logchunk[3] = (byte)'D';
-                    Logchunk[4] = (byte)'a';
-                    Logchunk[5] = message[4];
-                    Logchunk[6] = message[5];
-                    Logchunk[7] = 0;
-                    Logchunk[8] = 0;
-                    Logchunk[9] = (byte)']';
+                }
 
-                    GlobalSharedData.ServerMessageSend = Logchunk;
-                    Console.WriteLine("DataIndex: " + DataIndex.ToString());
-                    StoredIndex = DataIndex;
+                // === Check if device is ready to receive ===
+                if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'a'))
+                {
+                    TransferStatus = (int)TransferStatusEnum.ReadytoReceive;
 
                 }
-                // === Check if received packet number is the same as the total packet count ===
-                else if (DataIndex == TotalCount)
-                {
-                    DatalogsBusy = false;
 
-                    using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
-                    {
-                        stream.Write(message, 8, DATALOG_RX_SIZE);
-                    }
-                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
-                    DataExtractorComplete = true;
-                    _fileCreated = false;
-                }
-                // === Check if the received packet number is the same as the stored previous packet number === 
-                else if(DataIndex == StoredIndex)
+                // === Check if device is ready to receive ===
+                if ((message.Length >= 9) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'c'))
                 {
 
-                    byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
-                    Logchunk[0] = (byte)'[';
-                    Logchunk[1] = (byte)'&';
-                    Logchunk[2] = (byte)'L';
-                    Logchunk[3] = (byte)'D';
-                    Logchunk[4] = (byte)'a';
-                    Logchunk[5] = message[4];
-                    Logchunk[6] = message[5];
-                    Logchunk[7] = 0;
-                    Logchunk[8] = 0;
-                    Logchunk[9] = (byte)']';
-
-                    GlobalSharedData.ServerMessageSend = Logchunk;
-                    Console.WriteLine("DataIndex: " + DataIndex.ToString());
-                   // StoredIndex = -1;
-                }
-            
-                else
-                {
-                    
                     byte[] StoredIndexBytes = BitConverter.GetBytes(StoredIndex);
                     byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
                     Logchunk[0] = (byte)'[';
@@ -436,7 +357,104 @@ namespace Booyco_HMI_Utility
 
                     GlobalSharedData.ServerMessageSend = Logchunk;
                 }
-            }           
+
+                // === Check if device is ready to send datalog file ===
+                if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'L') && (message[3] == 'D'))
+                {
+                    TransferStatus = (int)TransferStatusEnum.ReceivingLogs;
+
+                    StartDataReceiving = true;
+                    DataIndex = BitConverter.ToUInt16(message, 4);
+                    TotalCount = BitConverter.ToUInt16(message, 6);
+                    DataLogProgress = (DataIndex * 850) / TotalCount + 50;
+
+                    // === check if datalog extraction has not started ===
+                    if (TransferStatus == (int)TransferStatusEnum.Complete || TransferStatus == (int)TransferStatusEnum.Cancel)
+                    {
+                        // === Send  stop request ===
+                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
+                    }
+
+                    //else if (DataIndex < TotalCount && DataIndex > StoredIndex) 
+                    // === Check if received packet number is one more than the stored previous packet number ===
+                    if (DataIndex == (StoredIndex + 1))
+                    {
+
+                        using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
+                        {
+                            stream.Write(message, 8, DATALOG_RX_SIZE);
+                        }
+
+                        byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+
+                        Logchunk[0] = (byte)'[';
+                        Logchunk[1] = (byte)'&';
+                        Logchunk[2] = (byte)'L';
+                        Logchunk[3] = (byte)'D';
+                        Logchunk[4] = (byte)'a';
+                        Logchunk[5] = message[4];
+                        Logchunk[6] = message[5];
+                        Logchunk[7] = 0;
+                        Logchunk[8] = 0;
+                        Logchunk[9] = (byte)']';
+
+                        GlobalSharedData.ServerMessageSend = Logchunk;
+                        Debug.WriteLine("DataIndex: " + DataIndex.ToString());
+                        StoredIndex = DataIndex;
+
+                    }
+                    // === Check if received packet number is the same as the total packet count ===
+                    else if (DataIndex == TotalCount)
+                    {
+                        using (var stream = new FileStream(_newLogFilePath, FileMode.Append))
+                        {
+                            stream.Write(message, 8, DATALOG_RX_SIZE);
+                        }
+                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
+                        TransferStatus = (int)TransferStatusEnum.Complete;
+                        _fileCreated = false;
+                    }
+                    // === Check if the received packet number is the same as the stored previous packet number === 
+                    else if (DataIndex == StoredIndex)
+                    {
+
+                        byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+                        Logchunk[0] = (byte)'[';
+                        Logchunk[1] = (byte)'&';
+                        Logchunk[2] = (byte)'L';
+                        Logchunk[3] = (byte)'D';
+                        Logchunk[4] = (byte)'a';
+                        Logchunk[5] = message[4];
+                        Logchunk[6] = message[5];
+                        Logchunk[7] = 0;
+                        Logchunk[8] = 0;
+                        Logchunk[9] = (byte)']';
+
+                        GlobalSharedData.ServerMessageSend = Logchunk;
+                        Debug.WriteLine("DataIndex: " + DataIndex.ToString());
+                        // StoredIndex = -1;
+                    }
+
+                    else
+                    {
+
+                        byte[] StoredIndexBytes = BitConverter.GetBytes(StoredIndex);
+                        byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();
+                        Logchunk[0] = (byte)'[';
+                        Logchunk[1] = (byte)'&';
+                        Logchunk[2] = (byte)'L';
+                        Logchunk[3] = (byte)'D';
+                        Logchunk[4] = (byte)'a';
+                        Logchunk[5] = StoredIndexBytes[0];
+                        Logchunk[6] = StoredIndexBytes[1];
+                        Logchunk[7] = 0;
+                        Logchunk[8] = 0;
+                        Logchunk[9] = (byte)']';
+
+                        GlobalSharedData.ServerMessageSend = Logchunk;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -461,7 +479,7 @@ namespace Booyco_HMI_Utility
                 Label_ProgressStatusPercentage.Content = "";
                 StoredIndex = -1;
                 _heartBeatDelay = 0;
-                DataExtractorComplete = false;
+                TransferStatus = (int)TransferStatusEnum.None;
                 _fileCreated = false;
                 updateDispatcherTimer.Start();
                 ConnectionLost = false;
@@ -473,7 +491,7 @@ namespace Booyco_HMI_Utility
             {
                 
                 SelectVID = 0;
-                DataExtractorComplete = false;
+                TransferStatus = (int)TransferStatusEnum.None;
                 Button_ViewLogs.Visibility = Visibility.Hidden;
                 Button_Extract.Content = "Extract";
                 updateDispatcherTimer.Stop();
@@ -495,11 +513,11 @@ namespace Booyco_HMI_Utility
             DataIndex = 0;
 
             // === If datalogs were successfull ===
-            if (DataExtractorComplete)
-            {     
+            //if (TransferStatus == (int)TransferStatusEnum.Complete)
+          //  {     
                 // === Open Datalogview ===
                 ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataLogView;
-            }
+         //   }
         }
 
         void ConnectionInfoUpdate()

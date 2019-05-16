@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -185,7 +186,7 @@ namespace Booyco_HMI_Utility
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine("Cannot Delete file " + item.FileName);
+                    Debug.WriteLine("Cannot Delete file " + item.FileName);
                 }
             }
             ReadSavedFolder();

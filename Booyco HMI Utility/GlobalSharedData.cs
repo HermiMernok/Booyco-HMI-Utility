@@ -104,7 +104,7 @@ namespace Booyco_HMI_Utility
                 {
                     if (name2[i] != "")
                     {
-                        string2 = string2 + name2[i];
+                        string2 += name2[i];
                     }
 
                 }
@@ -144,7 +144,7 @@ namespace Booyco_HMI_Utility
                 {
                     if (name2[i] != "")
                     {
-                        string2 = string2 + name2[i];
+                        string2 += name2[i];
                     }
 
                 }
@@ -184,7 +184,7 @@ namespace Booyco_HMI_Utility
                 {
                     if (name2[i] != "")
                     {
-                        string2 = string2 + name2[i];
+                        string2 += name2[i];
                     }
 
                 }
@@ -223,7 +223,7 @@ namespace Booyco_HMI_Utility
                 {
                     if (name2[i] != "")
                     {
-                        string2 = string2 + name2[i];
+                        string2 += name2[i];
                     }
 
                 }

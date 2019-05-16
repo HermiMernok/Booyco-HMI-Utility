@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Booyco_HMI_Utility
 {
@@ -843,7 +844,7 @@ namespace Booyco_HMI_Utility
                         //ConfigSentIndex--;
                         ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
                         ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
-                        Console.WriteLine("Error at Index" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
+                        Debug.WriteLine("Error at Index" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
                     }
 
                 }
@@ -854,8 +855,8 @@ namespace Booyco_HMI_Utility
                 {
                     backBtner = true;
                 }
-            
-                Console.WriteLine("Packet Index:" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
+
+                Debug.WriteLine("Packet Index:" + ConfigSentIndex.ToString() + " ACK Index: " + ConfigSentAckIndex.ToString());
             }
             else
             {
@@ -898,13 +899,13 @@ namespace Booyco_HMI_Utility
                         ParamsReceivechunk[9] = (byte)']';
 
                         GlobalSharedData.ServerMessageSend = ParamsReceivechunk;
-                        Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+                        Debug.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
 
                     }
                     else if (DataIndex == TotalCount)
                     {
                         GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&ps00]");
-                        Console.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
+                        Debug.WriteLine("DataIndex: " + DataIndex.ToString() + "of " + TotalCount.ToString() + " Indexes");
                         ParamsReceiveComplete = true;
                     }
 
@@ -985,7 +986,7 @@ namespace Booyco_HMI_Utility
 
                     if (ConfigSentIndex == ConfigSendList.Count)
                     {
-                        Console.WriteLine("====================Parameters sent done======================");
+                        Debug.WriteLine("====================Parameters sent done======================");
                         //WIFIcofig.ServerMessageSend = 
                         //BootReady = false;
                         break;

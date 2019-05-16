@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,7 +89,7 @@ namespace Booyco_HMI_Utility
             TCPclients = WiFiconfig.ClientLsitChanged(TCPclients);
             if (WiFiconfig.clients != null)
             {
-                TCPclientR _removeItem = new TCPclientR();
+               
                 foreach (TCPclientR item in TCPclients)
                 {
                     if (item.HeartbeatTimestamp <= DateTime.Now.AddSeconds(-3) && item.HeartCount > 0)
@@ -268,7 +269,7 @@ private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChang
                 {
 
                 }
-                Console.WriteLine("====================== Not Visible");
+                Debug.WriteLine("====================== Not Visible");
             }
         }
 

@@ -84,7 +84,7 @@ namespace Booyco_HMI_Utility
             }
             catch
             {
-                Console.WriteLine(" ================= Wifi hotspot creation/close broke ==============");
+                Debug.WriteLine(" ================= Wifi hotspot creation/close broke ==============");
             }
 
         }
@@ -148,7 +148,7 @@ namespace Booyco_HMI_Utility
             HeartbeatMessage[521] = (byte)']';
 
             Array.Copy(bytes, 0, HeartbeatMessage, 4, 30);
-            Console.WriteLine(Encoding.ASCII.GetString(HeartbeatMessage, 0, 34));
+            Debug.WriteLine(Encoding.ASCII.GetString(HeartbeatMessage, 0, 34));
             #endregion
 
             Thread newThread = new Thread(new ThreadStart(StartServer))
@@ -218,37 +218,6 @@ namespace Booyco_HMI_Utility
             // Set the Time To Live (TTL) to 42 router hops.
             //tcpSocket.Ttl = 42;
 
-            //Console.WriteLine("Tcp Socket configured:");
-
-            //Console.WriteLine("  ExclusiveAddressUse {0}",
-            //            tcpSocket.ExclusiveAddressUse);
-
-            //Console.WriteLine("  LingerState {0}, {1}",
-            //             tcpSocket.LingerState.Enabled,
-            //                 tcpSocket.LingerState.LingerTime);
-
-            //Console.WriteLine("  NoDelay {0}",
-            //                                          tcpSocket.NoDelay);
-
-            //Console.WriteLine("  ReceiveBufferSize {0}",
-            //            tcpSocket.ReceiveBufferSize);
-
-            //Console.WriteLine("  ReceiveTimeout {0}",
-            //            tcpSocket.ReceiveTimeout);
-
-            //Console.WriteLine("  SendBufferSize {0}",
-            //            tcpSocket.SendBufferSize);
-
-            //Console.WriteLine("  SendTimeout {0}",
-            //                                          tcpSocket.SendTimeout);
-
-            //Console.WriteLine("  Ttl {0}",
-            //                                          tcpSocket.Ttl);
-
-            //Console.WriteLine("  IsBound {0}",
-            //                        tcpSocket.IsBound);
-
-            //Console.WriteLine("");
         }
 
         private void StartServer()
@@ -297,7 +266,7 @@ namespace Booyco_HMI_Utility
             while (clientnum < 10 && !endAll)
             {
 
-                Console.WriteLine("Waiting for a client...");
+                Debug.WriteLine("Waiting for a client...");
                 try
                 {
                     client = server.AcceptTcpClient();
@@ -316,7 +285,7 @@ namespace Booyco_HMI_Utility
                     {
                         clients.Where(t => t.Client.RemoteEndPoint.ToString().Contains(clientel.Address.ToString())).ToList().First().Client.Close();
                         clients.Remove(clients.Where(t => t.Client.Connected == false).ToList().First());
-                        Console.WriteLine("********************************************************************************************");
+                        Debug.WriteLine("********************************************************************************************");
 
                         // List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint.ToString().Contains(clientel.Address.ToString())).ToList();
                         // clients.Remove(clientR[0]);
@@ -328,7 +297,7 @@ namespace Booyco_HMI_Utility
 
                     IPEndPoint clientep = (IPEndPoint)clients[clientnum].Client.RemoteEndPoint;
 
-                    Console.WriteLine("Connected with {0} at port {1}", clientep.Address, clientep.Port);
+                    Debug.WriteLine("Connected with {0} at port {1}", clientep.Address, clientep.Port);
                
                     ClientLsitChanged(TCPclients);
                     TCPclients.Last().Heartbeat_Colour = WiFiView.HBConnectingColour;
@@ -363,24 +332,20 @@ namespace Booyco_HMI_Utility
                     //PollThread.Start();
 
                     clientnum++;
-                    //}
-                    //else
-                    //{
-                    //    client.Close();
-                    //    Console.WriteLine("Client failed to connect...");
-                    //}
+                  
+
 
 
                 }
                 catch
                 {
-                    Console.WriteLine("Client connection failed...");
+                    Debug.WriteLine("Client connection failed...");
                     GlobalSharedData.ServerStatus = "Client connection failed...";
                 }
 
             }
 
-            Console.WriteLine("Maximum amount of clients reached!");
+            Debug.WriteLine("Maximum amount of clients reached!");
             GlobalSharedData.ServerStatus = "Server closed";
 
         }
@@ -410,25 +375,16 @@ namespace Booyco_HMI_Utility
                         else
                         {
 
-                            Console.WriteLine("Polling failed, no error");
+                            Debug.WriteLine("Polling failed, no error");
                             clientR[0].Close();
                             clients.Remove(clientR[0]);
                             ClientLsitChanged(TCPclients);                  //                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
                         }
-                        //}
-                        //else
-                        //{
-                        //    Console.WriteLine("Polling failed, no error 2");
-                        //    clientR[0].Close();
-                        //    clients.Remove(clientR[0]);
-                        //    ClientLsitChanged(TCPclients);
-                        //    clientnum--;
-                        //    break;
-                        //}
+                    
                     }
                     catch (Exception f)
                     {
-                        Console.WriteLine("Polling failed, error");
+                        Debug.WriteLine("Polling failed, error");
                         clientR[0].Close();
                         clients.Remove(clientR[0]);
                         ClientLsitChanged(TCPclients);
@@ -439,7 +395,7 @@ namespace Booyco_HMI_Utility
                 }
                 catch
                 {
-                    Console.WriteLine("Polling failed, client not found!");
+                    Debug.WriteLine("Polling failed, client not found!");
                     break;
                 }
 
@@ -471,12 +427,12 @@ namespace Booyco_HMI_Utility
                 {
                     if ((i = stream.Read(data2, 0, data2.Length)) != 0)
                     {
-                       
-                      // if (clientR[0].ReceiveTimeout!= 10000)
-                     //   {
-                     //       clientR[0].ReceiveTimeout = 10000;
-                     //   }
-                        Console.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0].ToString() + "-" + Buffer[512 + 9].ToString());
+
+                        // if (clientR[0].ReceiveTimeout!= 10000)
+                        //   {
+                        //       clientR[0].ReceiveTimeout = 10000;
+                        //   }
+                        Debug.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0].ToString() + "-" + Buffer[512 + 9].ToString());
                         #region bufferCreator
                         if (i == DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                         {
@@ -542,59 +498,46 @@ namespace Booyco_HMI_Utility
                             messageReceived = true;
                             totalCount = i;
                         }
-                        else if (data2[0] == '[' && data2[1] == '&')
+
+                        else if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'L')
                         {
-                            Console.WriteLine(Buffer[0] + " First: " + i.ToString());
+                            Debug.WriteLine(Buffer[0] + "Receive Parsing - First: " + i.ToString() +"  " + DateTime.Now.ToString());
 
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
                             Array.Copy(data2, 0, Buffer, count, i);
                             count = i;
-                            totalCount = count;
+                            totalCount = count;                        
                         }
-
 
                         else if (count > 0)
                         {
                            
                             if ((totalCount + i) > (DataExtractorView.DATALOG_RX_SIZE + 10))
                             {
-                                //Console.WriteLine(" Second: " + i.ToString());
-
                                 Array.Copy(data2, 0, Buffer, totalCount, (DataExtractorView.DATALOG_RX_SIZE + 10) - totalCount);
                                 overflow = true;
-
+                                Debug.WriteLine("Receive Parsing - Overflow:" + (totalCount + i).ToString());
                             }
                             else
-                            {
-                                // Console.WriteLine(" Second: " + i.ToString());
-                          
+                            {                               
                                 Array.Copy(data2, 0, Buffer, totalCount, i);
+                                Debug.WriteLine("Receive Parsing - Append:" + (totalCount + i).ToString());
                             }
 
                             totalCount += i;
                             if (totalCount >= DataExtractorView.DATALOG_RX_SIZE + 10)
-                            {
-                                //Console.WriteLine(Buffer[0] +" **** " + Buffer[8201]);
-
-                                // totalCount = 0;
+                            {                             
                                 count = 0;
-                            }
-
-
-
-                            //count = 0;
+                            }                    
 
                             if (Buffer[0] == '[' && Buffer[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                             {
-                                //Buffer = new byte[2058];
-                                //  Array.Copy(data2, Buffer, 2058);
+                                Debug.WriteLine("Receive Parsing - Successful: " + totalCount + i);
                                 messagecount++;
                                 messageReceived = true;
                             }
                             else if (totalCount >= 522 && Buffer[0] == '[' && Buffer[1] == '&' && Buffer[521] == ']')
-                            {
-                                // Buffer = new byte[2058];
-                                // Array.Copy(data2, Buffer, 522);
+                            {                             
                                 messagecount++;
                                 messageReceived = true;
                                 count = 0;
@@ -604,10 +547,7 @@ namespace Booyco_HMI_Utility
 
                         #endregion
                         #region Message Debug
-                        //string recmeg = Encoding.UTF8.GetString(data2, 0, i);
-                        //Console.WriteLine("Received:" + recmeg + " from: " + clientR[0].RemoteEndPoint + " count:==== " + messagecount.ToString());
-                        //Console.WriteLine("Recieved message: =======: " + messagecount.ToString() + " ============= length: " + i.ToString());
-                        //Console.WriteLine("Recieved: " + Encoding.UTF8.GetString(data2, 0, 10));
+                       
                         #endregion
 
                         if (messageReceived)
@@ -616,7 +556,7 @@ namespace Booyco_HMI_Utility
                            messageReceived = false;
 
                             //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
-                            Console.WriteLine(totalCount.ToString() + "-Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
+                            Debug.WriteLine("Process Message - " +totalCount.ToString() + " -Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
                             #region Message Paresers
                             if (Buffer[0] == '[' && Buffer[1] == '&' && Buffer[2] == 'B' && Buffer[3] == 'h' /*&& Buffer[521] == ']'*/)
                             {
@@ -652,7 +592,7 @@ namespace Booyco_HMI_Utility
                                     }
                                     catch
                                     {
-                                        Console.WriteLine("Heartbeat not parsed!");
+                                        Debug.WriteLine("Heartbeat not parsed!");
                                         #region failed heartbeat
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = "UNKNOWN DEVICE";
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = 0;
@@ -711,13 +651,13 @@ namespace Booyco_HMI_Utility
                                 Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
 
                                 totalCount = count;
-                                Console.WriteLine(" LAST: " + totalCount.ToString());
+                                Debug.WriteLine(" LAST: " + totalCount.ToString());
                                 Array.Copy(data2, i - count, Buffer, 0, count);
                                 overflow = false;
                             }
                             catch
                             {
-                                Console.WriteLine("Last Failed", clientnumr);
+                                Debug.WriteLine("Last Failed", clientnumr);
                             }
                         }
                         data2 = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
@@ -728,13 +668,13 @@ namespace Booyco_HMI_Utility
                 catch (Exception e)
                 {
 
-                    Console.WriteLine("-------------- {0} recieve broke", clientnumr);
+                    Debug.WriteLine("-------------- {0} recieve broke", clientnumr);
                     //Console.WriteLine(e.ToString());
                     break;
                 }
               
             }
-            Console.WriteLine("-------------- {0} closed recieve", clientnumr);
+            Debug.WriteLine("-------------- {0} closed recieve", clientnumr);
 
             try
             {
@@ -750,12 +690,12 @@ namespace Booyco_HMI_Utility
                     ClientLsitChanged(TCPclients);
                     clients.Remove(clientR[0]);
                     clientnum--;
-                    Console.WriteLine("-------------- {0} Client Removed", clientnumr);
+                    Debug.WriteLine("-------------- {0} Client Removed", clientnumr);
                 }
             }
             catch
             {
-                Console.WriteLine("-------------- {0} Client Removed failed", clientnumr);
+                Debug.WriteLine("-------------- {0} Client Removed failed", clientnumr);
             }
         }
 
@@ -793,7 +733,7 @@ namespace Booyco_HMI_Utility
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("client not found in list!");
+                                    Debug.WriteLine("client not found in list!");
                                     break;
                                 }
                             }
@@ -802,13 +742,13 @@ namespace Booyco_HMI_Utility
                             //GlobalSharedData.ServerStatus = "Message sent";
                             GlobalSharedData.CommunicationSent = true;
                             //Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
-                            Console.WriteLine("Sent: " + Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend, 0, 5) + "       Time: " + DateTime.Now.ToLongTimeString());
+                            Debug.WriteLine("Sent: " + Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend, 0, 5) + "       Time: " + DateTime.Now.ToLongTimeString());
                             GlobalSharedData.ServerMessageSend = null;
                         }
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("-------------- The sending failed");
+                        Debug.WriteLine("-------------- The sending failed");
                         //break;
                     }
                 }
@@ -832,15 +772,15 @@ namespace Booyco_HMI_Utility
             }
             catch
             {
-               
-                Console.WriteLine("-------------- {0} closed send due to error", clientnumr);
+
+                Debug.WriteLine("-------------- {0} closed send due to error", clientnumr);
                 //clientR[0].Close();
                 //ClientLsitChanged(TCPclients);
                 return;
             }
-           
 
-            Console.WriteLine("-------------- {0} closed send", clientnumr);
+
+            Debug.WriteLine("-------------- {0} closed send", clientnumr);
             //clientR[0].Close();
             //ClientLsitChanged(TCPclients);
             //
@@ -876,7 +816,7 @@ namespace Booyco_HMI_Utility
             }
             catch
             {
-                Console.WriteLine("----failed to update client list----");
+                Debug.WriteLine("----failed to update client list----");
                 return TCPclients;
             }
         }
@@ -894,14 +834,14 @@ namespace Booyco_HMI_Utility
                     }
                     catch
                     {
-                        Console.WriteLine("failed to close port..");
+                        Debug.WriteLine("failed to close port..");
                         try
                         {
                             item.Dispose();
                         }
                         catch
                         {
-                            Console.WriteLine("Failed to dispose port..");
+                            Debug.WriteLine("Failed to dispose port..");
                         }
                     }
                 }
@@ -915,7 +855,7 @@ namespace Booyco_HMI_Utility
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine("Server failed to stop...");
+                    Debug.WriteLine("Server failed to stop...");
                     //var prc = new ProcManager();
                     //prc.KillByPort(13000);
                 }
@@ -927,13 +867,13 @@ namespace Booyco_HMI_Utility
                 catch
                 {
 
-                    Console.WriteLine("Wifi failed to stop...");
+                    Debug.WriteLine("Wifi failed to stop...");
                 }
 
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Server close error=========");
+                Debug.WriteLine("Server close error=========");
             }
             //try
             //{
@@ -1001,11 +941,11 @@ namespace Booyco_HMI_Utility
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.Message);
                 }
             else
             {
-                Console.WriteLine("No process to kill!");
+                Debug.WriteLine("No process to kill!");
             }
         }
 

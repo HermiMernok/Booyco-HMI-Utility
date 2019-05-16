@@ -8,6 +8,7 @@ using ExcelDataReader;
 using System.IO;
 using System.Data;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Booyco_HMI_Utility
 {
@@ -49,8 +50,10 @@ namespace Booyco_HMI_Utility
                     else
                     {
                         LPDInfoEnumList.Add(tempStringList);
-                        tempStringList = new List<string>();
-                        tempStringList.Add(Convert.ToString(_row.ItemArray[12]));
+                        tempStringList = new List<string>
+                        {
+                            Convert.ToString(_row.ItemArray[12])
+                        };
                         EnumIndex = Convert.ToInt32(_row.ItemArray[11]);
                     }
 
@@ -59,7 +62,7 @@ namespace Booyco_HMI_Utility
                
                 catch(Exception e)
                 {
-                    Console.WriteLine("====== Lookup Excel Read Fail ======");
+                    Debug.WriteLine("Exception - Lookup Excel Read Fail");
                 }
                 //if (Convert.ToInt32(_row.ItemArray[5]) == 1)
                 //{
@@ -119,7 +122,7 @@ namespace Booyco_HMI_Utility
                     }
                     catch
                     {
-                        Console.WriteLine("====== Log Excel Read Fail ======");
+                        Debug.WriteLine("Exception - Log Excel Read Fail");
                     }
                     
 
@@ -176,7 +179,7 @@ namespace Booyco_HMI_Utility
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Parametr from excel error: " + e.ToString());
+                        Debug.WriteLine("Exception - Parameter from excel error: " + e.ToString());
                     }
 
                 }
@@ -196,7 +199,7 @@ namespace Booyco_HMI_Utility
             else
             {
                 //if this point is reached then there was no parameters to display.
-                Console.WriteLine("No parameters to display. Please view error logs");
+                Debug.WriteLine("No parameters to display. Please view error logs");
             }
 
             return parameters;
@@ -250,7 +253,7 @@ namespace Booyco_HMI_Utility
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Parameter from excel error: " + e.ToString());
+                    Debug.WriteLine("Exception - Parameter from excel error: " + e.ToString());
                 }
 
                 return null;

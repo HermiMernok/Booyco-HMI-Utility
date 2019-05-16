@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -33,10 +34,7 @@ namespace Booyco_HMI_Utility
         private const byte TOTAL_ENTRY_BYTES = 16;
         private void ReportProgress(int percent)
         {
-            if (ReportProgressDelegate != null)
-            {
-                ReportProgressDelegate(percent);
-            }
+            ReportProgressDelegate?.Invoke(percent);
         } 
           
         /// <summary>
@@ -49,14 +47,14 @@ namespace Booyco_HMI_Utility
         public bool ReadFile(string Log_Filename)
         {
             ExcelFilemanager.StoreLogProtocolInfo();
-            byte[] _logBytes = { 0 };      
+            
             byte[] _logTimeStamp = { 0, 0, 0, 0, };          
 
             // === Read datalog file ===
             //string _logInfoRaw = System.IO.File.ReadAllText(Log_Filename, Encoding.Default);          
             BinaryReader _breader = new BinaryReader(File.OpenRead(Log_Filename));
             int _fileLength = (int)(new FileInfo(Log_Filename).Length);
-            _logBytes = _breader.ReadBytes(_fileLength);
+            byte[] _logBytes = _breader.ReadBytes(_fileLength);
 
             int PercentageComplete = 0;      
      
@@ -152,7 +150,7 @@ namespace Booyco_HMI_Utility
             }
             catch
             {
-                Console.WriteLine("failed to close Binary reader.");
+                Debug.WriteLine("failed to close Binary reader.");
             }
             return true;
             }
@@ -396,7 +394,7 @@ namespace Booyco_HMI_Utility
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("unable to add event");
+                    Debug.WriteLine("unable to add event");
                 }
             }
 

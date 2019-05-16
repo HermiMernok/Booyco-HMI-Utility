@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -277,7 +278,7 @@ namespace Booyco_HMI_Utility
 
                     if (BootSentIndex == BootFileList.Count)
                     {
-                        Console.WriteLine("====================Bootloading done======================");
+                        Debug.WriteLine("====================Bootloading done======================");
                         //WIFIcofig.ServerMessageSend = 
                         //BootReady = false;
                         break;
@@ -395,9 +396,7 @@ namespace Booyco_HMI_Utility
             if(bootfile != "")
             {
                 int fileNameStart = bootfile.LastIndexOf("\\") + 1;
-                string fileSub = bootfile.Substring(fileNameStart, bootfile.Length - fileNameStart);
-
-                //           File.WriteAllBytes(fileSub, bootfilebytes);
+                             //           File.WriteAllBytes(fileSub, bootfilebytes);
                 try
                 {
                     if (bootfile.Contains("M-PFW-") && bootfile.Contains(".binary"))

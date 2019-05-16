@@ -32,10 +32,7 @@ namespace Booyco_HMI_Utility
 
         private void ReportProgress(int percent)
         {
-            if (ReportProgressDelegate != null)
-            {
-                ReportProgressDelegate(percent);
-            }
+            ReportProgressDelegate?.Invoke(percent);
         }
 
         public void Filter()

@@ -83,7 +83,7 @@ namespace Booyco_HMI_Utility
         static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // Log the exception, display it, etc
-            Console.WriteLine((e.Exception as Exception).Message);
+            Debug.WriteLine((e.Exception as Exception).Message);
         }
 
         private void WindowUpdateTimer(object sender, EventArgs e)
