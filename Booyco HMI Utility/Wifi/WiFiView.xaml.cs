@@ -52,7 +52,7 @@ namespace Booyco_HMI_Utility
 
         private void ClientListUpdater(object sender, EventArgs e)
         {            
-            if (DGTCPclientList.SelectedIndex > 0)
+            if (DGTCPclientList.SelectedItems.Count == 1)
             {
                 SelectionUpdate();
             }
@@ -223,12 +223,14 @@ namespace Booyco_HMI_Utility
                 BtnBootload.IsEnabled = true;
                 BtnConfig.IsEnabled = false;
                 BtnDatView.IsEnabled = false;
+                GlobalSharedData.ConnectedDeviceApplicationState = (int)ApplicationEnum.bootloader;
             }
             else if ((_selectedItem.ApplicationState == "Application"))
             {
-                BtnBootload.IsEnabled = true;
+                BtnBootload.IsEnabled = false;
                 BtnConfig.IsEnabled = true;
                 BtnDatView.IsEnabled = true;
+                GlobalSharedData.ConnectedDeviceApplicationState = (int)ApplicationEnum.Application;
 
             }
             else if ((_selectedItem.ApplicationState == "ERB Bootloader"))
@@ -236,6 +238,7 @@ namespace Booyco_HMI_Utility
                 BtnBootload.IsEnabled = true;
                 BtnConfig.IsEnabled = false;
                 BtnDatView.IsEnabled = false;
+                GlobalSharedData.ConnectedDeviceApplicationState = (int)ApplicationEnum.ERB_Bootloader;
             }
 }
 

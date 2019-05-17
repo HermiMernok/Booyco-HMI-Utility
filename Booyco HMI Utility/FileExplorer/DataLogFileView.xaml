@@ -50,10 +50,10 @@
             </DataGrid.ColumnHeaderStyle>
 
         </DataGrid>
-        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-            <Label Content="File" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
-        </Viewbox>
-
+       
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" HorizontalAlignment="Center">
+            <Label Content="Datalog Files" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        </Viewbox>  
         <Button x:Name="ButtonAdd" Content="Add" Click="ButtonAdd_Click" Grid.Row="6" Margin="10,0,10,5" Grid.Column="1"/>
         <Button x:Name="ButtonOpen" Content="Open" Click="ButtonDataViewer_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="False"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5" Margin="10"/>

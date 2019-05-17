@@ -27,10 +27,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
-        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-            <Label Content="PDS Map" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+          
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" HorizontalAlignment="Center">
+            <Label Content="PDS Map" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
-
 
         <gmaps:GMapControl x:Name="MainMap" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="5" Loaded="mapView_Loaded" Margin="0,0,0,0" MouseWheel="MainMap_MouseWheel" />
         <Button x:Name="ButtonBack" Content="Back" Margin="10" Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>

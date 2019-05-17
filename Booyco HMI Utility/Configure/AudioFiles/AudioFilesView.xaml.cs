@@ -51,6 +51,7 @@ namespace Booyco_HMI_Utility
         static int TotalSize = 522;
         static int DataSize = TotalSize - 14;
         private uint _heartBeatDelay = 0;
+     
 
         DispatcherTimer updateDispatcherTimer;
         public AudioFilesView()
@@ -71,33 +72,60 @@ namespace Booyco_HMI_Utility
 
         void InfoUpdater(object sender, EventArgs e)
         {
-            if(TransferStatus != (int)TransferStatusEnum.None)
+            ButtonState();
+            if (!GlobalSharedData.WiFiConnectionStatus)
             {
-                ProgressBar_AudioFiles.Maximum = TotalAudioFiles * 100;
-                if (TotalCount > 0)
+
+            }
+            else
+            {
+
+                TCPclientR _foundTCPClient = WiFiconfig.TCPclients.FirstOrDefault(t => t.VID == SelectVID);
+                if (_foundTCPClient != null)
                 {
-                    ProgressBar_AudioFiles.Value = (int)((DataIndex * 100) / TotalCount) + (CurrentAudioFileNumber - 1) * 100;
+                    WiFiconfig.SelectedIP = _foundTCPClient.IP;
                 }
-                Label_StatusView.Content ="Audio File " + CurrentAudioFileNumber.ToString() + " of " + TotalAudioFiles.ToString();
-                Label_ProgressStatusPercentage.Content = (Convert.ToInt32(ProgressBar_AudioFiles.Value/ TotalAudioFiles)).ToString() + "%";
 
-                // === check if heartbeat received ===
-                if (WiFiconfig.Heartbeat && TransferStatus == (int)TransferStatusEnum.Initialize)
-                {                    
-                    _heartBeatDelay++;
-
-                    if (_heartBeatDelay > 15)
+                if (TransferStatus != (int)TransferStatusEnum.None)
+                {
+                    ProgressBar_AudioFiles.Maximum = TotalAudioFiles * 100;
+                    if (TotalCount > 0)
                     {
-                        WiFiconfig.Heartbeat = false;
-                        _heartBeatDelay = 0;
-                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&AA00]");
-                    }                    
-                }
+                        ProgressBar_AudioFiles.Value = (int)((DataIndex * 100) / TotalCount) + (CurrentAudioFileNumber - 1) * 100;
+                    }
+                    Label_StatusView.Content = "Audio File " + CurrentAudioFileNumber.ToString() + " of " + TotalAudioFiles.ToString();
+                    Label_ProgressStatusPercentage.Content = (Convert.ToInt32(ProgressBar_AudioFiles.Value / TotalAudioFiles)).ToString() + "%";
 
-                if (TransferStatus == (int)TransferStatusEnum.Complete)
-                {
-                    ButtonBack_Click(null, null);
-                    //TransferStatus = (int)TransferStatusEnum.None;
+                    // === check if heartbeat received ===
+                    if (WiFiconfig.Heartbeat && TransferStatus == (int)TransferStatusEnum.Initialize)
+                    {
+                        _heartBeatDelay++;
+
+                        if (_heartBeatDelay > 15)
+                        {
+                            WiFiconfig.Heartbeat = false;
+                            _heartBeatDelay = 0;
+                            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&AA00]");
+                        }
+                    }
+                    if (WiFiconfig.Heartbeat && TransferStatus == (int)TransferStatusEnum.Busy)
+                    {
+
+                        _heartBeatDelay++;
+
+                        if (_heartBeatDelay > 15)
+                        {
+                            WiFiconfig.Heartbeat = false;
+                            _heartBeatDelay = 0;
+                            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&AU00]");
+                        }                       
+                      
+                    }
+                        if (TransferStatus == (int)TransferStatusEnum.Complete)
+                    {
+                        ButtonBack_Click(null, null);
+                        //TransferStatus = (int)TransferStatusEnum.None;
+                    }
                 }
             }
            
@@ -322,9 +350,7 @@ namespace Booyco_HMI_Utility
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&AA00]");
             CurrentAudioFileNumber = 1;
             DataIndex = 0;
-            ButtonNew.IsEnabled = false;
-            ButtonNext.IsEnabled = false;
-            ButtonPrevious.IsEnabled = false;
+        
             TransferStatus = (int)TransferStatusEnum.Initialize;
             PreviousAudioFileNumber = 1;
             CurrentAudioFileNumber = 1;
@@ -338,7 +364,38 @@ namespace Booyco_HMI_Utility
             }
         }
 
-        private void ButtonAppend_Click(object sender, RoutedEventArgs e)
+       void ButtonState()
+        {
+            if(TransferStatus == (int)TransferStatusEnum.None)
+            {
+                if (ButtonNew.IsEnabled == false)
+                {
+                    ButtonNew.IsEnabled = true;
+                    ButtonNext.IsEnabled = true;
+                    ButtonPrevious.IsEnabled = true;
+                    RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
+                    RectangleArrowLeft.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
+                    ImageParameter.Opacity = 0.6;
+                    ImagePicture.Opacity = 0.6;
+                }
+
+            }
+            else
+            {
+                if (ButtonNew.IsEnabled == true)
+                {
+                    RectangleArrowRight.Fill = new SolidColorBrush(Colors.DarkGray);
+                    RectangleArrowLeft.Fill = new SolidColorBrush(Colors.DarkGray);
+                    ImageParameter.Opacity = 0.4;
+                    ImagePicture.Opacity = 0.4;
+                    ButtonNew.IsEnabled = false;
+                    ButtonNext.IsEnabled = false;
+                    ButtonPrevious.IsEnabled = false;
+                }
+            }
+        }
+
+        private void ButtonPlay_Click(object sender, RoutedEventArgs e)
         {
             AudioEntry _item = (AudioEntry)DataGridAudioFiles.SelectedItem;
             SoundPlayer snd = new SoundPlayer(_item.Path);
@@ -349,12 +406,11 @@ namespace Booyco_HMI_Utility
         {
             if (TransferStatus != (int)TransferStatusEnum.None)
             {
-                ButtonNew.IsEnabled = true;
+               
                 TransferStatus = (int)TransferStatusEnum.None;
                 ButtonBack.Content = "Back";
                 ClearInfo();
-                ButtonNext.IsEnabled = true;
-                ButtonPrevious.IsEnabled = true;
+         
             }
             else
             {               
@@ -425,7 +481,7 @@ namespace Booyco_HMI_Utility
                 {
                     DataGridAudioFiles.Columns[2].Visibility = Visibility.Visible;
                     ButtonNew.Visibility = Visibility.Visible;
-                    ButtonAppend.Visibility = Visibility.Visible;
+                    ButtonPlay.Visibility = Visibility.Visible;
                     Grid_Progressbar.Visibility = Visibility.Visible;
                     ButtonNext.Visibility = Visibility.Visible;
                     ButtonPrevious.Visibility = Visibility.Visible;
@@ -433,13 +489,13 @@ namespace Booyco_HMI_Utility
                     SelectVID = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].VID;
                     updateDispatcherTimer.Start();
                     ReadAudioFiles();
-                    ProgressBar_AudioFiles.Value = 0;
+                    ProgressBar_AudioFiles.Value = 0;            
                 }
                 else
                 {
                     DataGridAudioFiles.Columns[2].Visibility = Visibility.Collapsed;
                     ButtonNew.Visibility = Visibility.Collapsed;
-                    ButtonAppend.Visibility = Visibility.Collapsed;
+                    ButtonPlay.Visibility = Visibility.Collapsed;
                     Grid_Progressbar.Visibility = Visibility.Collapsed;
                     ButtonNext.Visibility = Visibility.Collapsed;
                     ButtonPrevious.Visibility = Visibility.Collapsed;
@@ -448,6 +504,18 @@ namespace Booyco_HMI_Utility
             else
             {
                 SelectVID = 0;
+            }
+        }
+
+        private void DataGridAudioFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(DataGridAudioFiles.SelectedItems.Count == 1)
+            {
+                ButtonPlay.IsEnabled = true;
+            }
+            else
+            {
+                ButtonPlay.IsEnabled = false;
             }
         }
     }

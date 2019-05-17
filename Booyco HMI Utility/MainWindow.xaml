@@ -83,7 +83,7 @@
             <local:ConfigureMenuView x:Name="ConfigureMenuView" Grid.Row="1" Grid.Column="1"  Visibility="Collapsed"/>
 
             <Image Source="/Images/Booyco Logo.png" Grid.Column="1" Margin="0,0,20,10" Grid.Row="2" HorizontalAlignment="Right"/>
-            <Label Content="Booyco HMI Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
+            <Label Content="Booyco BHU Utility" HorizontalContentAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" Foreground="Black" VerticalContentAlignment="Center" />
             <Label Content="{Binding HeartbeatCount, FallbackValue=0}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Top" />
             <Grid Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>

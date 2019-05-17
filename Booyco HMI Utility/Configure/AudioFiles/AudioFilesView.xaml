@@ -25,7 +25,7 @@
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid x:Name="DataGridAudioFiles" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
+        <DataGrid x:Name="DataGridAudioFiles" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" SelectionChanged="DataGridAudioFiles_SelectionChanged">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
                    Color="#8c0909"/>
@@ -63,7 +63,7 @@
         </Viewbox>
 
         <Button x:Name= "ButtonNew" Content="Upload All" Click="ButtonNew_Click" Grid.Column="2" Grid.Row="3" Margin="10"/>
-        <Button x:Name="ButtonAppend" Content="Append" Grid.Column="2" Grid.Row="4" Margin="10" Click="ButtonAppend_Click" />
+        <Button x:Name="ButtonPlay" Content="play" Grid.Column="2" Grid.Row="4" Margin="10" Click="ButtonPlay_Click" IsEnabled="False" />
         <Button x:Name="ButtonBack" Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
         <Button x:Name= "ButtonNext"  ToolTip="Paramaters" Click="ButtonNext_Click" Grid.Column="2" Grid.Row="1" Margin="133,19,10,21" Background="Transparent" BorderThickness="0" MouseEnter="ButtonNext_MouseEnter" MouseLeave="ButtonNext_MouseLeave">
             <Grid>
@@ -74,7 +74,7 @@
 
         <Button x:Name= "ButtonPrevious"  ToolTip="Image files" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,21,831,21" BorderThickness="0" Background="Transparent" MouseEnter="ButtonPrevious_MouseEnter" MouseLeave="ButtonPrevious_MouseLeave">
             <Grid>
-                <Image x:Name="ImagePicture" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="52" Source="/Booyco HMI Utility;component/Images/ButtonImages/Images.png" Margin="22.667,18.166,-22.667,0"/>
+                <Image x:Name="ImagePicture" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="52" Opacity="0.7" Source="/Booyco HMI Utility;component/Images/ButtonImages/Images.png" Margin="22.667,18.166,-22.667,0"/>
                 <Rectangle x:Name="RectangleArrowLeft"  HorizontalAlignment="Left" Fill="#8c0909" Height="84.5"  VerticalAlignment="Top" Width="45.667" Clip="M13.333999,3.3330003 L6.5000008,12.833006 L26.166998,42.500026 L7.5003334,71.166712 L13.500334,81.332998 L39.667002,42.333334 z" RenderTransformOrigin="0.5,0.5" Margin="-31,0,0,0">
                     <Rectangle.RenderTransform>
                         <TransformGroup>

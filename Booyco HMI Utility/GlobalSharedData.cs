@@ -38,7 +38,13 @@ namespace Booyco_HMI_Utility
         Basic,
         Full            
     }
-
+    public enum ApplicationEnum
+    {
+        None,
+        bootloader,
+        ERB_Bootloader,
+        Application
+    }
     public static class ProgramFlow
     {
         public static int ProgramWindow { get; set; }
@@ -48,6 +54,7 @@ namespace Booyco_HMI_Utility
     public static class GlobalSharedData
     { 
         public static int AccessLevel = (int)AccessLevelEnum.Basic;
+        public static int ConnectedDeviceApplicationState = (int)ApplicationEnum.None;
         public static bool CommunicationSent = false;
         public static string ServerStatus { get; set; }
         public static byte[] ServerMessageSend { get; set; }

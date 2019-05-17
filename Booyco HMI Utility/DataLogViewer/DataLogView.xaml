@@ -28,9 +28,11 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
-        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-            <Label Content="Data Extractor" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+   
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" HorizontalAlignment="Center">
+            <Label Content="Data Log Viewer" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
+
         <Button x:Name="ButtonBack" Content="Back"  Margin="10"  Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5"/>
         <Button x:Name="ButtonSave" Content="Export"  Click="ButtonSaveFile_Click" Grid.Column="5" Grid.Row="2" Margin="10" IsEnabled="True"/>
 

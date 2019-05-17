@@ -204,7 +204,7 @@ namespace Booyco_HMI_Utility
                         Debug.Write("Complete Time: " + new TimeSpan(ExtractionEndTimeStamp.Ticks - ExtractionStartTimeStamp.Ticks).ToString());
                     }
 
-                    // === infromation to be cleared regardless if the logs extraction status ===
+                    // === information to be cleared regardless of the logs extraction status ===
                     DataLogProgress = 0;
                     DataIndex = 0;
                 
@@ -437,6 +437,7 @@ namespace Booyco_HMI_Utility
 
                     else
                     {
+                    
 
                         byte[] StoredIndexBytes = BitConverter.GetBytes(StoredIndex);
                         byte[] Logchunk = Enumerable.Repeat((byte)0xFF, 10).ToArray();

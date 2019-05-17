@@ -234,6 +234,7 @@ namespace Booyco_HMI_Utility
             {
                 HeartbeatCount = "";
                 WiFiApStatus = "";
+                Label_StatusFixText.Content = "";
             }
             else if(ProgramFlow.ProgramWindow == (int)ProgramFlowE.WiFi)
             {
@@ -246,7 +247,7 @@ namespace Booyco_HMI_Utility
             {
 
                 #endregion
-                Label_StatusFixText.Content = "Connection Status: ";
+                Label_StatusFixText.Content = "Connection Status: ";            
                 HeartbeatCount = GlobalSharedData.ServerStatus;
       
           

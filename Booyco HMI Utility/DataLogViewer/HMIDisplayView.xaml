@@ -26,10 +26,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
-        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-            <Label Content="HMI Display" Foreground="Black" VerticalAlignment="Top" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-        </Viewbox>
 
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" HorizontalAlignment="Center">
+            <Label Content="BHU Display" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        </Viewbox>
         <Viewbox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" >
             <Grid>
                 <Grid.ColumnDefinitions>
