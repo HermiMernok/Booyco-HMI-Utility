@@ -575,9 +575,9 @@ namespace Booyco_HMI_Utility
         }
         private void min_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (DGparameters.SelectedIndex != -1)
+            if (DataGrid_Parameters.SelectedIndex != -1)
             {
-                ParametersDisplay tempPar = (ParametersDisplay)DGparameters.SelectedItem;
+                ParametersDisplay tempPar = (ParametersDisplay)DataGrid_Parameters.SelectedItem;
                 var SortedIndex = tempPar.OriginIndx;
 
                 //string str = tempPar.Name;
@@ -600,13 +600,13 @@ namespace Booyco_HMI_Utility
         private void max_Button_Click(object sender, RoutedEventArgs e)
         {
 
-            if (DGparameters.SelectedIndex != -1)
+            if (DataGrid_Parameters.SelectedIndex != -1)
             {
-                ParametersDisplay tempPar = (ParametersDisplay)DGparameters.SelectedItem;
+                ParametersDisplay tempPar = (ParametersDisplay)DataGrid_Parameters.SelectedItem;
                 var SortedIndex = tempPar.OriginIndx;
                 int j = 0;
 
-                int DisplayIndex = DGparameters.SelectedIndex;
+                int DisplayIndex = DataGrid_Parameters.SelectedIndex;
 
                 if (parameters[SortedIndex].CurrentValue < parameters[SortedIndex].MaximumValue)
                 {
@@ -666,14 +666,14 @@ namespace Booyco_HMI_Utility
             ParametersDisplay tempPar = new ParametersDisplay();
             var SortedIndex = 0;
 
-            if (DGparameters.SelectedIndex != -1)
+            if (DataGrid_Parameters.SelectedIndex != -1)
             {
-                tempPar = (ParametersDisplay)DGparameters.SelectedItem;
+                tempPar = (ParametersDisplay)DataGrid_Parameters.SelectedItem;
                 SortedIndex = tempPar.OriginIndx;
             }
 
            
-            if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 4)
+            if (DataGrid_Parameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 4)
             {
            
                 if (tempPar.Name == "Name")
@@ -732,7 +732,7 @@ namespace Booyco_HMI_Utility
            
 
            
-            else if (DGparameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 0)
+            else if (DataGrid_Parameters.SelectedIndex != -1 && parameters[SortedIndex].Ptype == 0)
             {
                 TextBox textBox = (TextBox)sender;
                 if (StringTestNum(textBox.Text))
@@ -766,10 +766,10 @@ namespace Booyco_HMI_Utility
 
         private void ComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            if (DGparameters.SelectedIndex != -1)
+            if (DataGrid_Parameters.SelectedIndex != -1)
             {
                 ComboBox comboBox = (ComboBox)sender;
-                ParametersDisplay tempPar = (ParametersDisplay)DGparameters.SelectedItem;
+                ParametersDisplay tempPar = (ParametersDisplay)DataGrid_Parameters.SelectedItem;
                 var SortedIndex = tempPar.OriginIndx;
 
                 parameters[SortedIndex].CurrentValue = comboBox.SelectedIndex;
@@ -1310,6 +1310,7 @@ namespace Booyco_HMI_Utility
                 ButtonConfigRefresh.IsEnabled = true;
                 SendFileButton.IsEnabled = true;
                 OpenFileButton.IsEnabled = true;
+                DataGrid_Parameters.IsEnabled = true;
                 ButtonBack.Content = "Back";
 
 
@@ -1319,6 +1320,7 @@ namespace Booyco_HMI_Utility
                 ButtonConfigRefresh.IsEnabled = false;
                 SendFileButton.IsEnabled = false;
                 OpenFileButton.IsEnabled = false;
+                DataGrid_Parameters.IsEnabled = false;
                 ButtonBack.Content = "Cancel";
             }
         }

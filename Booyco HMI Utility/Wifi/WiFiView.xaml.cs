@@ -129,7 +129,18 @@ namespace Booyco_HMI_Utility
 
         private void BtnBootload_Click(object sender, RoutedEventArgs e)
         {
-            ProgramFlow.ProgramWindow = (int)ProgramFlowE.Bootload;
+            TCPclientR _selectedItem = (TCPclientR)DGTCPclientList.SelectedItem;
+           
+            if (_selectedItem.ApplicationState == "Application")
+            {
+                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+            }
+            else
+            {
+                ProgramFlow.ProgramWindow = (int)ProgramFlowE.Bootload;
+            }
+         
            
         }
 
@@ -227,7 +238,7 @@ namespace Booyco_HMI_Utility
             }
             else if ((_selectedItem.ApplicationState == "Application"))
             {
-                BtnBootload.IsEnabled = false;
+                BtnBootload.IsEnabled = true;
                 BtnConfig.IsEnabled = true;
                 BtnDatView.IsEnabled = true;
                 GlobalSharedData.ConnectedDeviceApplicationState = (int)ApplicationEnum.Application;

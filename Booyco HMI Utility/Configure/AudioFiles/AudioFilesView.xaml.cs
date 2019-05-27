@@ -263,6 +263,7 @@ namespace Booyco_HMI_Utility
 
         static void SendAudioFile(int AudioFileNumber)
         {
+          
             if (AudioFileNumber == 0)
             {
                 AudioFileNumber = 1;
@@ -274,6 +275,11 @@ namespace Booyco_HMI_Utility
             }
 
             Debug.WriteLine("Debug2");
+
+            if(TotalCount == 0)
+            {
+                StoreAudioFile(CurrentAudioFileNumber);
+            }
            
             if (DataIndex == (TotalCount) && TransferStatus != (int)TransferStatusEnum.WaitEnd )
             {
@@ -346,7 +352,7 @@ namespace Booyco_HMI_Utility
         private void ButtonNew_Click(object sender, RoutedEventArgs e)
         {
             // === Send start datalog informaiton ===      
-            
+            ReadAudioFiles();
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&AA00]");
             CurrentAudioFileNumber = 1;
             DataIndex = 0;

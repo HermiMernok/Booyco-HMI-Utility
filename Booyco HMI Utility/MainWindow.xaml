@@ -87,13 +87,13 @@
             <Label Content="{Binding HeartbeatCount, FallbackValue=0}" HorizontalContentAlignment="Center" Margin="20,0,0,0" Grid.Column="1" Grid.Row="2" FontSize="12" Foreground="Black" VerticalContentAlignment="Top" />
             <Grid Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>                   
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label x:Name="Label_StatusFixText" Content="Connection Status:" Grid.Column="0"  FontSize="12" Foreground="Black" VerticalContentAlignment="Center" />
                 <Label Foreground="{Binding WiFiApStatusColor}" Content="{Binding WiFiApStatus, FallbackValue=0}" Grid.Column="1"  FontSize="12"  VerticalContentAlignment="Center" />
             </Grid>
-            <Ellipse Name="ComActivity" Width="18" HorizontalAlignment="Right" Opacity="0" Margin="0,5,315,47" Grid.Row="2" RenderTransformOrigin="0.964,0.393" Grid.Column="1">
+            <Ellipse Name="ComActivity" Width="7" HorizontalAlignment="Right" Opacity="0" Margin="0,26,262,36" Grid.Row="2" RenderTransformOrigin="0.964,0.393" Grid.Column="1">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
                         <GradientStop Color="#FF009BC9" Offset="0.309"/>

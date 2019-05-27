@@ -63,7 +63,7 @@
         </Viewbox>
 
         <Button x:Name= "ButtonNew" Content="Upload All" Click="ButtonNew_Click" Grid.Column="2" Grid.Row="3" Margin="10"/>
-        <Button x:Name="ButtonPlay" Content="play" Grid.Column="2" Grid.Row="4" Margin="10" Click="ButtonPlay_Click" IsEnabled="False" />
+        <Button x:Name="ButtonPlay" Content="Play" Grid.Column="2" Grid.Row="4" Margin="10" Click="ButtonPlay_Click" IsEnabled="False" />
         <Button x:Name="ButtonBack" Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
         <Button x:Name= "ButtonNext"  ToolTip="Paramaters" Click="ButtonNext_Click" Grid.Column="2" Grid.Row="1" Margin="133,19,10,21" Background="Transparent" BorderThickness="0" MouseEnter="ButtonNext_MouseEnter" MouseLeave="ButtonNext_MouseLeave">
             <Grid>

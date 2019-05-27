@@ -239,7 +239,7 @@ namespace Booyco_HMI_Utility
                 GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LDs00]");
                 StartDataReceiving = false;
                 StoredIndex = -1;
-
+                
                 Debug.Write("Cancel Time: " + new TimeSpan(ExtractionEndTimeStamp.Ticks - ExtractionStartTimeStamp.Ticks).ToString());
                
             }
