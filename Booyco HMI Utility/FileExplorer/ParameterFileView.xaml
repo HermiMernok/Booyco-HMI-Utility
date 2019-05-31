@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
-             d:DesignHeight="710" d:DesignWidth="1280" IsVisibleChanged="UserControl_IsVisibleChanged" >
+             d:DesignHeight="800" d:DesignWidth="1200" IsVisibleChanged="UserControl_IsVisibleChanged" >
 
     <Grid Background="White">
 
@@ -28,7 +28,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="DataGridFiles" RowHeaderWidth="0" FontSize="20" CanUserAddRows="False" RowHeight="30" CanUserReorderColumns="True"  IsReadOnly="True"  Grid.ColumnSpan="4" Margin="5,10,0,10" Grid.RowSpan="4" Grid.Column="1" Grid.Row="2" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" SelectionChanged="DataGridFiles_SelectionChanged">
+        <DataGrid x:Name="DataGridFiles" RowHeaderWidth="0" FontSize="20" CanUserAddRows="False" RowHeight="30" CanUserReorderColumns="True"  IsReadOnly="True"  Grid.ColumnSpan="4" Margin="10,10,5,10" Grid.RowSpan="4" Grid.Column="1" Grid.Row="2" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" SelectionChanged="DataGridFiles_SelectionChanged">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
                    Color="#ff630606"/>
@@ -54,7 +54,7 @@
             <Label Content="Parameter Files" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
         <Button x:Name="ButtonAdd" Content="Add" Click="ButtonAdd_Click" Grid.Row="6" Margin="10,0,10,5" Grid.Column="1"/>
-        <Button x:Name="ButtonOpen" Content="Parameters" Grid.Column="5" Grid.Row="2" Margin="10" Click="ButtonOpen_Click"/>
+        <Button x:Name="ButtonOpen" Content="Parameters" Grid.Column="5" Grid.Row="2" Margin="10" Click="ButtonOpen_Click" IsEnabled="False"/>
         <Button Content="Back" Click="ButtonBack_Click" Grid.Column="5" Grid.Row="5" Margin="10"/>
         <Button x:Name="Button_Delete" Content="Delete" Click="ButtonDelete_Click" Grid.Column="3" Grid.Row="6" Margin="10,0,10,5"/>
         <Button x:Name="Button_Save" Content="Save" Click="ButtonSave_Click" Grid.Column="2" Grid.Row="6" Margin="10,0,10,5"/>

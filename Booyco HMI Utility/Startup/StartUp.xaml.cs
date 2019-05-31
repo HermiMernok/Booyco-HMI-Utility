@@ -57,14 +57,14 @@ namespace Booyco_HMI_Utility
 
         private void ButtonNext_MouseEnter(object sender, MouseEventArgs e)
         {
-            RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(60, 6, 6));
-            ImageParameter.Opacity = 1;
+            //RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(60, 6, 6));
+            ImageLogin.Opacity = 1;
         }
 
         private void ButtonNext_MouseLeave(object sender, MouseEventArgs e)
         {
-            RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
-            ImageParameter.Opacity = 0.6;
+            // RectangleArrowRight.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
+            ImageLogin.Opacity = 0.6;
         }
     }
 }

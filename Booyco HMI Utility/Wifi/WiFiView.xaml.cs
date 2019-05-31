@@ -133,11 +133,13 @@ namespace Booyco_HMI_Utility
            
             if (_selectedItem.ApplicationState == "Application")
             {
-                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
-                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+
+                Grid_BootloaderPopup.Visibility = Visibility.Visible;
+                RequestMessageLabel.Text = "Press and hold Button 2 and 3 on the unit (VID" + GlobalSharedData.SelectedVID +") and press the Restart button.";
             }
             else
             {
+              
                 ProgramFlow.ProgramWindow = (int)ProgramFlowE.Bootload;
             }
          
@@ -238,10 +240,19 @@ namespace Booyco_HMI_Utility
             }
             else if ((_selectedItem.ApplicationState == "Application"))
             {
-                BtnBootload.IsEnabled = true;
+            
                 BtnConfig.IsEnabled = true;
                 BtnDatView.IsEnabled = true;
                 GlobalSharedData.ConnectedDeviceApplicationState = (int)ApplicationEnum.Application;
+
+                if (WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].FirmRev != 1)
+                {
+                    BtnBootload.IsEnabled = true;
+                }
+                else
+                {
+                    BtnBootload.IsEnabled = false;
+                }
 
             }
             else if ((_selectedItem.ApplicationState == "ERB Bootloader"))
@@ -291,6 +302,21 @@ private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChang
         {
             if (DGTCPclientList.SelectedIndex != -1)
                 GlobalSharedData.SelectedDevice = DGTCPclientList.SelectedIndex;
+        }
+
+        private void ButtonRestart_Click(object sender, RoutedEventArgs e)
+        {
+            if (WiFiconfig.clients.Count > 0 && GlobalSharedData.SelectedDevice != -1)
+            {
+                WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
+                GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&BB00]");
+            }
+            Grid_BootloaderPopup.Visibility = Visibility.Collapsed;
+        }
+
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
+        {
+            Grid_BootloaderPopup.Visibility = Visibility.Collapsed;
         }
     }
 
