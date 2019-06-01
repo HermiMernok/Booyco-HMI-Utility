@@ -416,7 +416,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 10000;
+            clientR[0].ReceiveTimeout = 5000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
@@ -499,7 +499,7 @@ namespace Booyco_HMI_Utility
                             totalCount = i;
                         }
 
-                        else if (data2[0] == '[' && data2[1] == '&' && data2[2] == 'L')
+                        else if (data2[0] == '[' && data2[1] == '&' && (data2[2] == 'L' || data2[2] == 'O'))
                         {
                             Debug.WriteLine(Buffer[0] + "Receive Parsing - First: " + i.ToString() +"  " + DateTime.Now.ToString());
 
@@ -633,7 +633,7 @@ namespace Booyco_HMI_Utility
                             {
                                 AudioFilesView.AudioFileSendParse(Buffer, clientnumr);
                             }
-                            else if (Buffer[2] == 'L')
+                            else if (Buffer[2] == 'L' || Buffer[2] == 'O')
                             {
                                 DataExtractorView.DataExtractorParser(Buffer, clientnumr);
                             }

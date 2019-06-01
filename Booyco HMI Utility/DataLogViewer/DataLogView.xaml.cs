@@ -254,7 +254,15 @@ namespace Booyco_HMI_Utility
 
             DataLogs.Clear();
             this.Visibility = Visibility.Collapsed;
-            ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
+            if(ProgramFlow.SourseWindow ==  (int)ProgramFlowE.WiFi)
+            {
+                ProgramFlow.ProgramWindow = (int)ProgramFlowE.DataExtractorView;
+            }
+            else
+            {
+                ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
+            }
+          
         }
 
         private void Datagrid_Logs_SelectionChanged(object sender, SelectionChangedEventArgs e)

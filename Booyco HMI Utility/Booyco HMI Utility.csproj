@@ -465,6 +465,7 @@
     <Resource Include="Images\ButtonImages\Audio.png" />
     <Resource Include="Images\ButtonImages\Images.png" />
     <Resource Include="Images\ButtonImages\Parameters.png" />
+    <Resource Include="Images\ButtonImages\Login.png" />
     <Content Include="Resources\Documents\CommanderParametersFile.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
