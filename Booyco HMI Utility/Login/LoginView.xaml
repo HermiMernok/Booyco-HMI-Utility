@@ -49,8 +49,8 @@
                 <!--Device info-->
 
                 <Label  Grid.Column="0" Grid.Row="2" Content="Password:" FontSize="30"  VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Foreground="Gray" Grid.RowSpan="2"/>
-                <PasswordBox x:Name="PasswordBox_Login" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Width="742" PasswordChanged="TextBox_Password_PasswordChanged" KeyDown="PasswordBox_Login_KeyDown" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="204,0,0,0"/>
-                <Label x:Name="Label_Error" Content="" FontSize="20" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Width="734" Height="57" Grid.ColumnSpan="2" Margin="204,0,0,0" />
+                <PasswordBox x:Name="PasswordBox_Login" Grid.Row="2" HorizontalAlignment="Left" Width="791" PasswordChanged="TextBox_Password_PasswordChanged" KeyDown="PasswordBox_Login_KeyDown" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="155,0,0,0"/>
+                <Label x:Name="Label_Error" Content="" FontSize="20"  Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Width="464" Height="57" />
 
                 <Label Content="Login Status:"  HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Grid.Row="6" Foreground="WhiteSmoke" FontSize="35" Background="#FF4D4D4D"/>
                 <!--Firmware info-->

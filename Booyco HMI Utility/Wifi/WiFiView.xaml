@@ -31,7 +31,7 @@
         <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
             <Label Content="Wifi Interface" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
-        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" RowHeaderWidth="0" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="16" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA68288"  RowBackground="#FFB68181" Margin="10,10,5,10">
+        <DataGrid x:Name="DGTCPclientList" Grid.Row="3" RowHeaderWidth="0" Grid.Column="1" RowHeight="60" Grid.RowSpan="4" ItemsSource="{Binding TCPclients}" SelectionChanged="DGTCPclientList_SelectionChanged" CanUserAddRows="False" IsReadOnly="True" FontSize="16" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA68288"  RowBackground="#FFB68181" Margin="5,10">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                          
                   Color="#338F1838"/>
@@ -134,42 +134,5 @@
         <Button x:Name="BtnConfig" Content="Configure" Grid.Column="2" Margin="10" Grid.Row="4" Click="BtnConfig_Click"  IsEnabled="{Binding btnEnabler, FallbackValue=false }"/>
         <Button x:Name="BtnDatView" Content="Data View" Grid.Column="2" Margin="10" Grid.Row="5" Click="BtnDatView_Click" IsEnabled="{Binding btnEnabler, FallbackValue=false }" />
         <Button x:Name="BtnMain" Content="Back" Grid.Column="2" Margin="10" Grid.Row="6" Click="BtnMain_Click"  />
-        <Grid x:Name="Grid_BootloaderPopup" Grid.Row="1"  Grid.RowSpan="8" Grid.ColumnSpan="3" Visibility="Collapsed" Grid.Column="1"  Margin="0,5,-5,-5" >
-
-            <Grid.Background>
-                <SolidColorBrush Color="Black" Opacity="0.2"/>
-            </Grid.Background>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="150"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="150"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="150"/>
-            </Grid.ColumnDefinitions>
-            <Grid Background="White" Grid.Column="1" Grid.Row="1" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="0.2*"/>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
-                </Grid.ColumnDefinitions>
-                <Label Content="Bootloader" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center"  VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
-                <TextBlock x:Name="RequestMessageLabel" Text="Press and hold Button 2 and 3 on the unit and press the Restart button." Foreground="Black" Grid.Column="0"  Grid.Row="2" Grid.ColumnSpan="4" FontSize="30" TextWrapping="Wrap" Margin="5" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
-                <Button x:Name="ButtonClose" Content="Cancel" Grid.Column="2" Grid.Row="3" Margin="15" Click="ButtonClose_Click" />
-                <Button x:Name="ButtonRestart" Content="Restart" Grid.Column="1" Grid.Row="3" Margin="15" Click="ButtonRestart_Click" />
-              
-            </Grid>
-        </Grid>
     </Grid>
 </UserControl>

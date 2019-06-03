@@ -37,7 +37,7 @@ namespace Booyco_HMI_Utility
         private string ParameterSaveFilename = "";
         private DispatcherTimer updateDispatcherTimer;
         private DispatcherTimer InfoDelay;
-        private uint SelectVID = 0;
+
 
         private DispatcherTimer dispatcherTimer;
 
@@ -47,14 +47,13 @@ namespace Booyco_HMI_Utility
         static bool ParamsTransmitComplete = false;
         static bool ParamsSendStarted = false;
         static bool RevertInfo = false;
-        static bool ParamsRequestInit = false;
-        static bool ParamsTransmitInit = false;
+
         private static int ParamReceiveProgress = 0;
         private static int ParamTransmitProgress = 0;
         public static int DataIndex { get; set; }
         public static int TotalCount { get; set; }
-        private uint _heartBeatDelay = 0;
 
+      
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -89,37 +88,26 @@ namespace Booyco_HMI_Utility
                 ParamsReceiveComplete = false;
                 ParamsTransmitComplete = false;
                 ParamsSendStarted = false;
-                ParamsRequestInit = false;
-              
+                Label_StatusView.Content = "Waiting for user command..";
                 ProgressBar_Params.Value = 0;
                 Label_ProgressStatusPercentage.Content = "";
 
-                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.FileMenuView)
+                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.File)
                 {
-                    Label_ProgressStatusPercentage.Visibility = Visibility.Collapsed;
-                    Label_StatusView.Content = "";
                     SendFileButton.Visibility = Visibility.Collapsed;
                     ButtonConfigRefresh.Visibility = Visibility.Collapsed;
-                    ProgressBar_Params.Visibility = Visibility.Collapsed;
-                    Grid_Progressbar.Visibility = Visibility.Hidden;
                 }
                 else if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
                 {
-                    Label_ProgressStatusPercentage.Visibility = Visibility.Visible;
-                    Label_StatusView.Content = "Waiting for user command..";
-                    ProgressBar_Params.Visibility = Visibility.Visible;
-                    ButtonConfigRefresh_Click(null, null);
                     //ConfigRefreshButton.Content = "Refresh";
                     SendFileButton.Visibility = Visibility.Visible;
                     ButtonConfigRefresh.Visibility = Visibility.Visible;
-                    SelectVID = GlobalSharedData.SelectedVID;
-                    Grid_Progressbar.Visibility = Visibility.Visible;
-                }              
-               
+                }
+
+                ButtonConfigRefresh_Click(null,null);
             }
             else
             {
-                ProgressBar_Params.Visibility = Visibility.Collapsed;
                 updateDispatcherTimer.Stop();
                 ProgressBar_Params.Value = 0;
                 ConfigSendReady = false;
@@ -134,120 +122,52 @@ namespace Booyco_HMI_Utility
 
         private void ConfigReceiveParams(object sender, EventArgs e)
         {
-            if (!GlobalSharedData.WiFiConnectionStatus && ButtonBack.ToString() != "Back")
+            if (ParamsRequestStarted)
             {
-                ButtonState(false);
-                ButtonBack_Click(null,null);
-            }
-            else
-            {
-               
-                TCPclientR _foundTCPClient = WiFiconfig.TCPclients.FirstOrDefault(t => t.VID == SelectVID);
-                if (_foundTCPClient != null)
+                RevertInfo = false;
+                ProgressBar_Params.Value = ParamReceiveProgress;
+                Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamReceiveProgress).ToString() + "%";
+                Label_StatusView.Content = "Loading parameters from device: Packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
+                if (ParamsReceiveComplete)
                 {
-                    WiFiconfig.SelectedIP = _foundTCPClient.IP;
-                    if (!ParamsRequestStarted && !ParamsSendStarted && !ParamsRequestInit && !ParamsTransmitInit)
-                    {
-                        ButtonState(true);
-                    }
-                    else
-                    {
-                        ButtonState(false);
-                    }
-                }
 
-                if (ParamsRequestStarted)
-                {
-                    RevertInfo = false;
-                    ParamsRequestInit = false;
-                    ProgressBar_Params.Value = ParamReceiveProgress;
-                    Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamReceiveProgress).ToString() + "%";
-                    Label_StatusView.Content = "Loading parameters from device: Packet " + DataIndex.ToString() + " of " + TotalCount.ToString() + "...";
-                    if (ParamsReceiveComplete)
-                    {
-
-                        UpdateParametersFromDevice();
-                        Label_StatusView.Content = "Loading of parameters from device completed...";
-                        //updateDispatcherTimer.Stop();
-                        ParamsReceiveComplete = false;
-                        ParamsRequestStarted = false;                    
-                        InfoDelay.Start();
-                    }
-
-                    // === check if heartbeat received ===
-                    if (WiFiconfig.Heartbeat && StoredIndex == -1)
-                    {
-                        _heartBeatDelay++;
-
-                        if (_heartBeatDelay > 10)
-                        {
-                            WiFiconfig.Heartbeat = false;
-                            _heartBeatDelay = 0;
-                            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
-                        }
-                    }
-                }
-                else if (ParamsSendStarted)
-                {
-                    RevertInfo = false;
-                    ParamsRequestStarted = false;
+                    UpdateParametersFromDevice();
+                    Label_StatusView.Content = "Loading of parameters from device completed...";
+                    //updateDispatcherTimer.Stop();
                     ParamsReceiveComplete = false;
-                    ParamsTransmitInit = false;
-                    ParamTransmitProgress = (ConfigSentIndex * 100) / Configchunks;
-                    ProgressBar_Params.Value = ParamTransmitProgress;
-                    Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamTransmitProgress).ToString() + "%";
-                    Label_StatusView.Content = "Loading parameters to device: Packet " + ConfigSentIndex.ToString() + " of " + Configchunks.ToString() + "...";
-
-                    if (ParamsTransmitComplete)
-                    {
-                        Label_StatusView.Content = "Loading of parameters to device completed...";
-                        ParamsTransmitComplete = false;
-                        ParamsSendStarted = false;               
-                        //updateDispatcherTimer.Stop();
-                        InfoDelay.Start();
-                    }
-
-
-
+                    ParamsRequestStarted = false;
+                    ButtonState(true);
+                    InfoDelay.Start();
                 }
-                else if (ParamsRequestInit)
+            }
+            else if (ParamsSendStarted)
+            {
+                RevertInfo = false;
+                ParamsRequestStarted = false;
+                ParamsReceiveComplete = false;
+                ParamTransmitProgress = (ConfigSentIndex * 100) / Configchunks;
+                ProgressBar_Params.Value = ParamTransmitProgress;
+                Label_ProgressStatusPercentage.Content = "Overall progress: " + (ParamTransmitProgress).ToString() + "%";
+                Label_StatusView.Content = "Loading parameters to device: Packet " + ConfigSentIndex.ToString() + " of " + Configchunks.ToString() + "...";
+
+                if (ParamsTransmitComplete)
                 {
-                    // === check if heartbeat received ===
-                    if (WiFiconfig.Heartbeat && ConfigSentAckIndex == -1)
-                    {
-                        _heartBeatDelay++;
+                    Label_StatusView.Content = "Loading of parameters to device completed...";
+                    ParamsTransmitComplete = false;
+                    ParamsSendStarted = false;
+                    ButtonState(true);
+                    //updateDispatcherTimer.Stop();
+                    InfoDelay.Start();
+                }
 
-                        if (_heartBeatDelay > 10)
-                        {
-                            WiFiconfig.Heartbeat = false;
-                            _heartBeatDelay = 0;
-                            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
-                        }
-                    }
-                }
-                else if (ParamsTransmitInit)
-                {
-                    // === check if heartbeat received ===
-                    if (WiFiconfig.Heartbeat && ConfigSentAckIndex == -1)
-                    {
-                        _heartBeatDelay++;
-
-                        if (_heartBeatDelay > 10)
-                        {
-                            WiFiconfig.Heartbeat = false;
-                            _heartBeatDelay = 0;
-                            GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
-                        }
-                    }
-                }
-                //else if ()
-                else if (RevertInfo)
-                {
-                    Label_StatusView.Content = "Waiting for user command..";
-                    ProgressBar_Params.Value = 0;
-                    Label_ProgressStatusPercentage.Content = "";
-                    InfoDelay.Stop();
-                }
+            }
+            //else if ()
+            else if (RevertInfo)
+            {
+                Label_StatusView.Content = "Waiting for user command..";
+                ProgressBar_Params.Value = 0;
+                Label_ProgressStatusPercentage.Content = "";
+                InfoDelay.Stop();
             }
         }
 
@@ -286,26 +206,18 @@ namespace Booyco_HMI_Utility
 
         private void InfoUpdater(object sender, EventArgs e)
         {
-            //if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi && Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
-            //{
-            // //   WiFiconfig.ConnectionError = true;
-            //  //  backBtner = true;
-            //  //  ConfigSendReady = false;    //todo is this required
-            //}
+            if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi && Visibility == Visibility.Visible && (WiFiconfig.clients.Count == 0 || WiFiconfig.clients.Where(t => t.Client.RemoteEndPoint.ToString() == WiFiconfig.SelectedIP).ToList().Count == 0))
+            {
+                WiFiconfig.ConnectionError = true;
+                backBtner = true;
+                ConfigSendReady = false;    //todo is this required
+            }
 
             if (backBtner)
             {
                 backBtner = false;
-                if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi )
-                {
-                    ProgramFlow.ProgramWindow = (int)ProgramFlowE.ConfigureMenuView;
-                }
-                else
-                {
-                    ProgramFlow.ProgramWindow = (int)ProgramFlowE.ParameterFileView;
-                }
-              
-               
+                ProgramFlow.ProgramWindow = ProgramFlow.SourseWindow;
+                this.Visibility = Visibility.Collapsed;
                 ConfigSendStop = true;
             }
         }
@@ -874,6 +786,7 @@ namespace Booyco_HMI_Utility
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'P'))
             {
 
+
                 if (message[3] == 'a' && message[6] == ']')
                 {
                     ConfigSendReady = true;
@@ -883,8 +796,10 @@ namespace Booyco_HMI_Utility
                     ConfigStatus = "Device ready to configure...";
                     GlobalSharedData.ServerStatus = "Config ready message recieved";
                     GlobalSharedData.BroadCast = false;
-                    WiFiconfig.SelectedIP = endPoint.ToString();                  
+                    WiFiconfig.SelectedIP = endPoint.ToString();
                 }
+             
+
 
                 if (message[3] == 'D')
                 {
@@ -895,7 +810,9 @@ namespace Booyco_HMI_Utility
                         GlobalSharedData.ServerStatus = "Config acknowledgment message recieved";
 
                     }
-                }    
+                }
+         
+
         
                 if (message[3] == 's' && message[6] == ']')
                 {
@@ -909,13 +826,13 @@ namespace Booyco_HMI_Utility
                     //GlobalSharedData.ServerMessageSend = WiFiconfig.HeartbeatMessage;
                     //GlobalSharedData.ServerStatus = "Config paramaters sent message recieved";
                 }
+          
+
         
                 if (message[3] == 'e' && message[8] == ']')
                 {
-                   
                     if (BitConverter.ToUInt16(message, 4) == 0xFFFF)
                     {
-                       
                         ConfigSentIndex = 0;
                         ConfigSentAckIndex = -1;
                         ConfigStatus = "Waiting for device, please be patient... " + ConfigSentAckIndex.ToString() + "...";
@@ -923,7 +840,6 @@ namespace Booyco_HMI_Utility
                     }
                     else
                     {
-                        
                         ConfigSentIndex = BitConverter.ToUInt16(message, 4);
                         //ConfigSentIndex--;
                         ConfigSentAckIndex = BitConverter.ToUInt16(message, 4);
@@ -957,11 +873,9 @@ namespace Booyco_HMI_Utility
             if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'a'))
             {                
                 ParamsRequestStarted = true;
-            
             }
                 if ((message.Length >= 7) && (message[0] == '[') && (message[1] == '&') && (message[2] == 'p') && (message[3] == 'D'))
                 {
-                    ParamsRequestInit = false;
                     DataIndex = BitConverter.ToUInt16(message, 4);
                     TotalCount = BitConverter.ToUInt16(message, 6);
 
@@ -1072,11 +986,6 @@ namespace Booyco_HMI_Utility
 
                     if (ConfigSentIndex == ConfigSendList.Count)
                     {
-                        //ConfigStatus = "Device config read done...";
-                       // ConfigSendDone = true;
-                       /// ParamsTransmitComplete = true;
-                       // ConfigSendStop = true;
-                      //  ConfigSendReady = false;
                         Debug.WriteLine("====================Parameters sent done======================");
                         //WIFIcofig.ServerMessageSend = 
                         //BootReady = false;
@@ -1136,34 +1045,10 @@ namespace Booyco_HMI_Utility
             for (int i = 0; i < parameters.Count; i++)
             {
                 //valuebytes = BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue),4));
-
+                
                 //Array.Copy(BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue), 4)), 0, paraMeterBytes, i * 4, 4);
-                if (GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
-                {
-                    if (parameters[i].AccessLevel == 2)
-                    {
-                        byte[] _unchanged =
-                        {
-                            0xFF,
-                            0xFF,
-                            0xFF,
-                            0xFF
-                        };
-                        Array.Copy(_unchanged, 0, paraMeterBytes, i * 4, 4);
-                    }
-                    else
-                    {
-                        Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
-                    }
-
-                }
-                else
-                {
-
-                    Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
-                }
-            }               
-            
+                Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
+            }
 
             string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
             string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\\\Saved Files\\Parameters" + "\\" + "Parameters.mer";
@@ -1359,16 +1244,9 @@ namespace Booyco_HMI_Utility
             else
             {
                 InfoDelay.Start();
-                ButtonBack.Content = "Back";
-                if (GlobalSharedData.WiFiConnectionStatus)
-                {
-                    ButtonState(true);
-                }
-             
+                ButtonState(true);
                 ParamsRequestStarted = false;
                 ParamsSendStarted = false;
-                ParamsRequestInit= false;
-                ParamsTransmitInit = false;
             }
 
         }
@@ -1381,19 +1259,12 @@ namespace Booyco_HMI_Utility
         private static Thread ConfigureThread;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            InfoDelay.Stop();
-            Label_StatusView.Content = "Asking device to configure parameters..";
-            ProgressBar_Params.Value = 0;
-            Label_ProgressStatusPercentage.Content = "";        
-
-            WiFiconfig.Heartbeat = false;
+           
             ButtonState(false);
             Save_ParaMetersToFile();
             ConfigSendReady = false;
             ConfigSendStop = false;
             ParamsRequestStarted = false;
-            ParamsTransmitInit = true;
-   
             //BootStart = true;
             ConfigSentIndex = 0;
             ConfigSentAckIndex = -1;
@@ -1412,6 +1283,7 @@ namespace Booyco_HMI_Utility
                 ConfigureThread.Start();
             }
 
+            ConfigStatus = "Asking device to configure parameters...";
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PP00]");
 
             updateDispatcherTimer.Start();
@@ -1419,17 +1291,11 @@ namespace Booyco_HMI_Utility
 
         private void ButtonConfigRefresh_Click(object sender, RoutedEventArgs e)
         {
-            InfoDelay.Stop();
-            Label_StatusView.Content = "Start Sending Parameters..";
-            ProgressBar_Params.Value = 0;
-            Label_ProgressStatusPercentage.Content = "";
-
-            ParamsRequestInit = true;
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&pP00]");
             StoredIndex = -1;
             ParamsRequestStarted = true;
             ParamsReceiveComplete = false;
-            WiFiconfig.Heartbeat = false;
+
             ParamsTransmitComplete = false;
             ParamsSendStarted = false;
             ButtonState(false);

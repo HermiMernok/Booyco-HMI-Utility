@@ -132,9 +132,8 @@ namespace Booyco_HMI_Utility
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.ParameterFileView)
             {
-                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = ParametersView.Visibility = Visibility.Collapsed;
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = Visibility.Collapsed;
                 ParameterFileView.Visibility = Visibility.Visible;
-
                 //ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
             }
             
@@ -231,7 +230,7 @@ namespace Booyco_HMI_Utility
                 ErrorView = true;
             }
 
-            if ( ProgramFlow.SourseWindow != (int)ProgramFlowE.WiFi)
+            if (ProgramFlow.ProgramWindow != (int)ProgramFlowE.DataExtractorView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.WiFi && ProgramFlow.ProgramWindow != (int)ProgramFlowE.AudioFilesView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.ImageFilesView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.ConfigureMenuView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.ParametersView && ProgramFlow.ProgramWindow != (int)ProgramFlowE.Bootload)
             {
                 HeartbeatCount = "";
                 WiFiApStatus = "";

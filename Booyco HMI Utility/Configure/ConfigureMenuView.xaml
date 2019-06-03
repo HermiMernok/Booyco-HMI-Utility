@@ -43,7 +43,7 @@
 
             </StackPanel>
         </Button>
-        <Button x:Name="ButtonImages" Grid.Column="1" IsEnabled="False" Grid.Row="3" Margin="5" Click="ButtonImages_Click">
+        <Button x:Name="ButtonImages" Grid.Column="1" Grid.Row="3" Margin="5" Click="ButtonImages_Click">
             <StackPanel Orientation="Horizontal">
                 <Grid Width="500">
                     <Grid.RowDefinitions>

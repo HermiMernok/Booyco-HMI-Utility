@@ -21,12 +21,12 @@ namespace Booyco_HMI_Utility
     public partial class LoginView : UserControl
     {
    
-        string PasswordFullAccess = "Booyco" ;
+        string PasswordFullAccess = "Mernok" ;
         public LoginView()
         {
             InitializeComponent();
-            int CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month* 999999).ToString(), "Booyco");       
-            PasswordFullAccess += (CalculatedHash.ToString("X6").Substring(0,6));
+            int CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), DateTime.Now.Month.ToString(), "Mernok");       
+            PasswordFullAccess += (CalculatedHash.ToString("X6").Substring(1,5));
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace Booyco_HMI_Utility
             var hash = 1;
             unchecked
             {
-                hash = hash * 10 + aHash;
-                hash = hash * 10 + bHash;
-                hash = hash * 10 + cHash;
+                hash = hash * 18 + aHash;
+                hash = hash * 19 + bHash;
+                hash = hash * 20 + cHash;
             }
             return hash;
         }

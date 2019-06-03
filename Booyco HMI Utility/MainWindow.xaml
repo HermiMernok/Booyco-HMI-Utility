@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
         xmlns:local="clr-namespace:Booyco_HMI_Utility"
         mc:Ignorable="d"
-        Title="Booyco HMI Utility V1.03d" Height="800" Width="1200" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
+        Title="Booyco HMI Utility V1.03d" Height="800" Width="1280" FontSize="30" FontFamily="Arial Black" Closing="Window_Closing" WindowState="Maximized">
 
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
@@ -93,11 +93,11 @@
                 <Label x:Name="Label_StatusFixText" Content="Connection Status:" Grid.Column="0"  FontSize="12" Foreground="Black" VerticalContentAlignment="Center" />
                 <Label Foreground="{Binding WiFiApStatusColor}" Content="{Binding WiFiApStatus, FallbackValue=0}" Grid.Column="1"  FontSize="12"  VerticalContentAlignment="Center" />
             </Grid>
-            <Ellipse Name="ComActivity" Width="11" HorizontalAlignment="Right" Opacity="0" Margin="0,25,260,34" Grid.Row="2" RenderTransformOrigin="0.964,0.393" Grid.Column="1">
+            <Ellipse Name="ComActivity" Width="7" HorizontalAlignment="Right" Opacity="0" Margin="0,26,262,36" Grid.Row="2" RenderTransformOrigin="0.964,0.393" Grid.Column="1">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
-                        <GradientStop Color="#FFFFFFFF" Offset="0.309"/>
-                        <GradientStop Color="#99FFFFFF" Offset="1"/>
+                        <GradientStop Color="#FF009BC9" Offset="0.309"/>
+                        <GradientStop Color="#99DBFAFB" Offset="1"/>
                     </RadialGradientBrush>
                 </Ellipse.Fill>
             </Ellipse>

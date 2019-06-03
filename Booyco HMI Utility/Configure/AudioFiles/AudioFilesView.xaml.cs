@@ -487,7 +487,7 @@ namespace Booyco_HMI_Utility
                 {
                     DataGridAudioFiles.Columns[2].Visibility = Visibility.Visible;
                     ButtonNew.Visibility = Visibility.Visible;
-         
+                    ButtonPlay.Visibility = Visibility.Visible;
                     Grid_Progressbar.Visibility = Visibility.Visible;
                     ButtonNext.Visibility = Visibility.Visible;
                     ButtonPrevious.Visibility = Visibility.Visible;
@@ -501,7 +501,7 @@ namespace Booyco_HMI_Utility
                 {
                     DataGridAudioFiles.Columns[2].Visibility = Visibility.Collapsed;
                     ButtonNew.Visibility = Visibility.Collapsed;
-          
+                    ButtonPlay.Visibility = Visibility.Collapsed;
                     Grid_Progressbar.Visibility = Visibility.Collapsed;
                     ButtonNext.Visibility = Visibility.Collapsed;
                     ButtonPrevious.Visibility = Visibility.Collapsed;

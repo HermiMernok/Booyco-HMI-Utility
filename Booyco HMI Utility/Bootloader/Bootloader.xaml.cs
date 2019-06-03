@@ -308,10 +308,7 @@ namespace Booyco_HMI_Utility
                     BootStatus = "Device ready to boot...";
                     GlobalSharedData.ServerStatus = "Boot ready message recieved";
                     GlobalSharedData.BroadCast = false;
-                    if (GlobalSharedData.ConnectedDeviceApplicationState != (int)ApplicationEnum.Application)
-                        {
-                        BootReady = true;
-                    }
+                    BootReady = true;
                     WiFiconfig.SelectedIP = endPoint.ToString();
                 }
                 #endregion

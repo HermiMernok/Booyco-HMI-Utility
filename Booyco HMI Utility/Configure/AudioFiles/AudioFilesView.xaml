@@ -25,7 +25,7 @@
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid x:Name="DataGridAudioFiles" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="10,10,5,10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" SelectionChanged="DataGridAudioFiles_SelectionChanged">
+        <DataGrid x:Name="DataGridAudioFiles" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" SelectionChanged="DataGridAudioFiles_SelectionChanged">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
                    Color="#8c0909"/>
@@ -40,7 +40,7 @@
                     <Setter Property="Height" Value="50"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
-
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Header="No." Binding="{Binding ID}" MinWidth="60" MaxWidth="60"/>
                 <DataGridTextColumn Width="8*" Binding="{Binding FileName}" Header="Name"/>
@@ -72,7 +72,7 @@
             </Grid>
         </Button>
 
-        <Button x:Name= "ButtonPrevious" IsEnabled="False" ToolTip="Image files" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,21,831,21" BorderThickness="0" Background="Transparent" MouseEnter="ButtonPrevious_MouseEnter" MouseLeave="ButtonPrevious_MouseLeave">
+        <Button x:Name= "ButtonPrevious"  ToolTip="Image files" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,21,831,21" BorderThickness="0" Background="Transparent" MouseEnter="ButtonPrevious_MouseEnter" MouseLeave="ButtonPrevious_MouseLeave">
             <Grid>
                 <Image x:Name="ImagePicture" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="52" Opacity="0.7" Source="/Booyco HMI Utility;component/Images/ButtonImages/Images.png" Margin="22.667,18.166,-22.667,0"/>
                 <Rectangle x:Name="RectangleArrowLeft"  HorizontalAlignment="Left" Fill="#8c0909" Height="84.5"  VerticalAlignment="Top" Width="45.667" Clip="M13.333999,3.3330003 L6.5000008,12.833006 L26.166998,42.500026 L7.5003334,71.166712 L13.500334,81.332998 L39.667002,42.333334 z" RenderTransformOrigin="0.5,0.5" Margin="-31,0,0,0">
@@ -88,17 +88,17 @@
             </Grid>
         </Button>
 
-        <Grid x:Name="Grid_Progressbar" Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray" Margin="10,5,10,0">
+        <Grid x:Name="Grid_Progressbar" Grid.Column="1" Grid.Row="7"  Grid.ColumnSpan="2" Background="Gray" Margin="0,5,0,0">
             <!--Margin="0,5,0,0"-->
             <!--<Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>-->
             <ProgressBar x:Name="ProgressBar_AudioFiles" Grid.Row="1" Background="Black" Foreground="#8c0909" Maximum="100" Margin="5"/>
-            <Label x:Name="Label_StatusView" Content="StatusView" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20" Margin="10,0"/>
-            <Label x:Name="Label_ProgressStatusPercentage" Content="ProgressStatus" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30" Margin="10,0"/>
+            <Label x:Name="Label_StatusView" Content="StatusView" Grid.Row="1" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FontSize="20"/>
+            <Label x:Name="Label_ProgressStatusPercentage" Content="ProgressStatus" Grid.Row="1" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontSize="30"/>
             <Label x:Name="Label_Index" Content="{Binding DataIndex, FallbackValue=0 }" HorizontalAlignment="Left" Margin="496,-695,0,0" VerticalAlignment="Top" Width="386" Height="70"/>
 
         </Grid>
-
+        
     </Grid>
 </UserControl>
