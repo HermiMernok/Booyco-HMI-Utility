@@ -64,14 +64,14 @@
         <Button x:Name="ButtonBack" Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
         <Button x:Name= "ButtonNext"  ToolTip="Audio Files" Click="ButtonNext_Click" Grid.Column="2" Grid.Row="1" Margin="133,19,10,21" Background="Transparent" BorderThickness="0" MouseEnter="ButtonNext_MouseEnter" MouseLeave="ButtonNext_MouseLeave">
             <Grid>
-                <Image x:Name="ImageParameter" HorizontalAlignment="Left" Height="50" Margin="-1.667,23.333,0,0" VerticalAlignment="Top" Width="53" Opacity="0.7" Source="/Booyco HMI Utility;component/Images/ButtonImages/Audio.png"/>
+                <Image x:Name="ImageParameter" HorizontalAlignment="Left" Height="50" Margin="-1.667,23.333,0,0" VerticalAlignment="Top" Width="53" Opacity="0.7" Source="/Images/ButtonImages/Audio.png"/>
                 <Rectangle x:Name="RectangleArrowRight"  HorizontalAlignment="Left" Fill="#8c0909" Height="84.5" Margin="43.833,4.5,0,0"  VerticalAlignment="Top" Width="45.667" Clip="M13.333999,3.3330003 L6.5000008,12.833006 L26.166998,42.500026 L7.5003334,71.166712 L13.500334,81.332998 L39.667002,42.333334 z"/>
             </Grid>
         </Button>
 
         <Button x:Name= "ButtonPrevious"  ToolTip="Parameters" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,21,831,21" BorderThickness="0" Background="Transparent" MouseEnter="ButtonPrevious_MouseEnter" MouseLeave="ButtonPrevious_MouseLeave">
             <Grid>
-                <Image x:Name="ImagePicture" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="52" Source="/Booyco HMI Utility;component/Images/ButtonImages/Parameters.png" Margin="22.667,18.166,-22.667,0"/>
+                <Image x:Name="ImagePicture" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="52" Source="/Images/ButtonImages/Parameters.png" Margin="22.667,18.166,-22.667,0"/>
                 <Rectangle x:Name="RectangleArrowLeft"  HorizontalAlignment="Left" Fill="#8c0909" Height="84.5"  VerticalAlignment="Top" Width="45.667" Clip="M13.333999,3.3330003 L6.5000008,12.833006 L26.166998,42.500026 L7.5003334,71.166712 L13.500334,81.332998 L39.667002,42.333334 z" RenderTransformOrigin="0.5,0.5" Margin="-31,0,0,0">
                     <Rectangle.RenderTransform>
                         <TransformGroup>

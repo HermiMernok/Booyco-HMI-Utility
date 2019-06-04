@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Booyco_HMI_Utility.Properties {
+namespace Booyco_BHU_Utility.Properties {
     using System;
     
     
@@ -19,7 +19,7 @@ namespace Booyco_HMI_Utility.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -39,7 +39,7 @@ namespace Booyco_HMI_Utility.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Booyco_HMI_Utility.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Booyco_BHU_Utility.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -139,7 +139,7 @@ namespace Booyco_HMI_Utility.Properties {
         ///    &lt;/MernokProduct&gt;
         ///    &lt;MernokProduct&gt;
         ///      &lt;Product&gt;2&lt;/Product&gt;
-        ///      &lt;ProductName&gt;MAXUS&lt;/ProductName&gt;
+        ///      &lt;ProductName&gt;Maxus&lt;/ProductName&gt;
         ///    &lt;/MernokProduct&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MernokProductList {

@@ -21,12 +21,16 @@ namespace Booyco_HMI_Utility
     public partial class LoginView : UserControl
     {
    
-        string PasswordFullAccess = "Mernok" ;
+        string PasswordBooycoAccess = "Booyco" ;
+        string PasswordMernokAccess = "Mernok";
+
         public LoginView()
         {
             InitializeComponent();
-            int CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), DateTime.Now.Month.ToString(), "Mernok");       
-            PasswordFullAccess += (CalculatedHash.ToString("X6").Substring(1,5));
+            int CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month* 999999).ToString(), "Booyco");
+            PasswordBooycoAccess += (CalculatedHash.ToString("X6").Substring(0,6));
+            CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month * 888888).ToString(), "Mernok");
+            PasswordMernokAccess += (CalculatedHash.ToString("X6").Substring(0, 6));
         }
 
         /// <summary>
@@ -46,9 +50,9 @@ namespace Booyco_HMI_Utility
             var hash = 1;
             unchecked
             {
-                hash = hash * 18 + aHash;
-                hash = hash * 19 + bHash;
-                hash = hash * 20 + cHash;
+                hash = hash * 10 + aHash;
+                hash = hash * 10 + bHash;
+                hash = hash * 10 + cHash;
             }
             return hash;
         }
@@ -72,19 +76,31 @@ namespace Booyco_HMI_Utility
                 Label_Error.Content =  "";
                 ButtonLogin.IsEnabled =false;
                 PasswordBox_Login.IsEnabled = true;
+                Label_AccessLevel.Content = "Access Level: None";
             }
-            else if (PasswordBox_Login.Password == PasswordFullAccess)
+            else if (PasswordBox_Login.Password == PasswordBooycoAccess || PasswordBox_Login.Password == PasswordMernokAccess)
             {
                 GlobalSharedData.AccessLevel = (int)AccessLevelEnum.Full;
                 ButtonLogin.Content = "Log Out";
                 Label_Error.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 150, 0));
-                Label_Error.Content = "Successfully logged in as Mernok techinician";
+
+                if(PasswordBox_Login.Password == PasswordBooycoAccess)
+                {
+                    Label_Error.Content = "Successfully logged in as Booyco technician.";
+                    Label_AccessLevel.Content = "Access Level: Booyco Technician";
+                }
+                else
+                {
+                    Label_Error.Content = "Successfully logged in as Mernok technician.";
+                    Label_AccessLevel.Content = "Access Level: Mernok Technician";
+                }
+               
                 PasswordBox_Login.IsEnabled = false;
             }
             else
             {
                 Label_Error.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 130, 0, 0));
-                Label_Error.Content = "Incorrect Password, please try again";
+                Label_Error.Content = "Incorrect Password, please try again.";
 
             }
             PasswordBox_Login.Clear();          
@@ -109,7 +125,7 @@ namespace Booyco_HMI_Utility
         private void ButtonPrevious_MouseEnter(object sender, MouseEventArgs e)
         {
             RectangleArrowLeft.Fill = new SolidColorBrush(Color.FromRgb(60, 6, 6));
-            ImagePicture.Opacity = 1;
+           // ImagePicture.Opacity = 1;
         }
 
         /// <summary>
@@ -120,7 +136,7 @@ namespace Booyco_HMI_Utility
         private void ButtonPrevious_MouseLeave(object sender, MouseEventArgs e)
         {
             RectangleArrowLeft.Fill = new SolidColorBrush(Color.FromRgb(140, 9, 9));
-            ImagePicture.Opacity = 0.6;
+           // ImagePicture.Opacity = 0.6;
         }
 
         /// <summary>
