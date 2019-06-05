@@ -714,7 +714,7 @@ namespace Booyco_HMI_Utility
 
         private void RowDoubleClick(object sender, RoutedEventArgs e)
         {
-            var row = (DataGridRow)sender;
+          //  var row = (DataGridRow)sender;
             //if (row.DetailsVisibility == Visibility.Collapsed)
             //{
             //    DataLogIsExpanded = true;
@@ -726,7 +726,8 @@ namespace Booyco_HMI_Utility
             //    DataLogIsExpanded = false;
             // //   Expander_Collapsed(sender, e);
             //}
-            row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            
+          // row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
 
         }
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -1353,7 +1354,7 @@ namespace Booyco_HMI_Utility
             if ((string)ButtonBack.Content == "Back")
             {
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
+                    //GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
                 //            else
 
                 backBtner = true;
@@ -1514,6 +1515,15 @@ namespace Booyco_HMI_Utility
             ImagePicture.Opacity = 0.6;
         }
 
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            {
+                var row = (DataGridRow)DataGrid_Parameters.ItemContainerGenerator.ContainerFromIndex( DataGrid_Parameters.SelectedIndex);  ;
+            
+                row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
     }
 }
 
