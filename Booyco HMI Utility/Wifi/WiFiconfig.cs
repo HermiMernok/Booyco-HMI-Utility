@@ -145,6 +145,10 @@ namespace Booyco_HMI_Utility
             HeartbeatMessage[1] = (byte)'&';
             HeartbeatMessage[2] = (byte)'B';
             HeartbeatMessage[3] = (byte)'h';
+            HeartbeatMessage[34] = (byte)'0';
+            HeartbeatMessage[35] = (byte)'0';
+            HeartbeatMessage[36] = (byte)'0';
+            HeartbeatMessage[37] = (byte)'0';
             HeartbeatMessage[521] = (byte)']';
 
             Array.Copy(bytes, 0, HeartbeatMessage, 4, 30);
