@@ -81,6 +81,7 @@ namespace Booyco_HMI_Utility
             DataGridLogs.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, SelectAll_Executed));
             FilterManager = new FilterManagement();
             DataLogIsExpanded = new bool();
+                
         }
           
         /// <summary>

@@ -80,6 +80,13 @@ namespace Booyco_HMI_Utility
             return dtDateTime;
         }
 
+        public static long DateTimeStampToUnixTime(DateTime dateTimestamp)
+        {
+            DateTime sTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            return (long)(dateTimestamp - sTime).TotalSeconds;
+        }
+
         public static uint CheckDateTimeStampUnix(UInt32 UnixValue ,out DateTime DateTimeStamp)
         {
             DateTimeStamp = UnixTimeStampToDateTime(UnixValue-2*60*60);

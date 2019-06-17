@@ -138,17 +138,19 @@ namespace Booyco_HMI_Utility
 
             byte[] bytes = new byte[30];
             Array.Copy(Encoding.ASCII.GetBytes(PCName), bytes, Encoding.ASCII.GetBytes(PCName).Length);
-
+         
             #region HeartbeatCreation
             HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
             HeartbeatMessage[0] = (byte)'[';
             HeartbeatMessage[1] = (byte)'&';
             HeartbeatMessage[2] = (byte)'B';
             HeartbeatMessage[3] = (byte)'h';
-            HeartbeatMessage[34] = (byte)'0';
-            HeartbeatMessage[35] = (byte)'0';
-            HeartbeatMessage[36] = (byte)'0';
-            HeartbeatMessage[37] = (byte)'0';
+            long UnixTimeStamp = DateTimeCheck.DateTimeStampToUnixTime(DateTime.Now);
+            byte[] UnixByteArray = BitConverter.GetBytes(Convert.ToUInt32(UnixTimeStamp));
+            HeartbeatMessage[34] = UnixByteArray[0];
+            HeartbeatMessage[35] = UnixByteArray[1];
+            HeartbeatMessage[36] = UnixByteArray[2];
+            HeartbeatMessage[37] = UnixByteArray[3];          
             HeartbeatMessage[521] = (byte)']';
 
             Array.Copy(bytes, 0, HeartbeatMessage, 4, 30);
@@ -586,7 +588,14 @@ namespace Booyco_HMI_Utility
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Licensed = Convert.ToBoolean(Buffer[28]);
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Heartbeat_Colour = WiFiView.HBReceiveColour;
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).HeartbeatTimestamp = DateTime.Now;
-                                    
+
+                                        long UnixTimeStamp = DateTimeCheck.DateTimeStampToUnixTime(DateTime.Now);
+                                        byte[] UnixByteArray = BitConverter.GetBytes(Convert.ToUInt32(UnixTimeStamp));
+                                        HeartbeatMessage[34] = UnixByteArray[0];
+                                        HeartbeatMessage[35] = UnixByteArray[1];
+                                        HeartbeatMessage[36] = UnixByteArray[2];
+                                        HeartbeatMessage[37] = UnixByteArray[3];
+
                                         if (GlobalSharedData.SelectedVID == (uint)TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID)
                                         {
                                             GlobalSharedData.WiFiConnectionStatus = true;   
