@@ -24,7 +24,7 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class ParameterFileView : UserControl
     {
-        string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files\\Parameters";
+        string _savedFilesPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility" + "\\Parameters";
         private RangeObservableCollection<FileEntry> FileList;
 
         public ParameterFileView()
@@ -46,7 +46,7 @@ namespace Booyco_HMI_Utility
 
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
-            //GlobalSharedData.FilePath = FileList.ElementAt(DataGridFiles.SelectedIndex).Path;
+            GlobalSharedData.FilePath = FileList.ElementAt(DataGridFiles.SelectedIndex).Path;
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.ParametersView;
         }
 
@@ -214,5 +214,34 @@ namespace Booyco_HMI_Utility
                 ReadSavedFolder();
             }
         }
+
+        private void ButtonNew_Click(object sender, RoutedEventArgs e)
+        {
+
+            string DefaultFilePath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\Default\\Default Parameters.mer";
+            string NewFilePath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\New Parameter.mer";
+
+            if (System.IO.Directory.Exists(System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\Default\\"))
+            {
+                if (System.IO.File.Exists(DefaultFilePath))
+                {
+                    for (int i = 1; i < 100; i++)
+                    {
+
+                        if (!System.IO.File.Exists(NewFilePath))
+                        {
+
+                            System.IO.File.Copy(DefaultFilePath, NewFilePath, true);
+                            i = 100;
+                        }
+                        NewFilePath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\New Parameter(" + i + ").mer";
+                    }
+                }
+                
+            }
+            ReadSavedFolder();
+
+        }
+
     }
 }

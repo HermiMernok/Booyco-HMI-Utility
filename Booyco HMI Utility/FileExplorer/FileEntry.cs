@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +33,7 @@ namespace Booyco_HMI_Utility
             set
             {
                 _fileName = value;
+                PathFile = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\" + _fileName;
                 OnPropertyChanged("FileName");
             }
         }
@@ -79,7 +81,19 @@ namespace Booyco_HMI_Utility
             }
         }
 
-
+        private string _pathFile;
+        public string PathFile
+        {
+            get
+            {
+                return _pathFile;
+            }
+            set
+            {
+                _pathFile = value;
+                OnPropertyChanged("PathFile");
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)

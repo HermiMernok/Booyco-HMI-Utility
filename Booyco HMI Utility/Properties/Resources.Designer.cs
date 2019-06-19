@@ -63,9 +63,9 @@ namespace Booyco_BHU_Utility.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] CommanderParametersFile {
+        internal static byte[] BHUParametersFile {
             get {
-                object obj = ResourceManager.GetObject("CommanderParametersFile", resourceCulture);
+                object obj = ResourceManager.GetObject("BHUParametersFile", resourceCulture);
                 return ((byte[])(obj));
             }
         }

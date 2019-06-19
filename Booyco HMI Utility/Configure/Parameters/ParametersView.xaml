@@ -133,7 +133,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Value" Width="*" MinWidth="500">
+                <DataGridTemplateColumn Header="Value" Width="*" MinWidth="563">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>

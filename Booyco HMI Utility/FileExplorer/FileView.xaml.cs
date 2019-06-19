@@ -24,7 +24,7 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class FileView : UserControl
     {
-        string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
+        string _savedFilesPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\";
         private RangeObservableCollection<FileEntry> FileList;
 
         public FileView()
@@ -237,5 +237,6 @@ namespace Booyco_HMI_Utility
                 ReadSavedFolder();
             }
         }
+
     }
 }

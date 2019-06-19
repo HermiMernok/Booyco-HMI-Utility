@@ -58,7 +58,7 @@ namespace Booyco_HMI_Utility
         private static int TransferStatus = (int)TransferStatusEnum.None;
         // === Static Variables ===
 
-        static string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
+        static string _savedFilesPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\";
         static string _newLogFilePath = "";
         static int StoredIndex = 0;
 

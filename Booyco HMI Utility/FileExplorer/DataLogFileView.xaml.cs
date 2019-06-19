@@ -25,7 +25,7 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class DataLogFileView : UserControl
     {
-        string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Saved Files";
+        string _savedFilesPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Datalogs";
         private RangeObservableCollection<FileEntry> FileList;
 
         public DataLogFileView()

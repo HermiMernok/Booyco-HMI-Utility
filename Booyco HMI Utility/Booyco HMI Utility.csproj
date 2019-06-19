@@ -460,6 +460,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="Resources\Documents\BHUParametersFile.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\ButtonImages\Arrow-Left.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -518,9 +521,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Saved Files\Audio\014_Vehicle Alert.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Documents\CommanderParametersFile.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Documents\LPD.xlsx">
@@ -620,7 +620,7 @@
     <Resource Include="Images\icon2.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PublishFile Include="Resources\Documents\CommanderParametersFile.xlsx">
+    <PublishFile Include="Resources\Documents\BHUParametersFile.xlsx">
       <Visible>False</Visible>
       <Group>
       </Group>

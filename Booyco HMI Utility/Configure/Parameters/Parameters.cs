@@ -10,6 +10,7 @@ namespace Booyco_HMI_Utility
 {
     public class Parameters
     {
+        public int Number;
         public string Name;
         public int CurrentValue;
         public int MaximumValue;
@@ -39,6 +40,7 @@ namespace Booyco_HMI_Utility
         #endregion
 
         public int OriginIndx { get; set; }
+        public int Number { get; set; }
         public string Group { get; set; }
         public string SubGroup { get; set; }
         private string _Name;

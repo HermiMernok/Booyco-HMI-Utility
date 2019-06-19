@@ -38,7 +38,7 @@ namespace Booyco_HMI_Utility
         private DispatcherTimer updateDispatcherTimer;
         private DispatcherTimer InfoDelay;
         private uint SelectVID = 0;
-
+        private string ParameterDirectoryPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\";
         private DispatcherTimer dispatcherTimer;
 
         static int StoredIndex = -1;
@@ -54,6 +54,8 @@ namespace Booyco_HMI_Utility
         public static int DataIndex { get; set; }
         public static int TotalCount { get; set; }
         private uint _heartBeatDelay = 0;
+
+       
 
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
@@ -77,6 +79,10 @@ namespace Booyco_HMI_Utility
             InfoDelay = new DispatcherTimer();
             InfoDelay.Tick += new EventHandler(InfoDelayFunc);
             InfoDelay.Interval = new TimeSpan(0, 0, 0, 0, 5000);
+
+            GetDefaultParametersFromFile();
+            string _savedFilesPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\BHU Utility\\Parameters\\Default\\Default Parameters.mer";
+            StoreParameterFile(_savedFilesPath);      
         }
 
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -96,6 +102,7 @@ namespace Booyco_HMI_Utility
 
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.FileMenuView)
                 {
+                   
                     Label_ProgressStatusPercentage.Visibility = Visibility.Collapsed;
                     Label_StatusView.Content = "";
                     SendFileButton.Visibility = Visibility.Collapsed;
@@ -259,7 +266,7 @@ namespace Booyco_HMI_Utility
             {
                 GetDefaultParametersFromFile();
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
-                {
+                {                   
                     WiFiconfig.SelectedIP = WiFiconfig.TCPclients[GlobalSharedData.SelectedDevice].IP;
                     ButtonNext.Visibility = Visibility.Visible;
                     ButtonPrevious.Visibility = Visibility.Visible;
@@ -268,6 +275,7 @@ namespace Booyco_HMI_Utility
                 }
                 else
                 {
+                    ReadParameterFile(GlobalSharedData.FilePath);
                     ButtonConfigRefresh.Visibility = Visibility.Collapsed;
                     SendFileButton.Visibility = Visibility.Collapsed;
                     ButtonNext.Visibility = Visibility.Collapsed;
@@ -311,7 +319,7 @@ namespace Booyco_HMI_Utility
                 ConfigSendStop = true;
             }
         }
-
+        
         public ObservableCollection<ParametersDisplay> ParametersToDisplay(List<Parameters> parameters)
         {
             ObservableCollection<ParametersDisplay> parametersDisplays = new ObservableCollection<ParametersDisplay>();
@@ -328,224 +336,270 @@ namespace Booyco_HMI_Utility
             bool EditLbl = true;
             int enumIndx = -1;
 
-            for (int i = 0; i < parameters.Count; i++)
+            int _indexCount = 0;
+
+            try
             {
-                if (parameters[i].Ptype == 0)
+
+                for (int i = 0; i < parameters.Count; i++)
                 {
-                    valueString = parameters[i].CurrentValue.ToString();
-                    enumIndx = -1;
-                    btnvisibility = Visibility.Visible;
-                    drpDwnVisibility = Visibility.Collapsed;
-                    EditLbl = false;
-                }
-                else if (parameters[i].Ptype == 1)
-                {
-                    valueString = (parameters[i].CurrentValue == 1) ? "true" : "false";
-                    enumIndx = -1;
-                    btnvisibility = Visibility.Visible;
-                    drpDwnVisibility = Visibility.Collapsed;
-                    EditLbl = true;
-                }
-                else if (parameters[i].Ptype == 2)
-                {
-                    valueString = parameters[i].parameterEnums[parameters[i].CurrentValue];
-                    enumIndx = parameters[i].CurrentValue;
-                    btnvisibility = Visibility.Visible;
-                    drpDwnVisibility = Visibility.Visible;
-                    EditLbl = true;
-                }
-                else if (parameters[i].Ptype == 4)
-                {
-                    if (parameters[i].Name.Contains("Name"))
+                    _indexCount = i;
+
+
+                    if (parameters[i].Ptype == 0)
                     {
-                        VehicleName += Convert.ToChar(parameters[i].CurrentValue);
+
+                        if (parameters[i].CurrentValue > parameters[i].MaximumValue)
+                        {
+                            parameters[i].CurrentValue = parameters[i].MaximumValue;
+                        }
+                        else if (parameters[i].CurrentValue < parameters[i].MinimumValue)
+                        {
+                            parameters[i].CurrentValue = parameters[i].MinimumValue;
+                        }
+                        valueString = parameters[i].CurrentValue.ToString();
                         enumIndx = -1;
-                        btnvisibility = Visibility.Collapsed;
+                        btnvisibility = Visibility.Visible;
                         drpDwnVisibility = Visibility.Collapsed;
                         EditLbl = false;
                     }
-                    else if (parameters[i].Name.Contains("SSID"))
+                    else if (parameters[i].Ptype == 1)
                     {
-                        WiFiSSID += Convert.ToChar(parameters[i].CurrentValue);
+                        if (parameters[i].CurrentValue > parameters[i].MaximumValue)
+                        {
+                            parameters[i].CurrentValue = parameters[i].MaximumValue;
+                        }
+                        else if (parameters[i].CurrentValue < parameters[i].MinimumValue)
+                        {
+                            parameters[i].CurrentValue = parameters[i].MinimumValue;
+                        }
+                        valueString = (parameters[i].CurrentValue == 1) ? "true" : "false";
                         enumIndx = -1;
-                        btnvisibility = Visibility.Collapsed;
+                        btnvisibility = Visibility.Visible;
                         drpDwnVisibility = Visibility.Collapsed;
-                        EditLbl = false;
+                        EditLbl = true;
                     }
-                    else if (parameters[i].Name.Contains("Password"))
+                    else if (parameters[i].Ptype == 2)
                     {
-                        WiFiPassword += Convert.ToChar(parameters[i].CurrentValue);
-                        enumIndx = -1;
-                        btnvisibility = Visibility.Collapsed;
-                        drpDwnVisibility = Visibility.Collapsed;
-                        EditLbl = false;
+                        if (parameters[i].CurrentValue > parameters[i].MaximumValue)
+                        {
+                            parameters[i].CurrentValue = parameters[i].MaximumValue;
+                        }
+                        else if (parameters[i].CurrentValue < parameters[i].MinimumValue)
+                        {
+                            parameters[i].CurrentValue = parameters[i].MinimumValue;
+                        }
+                        valueString = parameters[i].parameterEnums[parameters[i].CurrentValue];
+                        enumIndx = parameters[i].CurrentValue;
+                        btnvisibility = Visibility.Visible;
+                        drpDwnVisibility = Visibility.Visible;
+                        EditLbl = true;
                     }
-                    else if (parameters[i].Name.Contains("Unit IP"))
+                    else if (parameters[i].Ptype == 4)
                     {
-                        WiFiUnitIP += Convert.ToChar(parameters[i].CurrentValue);
-                        enumIndx = -1;
-                        btnvisibility = Visibility.Collapsed;
-                        drpDwnVisibility = Visibility.Collapsed;
-                        EditLbl = false;
+                        if (parameters[i].Name.Contains("Name"))
+                        {
+                            VehicleName += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+                        else if (parameters[i].Name.Contains("SSID"))
+                        {
+                            WiFiSSID += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+                        else if (parameters[i].Name.Contains("Password"))
+                        {
+                            WiFiPassword += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+                        else if (parameters[i].Name.Contains("Unit IP"))
+                        {
+                            WiFiUnitIP += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+                        else if (parameters[i].Name.Contains("Server IP"))
+                        {
+                            WiFiServerIP += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+                        else if (parameters[i].Name.Contains("Gateway IP"))
+                        {
+                            WiFiGatewayIP += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+                        else if (parameters[i].Name.Contains("Subnet Mask"))
+                        {
+                            WiFiSubnetMask += Convert.ToChar(parameters[i].CurrentValue);
+                            enumIndx = -1;
+                            btnvisibility = Visibility.Collapsed;
+                            drpDwnVisibility = Visibility.Collapsed;
+                            EditLbl = false;
+                        }
+
                     }
-                    else if (parameters[i].Name.Contains("Server IP"))
+
+                    if (parameters[i].AccessLevel == (int)AccessLevelEnum.Full && GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full || parameters[i].AccessLevel == (int)AccessLevelEnum.Unaccessable)
                     {
-                        WiFiServerIP += Convert.ToChar(parameters[i].CurrentValue);
-                        enumIndx = -1;
+                        EditLbl = true;
                         btnvisibility = Visibility.Collapsed;
                         drpDwnVisibility = Visibility.Collapsed;
-                        EditLbl = false;
                     }
-                    else if (parameters[i].Name.Contains("Gateway IP"))
+
+                    if (!parameters[i].Name.Contains("Name") && !parameters[i].Name.Contains("Reserved") && !parameters[i].Name.Contains("SSID") && !parameters[i].Name.Contains("Password")
+                        && !parameters[i].Name.Contains("Unit IP") && !parameters[i].Name.Contains("Server IP") && !parameters[i].Name.Contains("Gateway IP") && !parameters[i].Name.Contains("Subnet Mask"))
                     {
-                        WiFiGatewayIP += Convert.ToChar(parameters[i].CurrentValue);
-                        enumIndx = -1;
-                        btnvisibility = Visibility.Collapsed;
-                        drpDwnVisibility = Visibility.Collapsed;
-                        EditLbl = false;
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = parameters[i].Name,
+                            Value = valueString,
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            parameterEnums = parameters[i].parameterEnums,
+                            EnumIndx = enumIndx,
+                            Group = Parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
                     }
-                    else if (parameters[i].Name.Contains("Subnet Mask"))
+                    else if (parameters[i].Name.Contains("Name 15"))
                     {
-                        WiFiSubnetMask += Convert.ToChar(parameters[i].CurrentValue);
-                        enumIndx = -1;
-                        btnvisibility = Visibility.Collapsed;
-                        drpDwnVisibility = Visibility.Collapsed;
-                        EditLbl = false;
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "Name",
+                            Value = VehicleName,
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
+                    }
+                    else if (parameters[i].Name.Contains("SSID 32"))
+                    {
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "WiFi SSID",
+                            Value = WiFiSSID,
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
+                    }
+                    else if (parameters[i].Name.Contains("Password 32"))
+                    {
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "WiFi Password",
+                            Value = WiFiPassword,
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
+                    }
+                    else if (parameters[i].Name.Contains("Unit IP 15"))
+                    {
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "WiFi Unit IP",
+                            Value = IPAddressConditioner(WiFiUnitIP),
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
+                    }
+                    else if (parameters[i].Name.Contains("Server IP 15"))
+                    {
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "WiFi Server IP",
+                            Value = IPAddressConditioner(WiFiServerIP),
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
+                    }
+                    else if (parameters[i].Name.Contains("Gateway IP 15"))
+                    {
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "WiFi Gateway IP",
+                            Value = IPAddressConditioner(WiFiGatewayIP),
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
+                    }
+                    else if (parameters[i].Name.Contains("Subnet Mask 15"))
+                    {
+                        parametersDisplays.Add(new ParametersDisplay
+                        {
+                            OriginIndx = i,
+                            Number = parameters[i].Number,
+                            Name = "WiFi Subnet Mask",
+                            Value = IPAddressConditioner(WiFiSubnetMask),
+                            BtnVisibility = btnvisibility,
+                            dropDownVisibility = drpDwnVisibility,
+                            LablEdit = EditLbl,
+                            Group = parameters[i].Group,
+                            SubGroup = parameters[i].SubGroup,
+                            Description = parameters[i].Description
+                        });
                     }
 
                 }
-
-                if(parameters[i].AccessLevel == (int)AccessLevelEnum.Full && GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
-                {
-                    EditLbl = true;
-                    btnvisibility = Visibility.Collapsed;
-                    drpDwnVisibility = Visibility.Collapsed;
-                }
-
-                if (!parameters[i].Name.Contains("Name") && !parameters[i].Name.Contains("Reserved") && !parameters[i].Name.Contains("SSID") && !parameters[i].Name.Contains("Password")
-                    && !parameters[i].Name.Contains("Unit IP") && !parameters[i].Name.Contains("Server IP") && !parameters[i].Name.Contains("Gateway IP") && !parameters[i].Name.Contains("Subnet Mask"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = parameters[i].Name,
-                        Value = valueString,
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        parameterEnums = parameters[i].parameterEnums,
-                        EnumIndx = enumIndx,
-                        Group = Parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("Name 15"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "Name",
-                        Value = VehicleName,
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("SSID 32"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "WiFi SSID",
-                        Value = WiFiSSID,
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("Password 32"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "WiFi Password",
-                        Value = WiFiPassword,
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("Unit IP 15"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "WiFi Unit IP",
-                        Value = IPAddressConditioner(WiFiUnitIP),
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("Server IP 15"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "WiFi Server IP",
-                        Value = IPAddressConditioner(WiFiServerIP),
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("Gateway IP 15"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "WiFi Gateway IP",
-                        Value = IPAddressConditioner(WiFiGatewayIP),
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-                else if (parameters[i].Name.Contains("Subnet Mask 15"))
-                {
-                    parametersDisplays.Add(new ParametersDisplay
-                    {
-                        OriginIndx = i,
-                        Name = "WiFi Subnet Mask",
-                        Value = IPAddressConditioner(WiFiSubnetMask),
-                        BtnVisibility = btnvisibility,
-                        dropDownVisibility = drpDwnVisibility,
-                        LablEdit = EditLbl,
-                        Group = parameters[i].Group,
-                        SubGroup = parameters[i].SubGroup,
-                        Description = parameters[i].Description
-                    });
-                }
-
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine("Error");
             }
 
             return parametersDisplays;
@@ -587,6 +641,7 @@ namespace Booyco_HMI_Utility
             ParametersDisplay newDisp_Parameter_value = new ParametersDisplay()
             {
                 OriginIndx = Index,
+                Number = parameters.Number,
                 Name = parameters.Name,
                 Value = valueString,
                 BtnVisibility = btnvisibility,
@@ -635,7 +690,7 @@ namespace Booyco_HMI_Utility
             int j = 0;
             foreach (ParametersDisplay item in Disp_Parameters)
             {
-                if (item.Name == parameters[ParameterIndex].Name)
+                if (item.Number == parameters[ParameterIndex].Number)
                 {
                     return j;
                 }
@@ -694,9 +749,9 @@ namespace Booyco_HMI_Utility
             {
                 ParametersDisplay tempPar = (ParametersDisplay)DataGrid_Parameters.SelectedItem;
                 var SortedIndex = tempPar.OriginIndx;
-                int j = 0;
+            
 
-                int DisplayIndex = DataGrid_Parameters.SelectedIndex;
+                
 
                 if (parameters[SortedIndex].CurrentValue < parameters[SortedIndex].MaximumValue)
                 {
@@ -1117,7 +1172,7 @@ namespace Booyco_HMI_Utility
         private void GetDefaultParametersFromFile()
         {
             ExcelFileManagement excelFileManagement = new ExcelFileManagement();
-            string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/CommanderParametersFile.xlsx";
+            string _parameterPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Resources\\Documents\\BHUParametersFile.xlsx";
 
             Parameters = new List<Parameters>();
             Parameters = excelFileManagement.ParametersfromFile(_parameterPath);
@@ -1135,7 +1190,7 @@ namespace Booyco_HMI_Utility
         private void Save_ParaMetersToFile()
         {
             byte[] paraMeterBytes = new byte[parameters.Count * 4];
-            //byte[] valuebytes = new byte [4]
+            byte[] valuebytes = new byte[4];
             for (int i = 0; i < parameters.Count; i++)
             {
                 //valuebytes = BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue),4));
@@ -1165,12 +1220,13 @@ namespace Booyco_HMI_Utility
 
                     Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
                 }
-            }               
-            
+            }
+
 
             string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
-            string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\\\Saved Files\\Parameters" + "\\" + "Parameters.mer";
-            File.WriteAllText(_savedFilesPath, hex);
+            //string _savedFilesPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\\\Saved Files\\Parameters" + "\\" + "Parameters.mer";
+            //StoreParameterFile(_savedFilesPath);
+            //  File.WriteAllText(_savedFilesPath, hex);
 
             int fileChunck = 512;
             int bytesleft = 0;
@@ -1209,9 +1265,13 @@ namespace Booyco_HMI_Utility
         private void OpenParameterFile()
         {
             string _filename = "";
-            byte[] _parameters = { 0 };
-            string value = "";
+           
             Microsoft.Win32.OpenFileDialog _openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            if (Directory.Exists(ParameterDirectoryPath))
+            {
+                _openFileDialog.InitialDirectory = ParameterDirectoryPath;
+            }
+          
             _openFileDialog.Filter = "Mernok Elektronik File (*.mer)|*.mer";
 
             if (_openFileDialog.ShowDialog() == true)
@@ -1220,26 +1280,49 @@ namespace Booyco_HMI_Utility
                 _filename = _openFileDialog.FileName;
             }
 
-            using (StreamReader reader = new StreamReader(_filename))
+            ReadParameterFile(_filename);
+
+           
+       
+
+        }
+
+        private void ReadParameterFile(string _filename)
+        {
+            byte[] _parameters = { 0 };
+            string value = "";
+            int i = 0;
+            try
             {
-                value = reader.ReadToEnd();
-            }
-            _parameters = StringToByteArray(value);
 
-            for (int i = 0; i < parameters.Count; i++)
+                using (StreamReader reader = new StreamReader(_filename))
+                {
+                    value = reader.ReadToEnd();
+                }
+                _parameters = StringToByteArray(value);
+                                      
+                for (i = 0; i < parameters.Count; i++)
+                {
+                 
+                    parameters[i].CurrentValue = ((Int32)_parameters[(0 + (i * 4)) + 2]) + ((Int32)_parameters[(1 + (i * 4)) + 2] << 8) + ((Int32)_parameters[(2 + (i * 4)) + 2] << 16) + ((Int32)_parameters[(3 + (i * 4)) + 2] << 24);
+                }
+
+                Disp_Parameters = ParametersToDisplay(parameters);
+
+                parametrsGroup.GroupDescriptions.Remove(groupDescription);
+                parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
+
+                parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
+
+                parametrsGroup.GroupDescriptions.Add(groupDescription);
+                parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+            }
+            catch(Exception e)
             {
-                parameters[i].CurrentValue = ((Int32)_parameters[(0 + (i * 4)) + 2]) + ((Int32)_parameters[(1 + (i * 4)) + 2] << 8) + ((Int32)_parameters[(2 + (i * 4)) + 2] << 16) + ((Int32)_parameters[(3 + (i * 4)) + 2] << 24);
+                // === Invalid Path name ===
+                Debug.WriteLine("Invalid Path Name");
             }
-
-            Disp_Parameters = ParametersToDisplay(parameters);
-
-            parametrsGroup.GroupDescriptions.Remove(groupDescription);
-            parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
-
-            parametrsGroup = (CollectionView)CollectionViewSource.GetDefaultView(Disp_Parameters);
-
-            parametrsGroup.GroupDescriptions.Add(groupDescription);
-            parametrsGroup.GroupDescriptions.Add(SubgroupDescription);
+           
         }
 
         private void SaveParameterFile()
@@ -1253,48 +1336,86 @@ namespace Booyco_HMI_Utility
             _saveFileDialog.FilterIndex = 1;
             _saveFileDialog.RestoreDirectory = true;
 
+            if (Directory.Exists(ParameterDirectoryPath))
+            {
+                _saveFileDialog.InitialDirectory = ParameterDirectoryPath;
+            }
+
+
             if (_saveFileDialog.ShowDialog() == true)
             {
                 if (_saveFileDialog.FileName.Contains(".mer"))
                 {
-                    StreamWriter writer = new StreamWriter(_saveFileDialog.FileName);
-                    int counter = 0;
+                    StoreParameterFile(_saveFileDialog.FileName);
+                }
+            }
+        }
+
+        private void StoreParameterFile(string _pathName)
+        {
+          
+            if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(_pathName)))
+            {
+                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(_pathName));
+            }
+            StreamWriter writer = new StreamWriter(_pathName);
+            int counter = 0;
 
 
-                    byte[] paraMeterBytes = new byte[parameters.Count * 4];
-                    byte[] valbytes = new byte[4];
-                    Int32 valInt32 = new Int32();
-                    for (int i = 0; i < parameters.Count; i++)
+            byte[] paraMeterBytes = new byte[parameters.Count * 4];
+            byte[] valbytes = new byte[4];
+            Int32 valInt32 = new Int32();
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                valbytes = BitConverter.GetBytes(parameters[i].CurrentValue);
+                valInt32 = BitConverter.ToInt32(valbytes, 0);
+                if (i == 322)
+                {
+                    Thread.Sleep(1);
+                }
+
+                if (GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
+                {
+                    if (parameters[i].AccessLevel == 2)
                     {
-                        valbytes = BitConverter.GetBytes(parameters[i].CurrentValue);
-                        valInt32 = BitConverter.ToInt32(valbytes, 0);
-                        if (i == 322)
+                        byte[] _unchanged =
                         {
-                            Thread.Sleep(1);
-                        }
-                        //Array.Copy(BitConverter.GetBytes(BitConverter.ToInt32(valbytes, 0)), 0, paraMeterBytes, i * 4, 4);
+                            0xFF,
+                            0xFF,
+                            0xFF,
+                            0xFF
+                        };
+                        Array.Copy(_unchanged, 0, paraMeterBytes, i * 4, 4);
+                    }
+                    else
+                    {
                         Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
                     }
 
-                    string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
-                    // write parameter file start bytes
-                    writer.Write("5B26");
-
-                    writer.Write(hex.ToCharArray());
-                    //foreach (char b in hex)
-                    //{
-                    //    writer.Write(b);
-                    //}
-
-                    // write parameter file stop byte
-                    writer.Write("5D");
-
-                    // === dispose streamwrite ===
-                    writer.Dispose();
-                    // === close stramwrite ===
-                    writer.Close();
                 }
+                else
+                {
+                    Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
+                }           
             }
+
+            string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);
+            // write parameter file start bytes
+            writer.Write("5B26");
+
+            writer.Write(hex.ToCharArray());
+            //foreach (char b in hex)
+            //{
+            //    writer.Write(b);
+            //}
+
+            // write parameter file stop byte
+            writer.Write("5D");
+
+            // === dispose streamwrite ===
+            writer.Dispose();
+            // === close stramwrite ===
+            writer.Close();
         }
 
  
@@ -1354,10 +1475,16 @@ namespace Booyco_HMI_Utility
             if ((string)ButtonBack.Content == "Back")
             {
                 if (ProgramFlow.SourseWindow == (int)ProgramFlowE.WiFi)
+                {
                     //GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&PX00]");
-                //            else
+                    //            else
 
-                backBtner = true;
+                    backBtner = true;
+                }
+                else
+                {
+                    ProgramFlow.ProgramWindow = (int)ProgramFlowE.ParameterFileView;                   
+                }
             }
             else
             {

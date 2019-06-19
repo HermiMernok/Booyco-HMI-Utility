@@ -132,12 +132,12 @@ namespace Booyco_HMI_Utility
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.ParameterFileView)
             {
-                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = ParametersView.Visibility = Visibility.Collapsed;
                 ParameterFileView.Visibility = Visibility.Visible;
+                WiFiView.Visibility = USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = ParametersView.Visibility = Visibility.Collapsed;
 
                 //ProgramFlow.SourseWindow = (int)ProgramFlowE.File;
             }
-            
+
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.Bluetooth)
             {
                 WiFiView.Visibility = USBView.Visibility = DataLogView.Visibility = FileView.Visibility = Visibility.Collapsed;
@@ -164,8 +164,9 @@ namespace Booyco_HMI_Utility
                 ImageFilesView.Visibility = Visibility.Collapsed;
             }
             else if(ProgramFlow.ProgramWindow == (int)ProgramFlowE.ParametersView)
-            {
+            {                
                 ParametersView.Visibility = Visibility.Visible;
+                ParameterFileView.Visibility = Visibility.Collapsed;
                 AudioFilesView.Visibility = Visibility.Collapsed;
                 ConfigureMenuView.Visibility = Visibility.Collapsed;
                 ImageFilesView.Visibility = Visibility.Collapsed;

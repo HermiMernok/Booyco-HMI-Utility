@@ -147,40 +147,48 @@ namespace Booyco_HMI_Utility
 
             if (_data != null)
             {
+                int _rowCount = 0;
                 foreach (DataRow _row in _data)
                 {
-                    try
-                    {
-                        parameters.Add(new Parameters
+                   // if (_rowCount != 0)
+                   // {
+                        try
                         {
-                            Name = Convert.ToString(_row.ItemArray[0]),
-                            CurrentValue = Convert.ToInt32(_row.ItemArray[1]),
-                            MaximumValue = Convert.ToInt32(_row.ItemArray[2]),
-                            MinimumValue = Convert.ToInt32(_row.ItemArray[3]),
-                            DefaultValue = Convert.ToInt32(_row.ItemArray[4]),
-                            Ptype = Convert.ToInt16(_row.ItemArray[5]),
-                            enumVal = Convert.ToInt16(_row.ItemArray[6]),
-                            Group = Convert.ToString(_row.ItemArray[7]),
-                            SubGroup = Convert.ToString(_row.ItemArray[8]),
-                            Description = Convert.ToString(_row.ItemArray[9]),
-                            AccessLevel = Convert.ToInt16(_row.ItemArray[10])
-
-                        });
-
-                        if (_row.ItemArray[12].ToString() != "")
-                        {
-                            enums.Add(new ParameterEnum
+                            parameters.Add(new Parameters
                             {
-                                enumVal = Convert.ToInt16(_row.ItemArray[12]),
-                                enumName = Convert.ToString(_row.ItemArray[13])
-                            });
-                        }
+                                Number = Convert.ToInt32(_row.ItemArray[0]),
+                                Name = Convert.ToString(_row.ItemArray[2]),
+                                CurrentValue = Convert.ToInt32(_row.ItemArray[3]),
+                                MaximumValue = Convert.ToInt32(_row.ItemArray[4]),
+                                MinimumValue = Convert.ToInt32(_row.ItemArray[5]),
+                                DefaultValue = Convert.ToInt32(_row.ItemArray[6]),
+                                Ptype = Convert.ToInt16(_row.ItemArray[7]),
+                                enumVal = Convert.ToInt16(_row.ItemArray[8]),
+                                Group = Convert.ToString(_row.ItemArray[9]),
+                                SubGroup = Convert.ToString(_row.ItemArray[10]),
+                                Description = Convert.ToString(_row.ItemArray[11]),
+                                AccessLevel = Convert.ToInt16(_row.ItemArray[12])
 
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("Exception - Parameter from excel error: " + e.ToString());
-                    }
+                            });
+
+                            if (_row.ItemArray[14].ToString() != "")
+                            {
+                                enums.Add(new ParameterEnum
+                                {
+                                    enumVal = Convert.ToInt16(_row.ItemArray[14]),
+                                    enumName = Convert.ToString(_row.ItemArray[15])
+                                });
+                            }
+                            
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine("Exception - Parameter from excel error: " + e.ToString());
+                        }
+                      
+                   // }
+
+                   // _rowCount++;
 
                 }
 

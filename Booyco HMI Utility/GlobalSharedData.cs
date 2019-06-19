@@ -36,7 +36,8 @@ namespace Booyco_HMI_Utility
     {
         Limited,
         Basic,
-        Full            
+        Full,
+        Unaccessable,
     }
     public enum ApplicationEnum
     {
