@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Booyco_HMI_Utility"
              mc:Ignorable="d" 
-              d:DesignHeight="800" d:DesignWidth="1200" Background="White">
+              d:DesignHeight="800" d:DesignWidth="1200" Background="White" IsVisibleChanged="UserControl_IsVisibleChanged">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="5"/>
@@ -28,7 +28,7 @@
             </StackPanel>
         </Viewbox>
 
-        <Button x:Name="ButtonParameters" Grid.Column="1" Grid.Row="2" Margin="5" Click="ButtonParameters_Click">
+        <Button x:Name="Button_Parameters" Grid.Column="1" Grid.Row="2" Margin="5" Click="ButtonParameters_Click">
             <StackPanel Orientation="Horizontal">
                 <Grid Width="500">
                     <Grid.RowDefinitions>
@@ -38,7 +38,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Content="Parameters"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="500"/>
+                    <Label Content="Parameters" IsEnabled="{Binding GlobalSharedData.ActiveDevice}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="500"/>
                 </Grid>
 
             </StackPanel>
@@ -57,7 +57,7 @@
                 </Grid>
             </StackPanel>
         </Button>
-        <Button x:Name="ButtonAudio" Grid.Column="1" Grid.Row="4" Margin="5" Click="ButtonAudio_Click">
+        <Button x:Name="Button_AudioFiles" Grid.Column="1" Grid.Row="4" Margin="5" Click="ButtonAudio_Click">
             <StackPanel Orientation="Horizontal">
                 <Grid Width="500">
                     <Grid.RowDefinitions>

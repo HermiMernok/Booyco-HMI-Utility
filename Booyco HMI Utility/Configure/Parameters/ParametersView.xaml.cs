@@ -116,8 +116,8 @@ namespace Booyco_HMI_Utility
                 {
                     Label_ProgressStatusPercentage.Visibility = Visibility.Visible;
                     Label_StatusView.Content = "Waiting for user command..";
-                    ProgressBar_Params.Visibility = Visibility.Visible;
-                    ButtonConfigRefresh_Click(null, null);
+                    ProgressBar_Params.Visibility = Visibility.Visible;                   
+                    ButtonConfigRefresh_Click(null, null);                 
                     //ConfigRefreshButton.Content = "Refresh";
                     SendFileButton.Visibility = Visibility.Visible;
                     ButtonConfigRefresh.Visibility = Visibility.Visible;

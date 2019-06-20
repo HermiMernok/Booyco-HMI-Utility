@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Booyco_HMI_Utility
 {
@@ -20,9 +21,29 @@ namespace Booyco_HMI_Utility
     /// </summary>
     public partial class ConfigureMenuView : UserControl
     {
+        private DispatcherTimer dispatcherTimer;
         public ConfigureMenuView()
         {
             InitializeComponent();
+
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(ActiveStatus);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 50);
+           
+        }
+
+        void ActiveStatus(object sender, EventArgs e)
+        {
+            if(GlobalSharedData.ActiveDevice)
+            {
+                Button_Parameters.IsEnabled = true;
+                Button_AudioFiles.IsEnabled = true;
+            }
+            else
+            {
+                Button_Parameters.IsEnabled = false;
+                Button_AudioFiles.IsEnabled = false;
+            }
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
@@ -43,9 +64,30 @@ namespace Booyco_HMI_Utility
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.ImageFilesView;
         }
         private void ButtonAudio_Click(object sender, RoutedEventArgs e)
-        {
-      
+        {      
             ProgramFlow.ProgramWindow = (int)ProgramFlowE.AudioFilesView;
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(this.Visibility == Visibility.Visible)
+            {
+                dispatcherTimer.Start();
+                if (GlobalSharedData.ActiveDevice)
+                {
+                    Button_Parameters.IsEnabled = true;
+                    Button_AudioFiles.IsEnabled = true;
+                }
+                else
+                {
+                    Button_Parameters.IsEnabled = false;
+                    Button_AudioFiles.IsEnabled = false;
+                }
+            }
+            else
+            {
+                dispatcherTimer.Stop();
+            }
         }
     }
 }

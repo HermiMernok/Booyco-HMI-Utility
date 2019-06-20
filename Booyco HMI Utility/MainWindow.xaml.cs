@@ -61,7 +61,9 @@ namespace Booyco_HMI_Utility
                 dispatcherTimer.Tick += new EventHandler(WindowUpdateTimer);
                 dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
                 dispatcherTimer.Start();
-              
+                GlobalSharedData.ActiveDevice = false;
+
+
 
         }
         /// <summary>
@@ -108,7 +110,7 @@ namespace Booyco_HMI_Utility
             }
             else if (ProgramFlow.ProgramWindow == (int)ProgramFlowE.WiFi)
             {
-                USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileMenuView.Visibility = Visibility.Collapsed;
+                USBView.Visibility = BluetoothView.Visibility = DataLogView.Visibility = FileMenuView.Visibility  = ParametersView.Visibility = Visibility.Collapsed;
                 WiFiView.Visibility = Visibility.Visible;
                 ProgramFlow.SourseWindow = (int)ProgramFlowE.WiFi;
             }

@@ -63,7 +63,7 @@ namespace Booyco_HMI_Utility
         public static List<NetworkDevice> NetworkDevices = new List<NetworkDevice>();
         public static int SelectedDevice { get; set; }
         public static uint SelectedVID = 0;
-        public static bool ActiveDevice= false;
+        public static bool ActiveDevice { get; set; }
 
         public static string WiFiApStatus;
         public static bool WiFiConnectionStatus;

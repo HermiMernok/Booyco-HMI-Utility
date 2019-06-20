@@ -422,7 +422,7 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 5000;
+            clientR[0].ReceiveTimeout = 6000;
             clientR[0].NoDelay = true;
 
             NetworkStream stream = clientR[0].GetStream();
