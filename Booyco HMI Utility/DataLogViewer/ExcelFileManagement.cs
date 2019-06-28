@@ -144,15 +144,66 @@ namespace Booyco_HMI_Utility
             AssetType = mernokAssetFile.mernokAssetList.Select(t => t.TypeName).ToList();
 
             DataRowCollection _data = ReadExcelFile(fileName, 0);
+            DataRowCollection _dataGroupList = ReadExcelFile(fileName, 1);
 
-            if (_data != null)
+            List<ParameterGroup> GroupNames =new List<ParameterGroup>();
+            if (_dataGroupList != null)
+            {
+                foreach (DataRow _row in _dataGroupList)
+                {
+                    try
+                    {
+                        ParameterGroup _Group = new ParameterGroup();
+                        _Group.SubGroupNames = new List<String>();
+                        _Group.GroupName = Convert.ToString(_row.ItemArray[3]); 
+
+                        String _SubGroupName = Convert.ToString(_row.ItemArray[4]);
+                        if (_Group.GroupName != "" && !GroupNames.Exists(x => x.GroupName == _Group.GroupName))
+                        {
+                            _Group.SubGroupNames.Add(_SubGroupName);
+                            GroupNames.Add(_Group);
+
+                        }
+                        else
+                        {
+                            GroupNames.ElementAt(GroupNames.FindIndex(x => x.GroupName == _Group.GroupName)).SubGroupNames.Add(_SubGroupName);
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+
+                }
+            }
+             if (_data != null)
             {
                 int _rowCount = 0;
                 foreach (DataRow _row in _data)
                 {
-                   // if (_rowCount != 0)
-                   // {
-                        try
+                    // if (_rowCount != 0)
+                    // {
+
+                    int _order = 0;
+                    if(_row.ItemArray[14].ToString() != "")
+                    {
+                        _order = Convert.ToInt16(_row.ItemArray[14]);
+                    }
+                    string _group = Convert.ToString(_row.ItemArray[9]);
+                    string _subGroup = Convert.ToString(_row.ItemArray[10]);
+                    int _groupOrder = 0;
+                    int _subGroupOrder = 0;
+                    if (GroupNames.Exists(x => x.GroupName == _group))
+                    {
+                        _groupOrder = GroupNames.FindIndex(x => x.GroupName == _group);
+                    }
+
+                    if (GroupNames.ElementAt(_groupOrder).SubGroupNames.Exists(x => x == _subGroup))
+                    {
+                        _subGroupOrder = GroupNames.ElementAt(_groupOrder).SubGroupNames.FindIndex(x => x == _subGroup);
+                    }
+
+                    try
                         {
                             parameters.Add(new Parameters
                             {
@@ -164,19 +215,21 @@ namespace Booyco_HMI_Utility
                                 DefaultValue = Convert.ToInt32(_row.ItemArray[6]),
                                 Ptype = Convert.ToInt16(_row.ItemArray[7]),
                                 enumVal = Convert.ToInt16(_row.ItemArray[8]),
-                                Group = Convert.ToString(_row.ItemArray[9]),
-                                SubGroup = Convert.ToString(_row.ItemArray[10]),
+                                Group = _group,
+                                SubGroup = _subGroup,
                                 Description = Convert.ToString(_row.ItemArray[11]),
-                                AccessLevel = Convert.ToInt16(_row.ItemArray[12])
+                                AccessLevel = Convert.ToInt16(_row.ItemArray[12]),
+                                VersionControl = Convert.ToInt16(_row.ItemArray[13]),
+                                Order = _order,
 
                             });
 
-                            if (_row.ItemArray[14].ToString() != "")
+                            if (_row.ItemArray[15].ToString() != "")
                             {
                                 enums.Add(new ParameterEnum
                                 {
-                                    enumVal = Convert.ToInt16(_row.ItemArray[14]),
-                                    enumName = Convert.ToString(_row.ItemArray[15])
+                                    enumVal = Convert.ToInt16(_row.ItemArray[15]),
+                                    enumName = Convert.ToString(_row.ItemArray[16])
                                 });
                             }
                             

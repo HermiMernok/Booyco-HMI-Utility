@@ -479,7 +479,11 @@ namespace Booyco_HMI_Utility
                             EnumIndx = enumIndx,
                             Group = Parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                            Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
+
                         });
                     }
                     else if (parameters[i].Name.Contains("Name 15"))
@@ -495,7 +499,10 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                             Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
                         });
                     }
                     else if (parameters[i].Name.Contains("SSID 32"))
@@ -511,7 +518,10 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                             Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
                         });
                     }
                     else if (parameters[i].Name.Contains("Password 32"))
@@ -527,7 +537,10 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                             Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
                         });
                     }
                     else if (parameters[i].Name.Contains("Unit IP 15"))
@@ -543,7 +556,10 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                             Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
                         });
                     }
                     else if (parameters[i].Name.Contains("Server IP 15"))
@@ -559,7 +575,10 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                            Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
                         });
                     }
                     else if (parameters[i].Name.Contains("Gateway IP 15"))
@@ -575,7 +594,11 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                            Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
+
                         });
                     }
                     else if (parameters[i].Name.Contains("Subnet Mask 15"))
@@ -591,7 +614,10 @@ namespace Booyco_HMI_Utility
                             LablEdit = EditLbl,
                             Group = parameters[i].Group,
                             SubGroup = parameters[i].SubGroup,
-                            Description = parameters[i].Description
+                            Description = parameters[i].Description,
+                            Order = parameters[i].Order,
+                            GroupOrder = parameters[i].GroupOrder,
+                            SubGroupOrder = parameters[i].SubGroupOrder
                         });
                     }
 
@@ -601,7 +627,7 @@ namespace Booyco_HMI_Utility
             {
                 Debug.WriteLine("Error");
             }
-
+            parametersDisplays = new ObservableCollection<ParametersDisplay>( parametersDisplays.OrderBy(x => x.GroupOrder).ThenBy(x => x.SubGroupOrder).ThenBy(x => x.Order));
             return parametersDisplays;
         }
 
@@ -1096,7 +1122,7 @@ namespace Booyco_HMI_Utility
 
 
             Disp_Parameters = ParametersToDisplay(parameters);
-
+   
             parametrsGroup.GroupDescriptions.Remove(groupDescription);
             parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
 
@@ -1308,7 +1334,7 @@ namespace Booyco_HMI_Utility
                 }
 
                 Disp_Parameters = ParametersToDisplay(parameters);
-
+          
                 parametrsGroup.GroupDescriptions.Remove(groupDescription);
                 parametrsGroup.GroupDescriptions.Remove(SubgroupDescription);
 

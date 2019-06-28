@@ -17,13 +17,24 @@ namespace Booyco_HMI_Utility
         public int MinimumValue;
         public int DefaultValue;
         public string Group;
+        public int GroupOrder;
         public string SubGroup;
+        public int SubGroupOrder;
         public int Ptype;
         public int AccessLevel;
-        
+        public int VersionControl;
+        public int Order;
         public int enumVal;
         public List<string> parameterEnums;
         public string Description;
+
+    }
+
+    public class ParameterGroup
+    {
+        public string GroupName { get; set; }
+
+        public List<string> SubGroupNames { get; set; }
 
     }
     
@@ -62,6 +73,10 @@ namespace Booyco_HMI_Utility
         public List<string> parameterEnums { get; set; }
         public int EnumIndx { get; set; }
         public string Description { get; set; }
+
+        public int Order { get; set; }
+        public int GroupOrder { get; set; }
+        public int SubGroupOrder { get; set; }
     }
 
     public class ParameterEnum

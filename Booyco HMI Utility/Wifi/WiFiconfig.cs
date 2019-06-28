@@ -20,7 +20,6 @@ namespace Booyco_HMI_Utility
     public class WiFiconfig
     {
 
-        #region WiFi hotspot
         public string WiFiHotspotSSID = "BooycoHMIUtility";
         public string WiFiKey = "BC123456";
 
@@ -122,7 +121,7 @@ namespace Booyco_HMI_Utility
             }
 
         }
-        #endregion
+     
         
         public static bool BusyReconnecting = false;
         public static bool ConnectionError = false;
@@ -130,7 +129,7 @@ namespace Booyco_HMI_Utility
         public static string PCName = Environment.MachineName;
         public static byte[] HeartbeatMessage;
 
-        #region TCP server
+      
         public void ServerRun()
         {
             WirelessHotspot(WiFiHotspotSSID, WiFiKey, true);
@@ -139,7 +138,7 @@ namespace Booyco_HMI_Utility
             byte[] bytes = new byte[30];
             Array.Copy(Encoding.ASCII.GetBytes(PCName), bytes, Encoding.ASCII.GetBytes(PCName).Length);
          
-            #region HeartbeatCreation
+ 
             HeartbeatMessage = Enumerable.Repeat((byte)0, 522).ToArray();
             HeartbeatMessage[0] = (byte)'[';
             HeartbeatMessage[1] = (byte)'&';
@@ -155,7 +154,7 @@ namespace Booyco_HMI_Utility
 
             Array.Copy(bytes, 0, HeartbeatMessage, 4, 30);
             Debug.WriteLine(Encoding.ASCII.GetString(HeartbeatMessage, 0, 34));
-            #endregion
+     
 
             Thread newThread = new Thread(new ThreadStart(StartServer))
             {
@@ -165,7 +164,7 @@ namespace Booyco_HMI_Utility
             newThread.Start();
         }
 
-        #region TCP server dependants
+      
         IPEndPoint ip;
         TcpListener server;
         Socket socket;
@@ -178,7 +177,7 @@ namespace Booyco_HMI_Utility
         private int clientnum = 0;
         private static int pretCount = 0;
         private static bool overflow = false;
-        #endregion
+
 
         static void ConfigureTcpSocket(Socket tcpSocket)
         {
@@ -206,9 +205,9 @@ namespace Booyco_HMI_Utility
 
             // Disable the Nagle Algorithm for this tcp socket.
             tcpSocket.NoDelay = true;
-
-            // Set the receive buffer size to 8k
-            //tcpSocket.ReceiveBufferSize = 8192;
+           
+             //Set the receive buffer size to 8k
+            tcpSocket.ReceiveBufferSize = 8192;
 
             //           // Set the timeout for synchronous receive methods to 
             //           // 1 second (1000 milliseconds.)
@@ -228,14 +227,11 @@ namespace Booyco_HMI_Utility
 
         private void StartServer()
         {
-
             endAll = false;
             SelectedIP = "";
             clients = new List<TcpClient>();
             try
-            {
-               
-             
+            {                            
                 server = new TcpListener(IPAddress.Any, 13000);
                 server.Start();
         
@@ -340,8 +336,6 @@ namespace Booyco_HMI_Utility
                     clientnum++;
                   
 
-
-
                 }
                 catch
                 {
@@ -353,59 +347,6 @@ namespace Booyco_HMI_Utility
 
             Debug.WriteLine("Maximum amount of clients reached!");
             GlobalSharedData.ServerStatus = "Server closed";
-
-        }
-
-        private void ClientsPoll(EndPoint clientnumr)
-        {
-            List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
-            while (!endAll)
-            {
-                try
-                {
-                    clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
-                    //if(clientR.Count > 0)
-                    //   {
-                    try
-                    {
-
-
-                        if (!clientR[0].Client.Poll(10, SelectMode.SelectRead))
-                        {
-                            //    byte[] buff = new byte[1];
-                            //    if (clientR[0].Client.Receive(buff, SocketFlags.Peek) == 0)
-                            //    {
-                            Thread.Sleep(1000);
-                        }
-
-                        else
-                        {
-
-                            Debug.WriteLine("Polling failed, no error");
-                            clientR[0].Close();
-                            clients.Remove(clientR[0]);
-                            ClientLsitChanged(TCPclients);                  //                            get_loss(clientR[0].Client.RemoteEndPoint.ToString(), 2);
-                        }
-                    
-                    }
-                    catch (Exception f)
-                    {
-                        Debug.WriteLine("Polling failed, error");
-                        clientR[0].Close();
-                        clients.Remove(clientR[0]);
-                        ClientLsitChanged(TCPclients);
-                        clientnum--;
-                        break;
-                    }
-                    // }
-                }
-                catch
-                {
-                    Debug.WriteLine("Polling failed, client not found!");
-                    break;
-                }
-
-            }
 
         }
 
@@ -422,9 +363,9 @@ namespace Booyco_HMI_Utility
             int count = 0;
             int totalCount = 0;
             int heartbeatCounter = 0;
-            clientR[0].ReceiveTimeout = 6000;
+            clientR[0].ReceiveTimeout = 60000;
             clientR[0].NoDelay = true;
-
+      
             NetworkStream stream = clientR[0].GetStream();
           
             while (clientR[0].Connected && !endAll /*&& !clientR[0].Client.Poll(50, SelectMode.SelectRead)*/)
@@ -439,7 +380,7 @@ namespace Booyco_HMI_Utility
                         //       clientR[0].ReceiveTimeout = 10000;
                         //   }
                         Debug.WriteLine(" i: " + i.ToString() + " totalcount:" + totalCount.ToString() + " Buffer" + Buffer[0].ToString() + "-" + Buffer[512 + 9].ToString());
-                        #region bufferCreator
+                       
                         if (i == DataExtractorView.DATALOG_RX_SIZE + 10 && data2[0] == '[' && data2[DataExtractorView.DATALOG_RX_SIZE + 9] == ']')
                         {
                             Buffer = new byte[DataExtractorView.DATALOG_RX_SIZE + 10];
@@ -551,10 +492,7 @@ namespace Booyco_HMI_Utility
 
                         }
 
-                        #endregion
-                        #region Message Debug
-                       
-                        #endregion
+                   
 
                         if (messageReceived)
                         {
@@ -563,11 +501,11 @@ namespace Booyco_HMI_Utility
 
                             //GlobalSharedData.ServerStatus = "Received: " + recmeg + " from: " + clientR[0].RemoteEndPoint;
                             Debug.WriteLine("Process Message - " +totalCount.ToString() + " -Recieved: " + Encoding.UTF8.GetString(Buffer, 0, 10) + "..." + Encoding.UTF8.GetString(Buffer, 512, 10) + "       Time: " + DateTime.Now.ToLongTimeString());
-                            #region Message Paresers
+                          
                             if (Buffer[0] == '[' && Buffer[1] == '&' && Buffer[2] == 'B' && Buffer[3] == 'h' /*&& Buffer[521] == ']'*/)
                             {
                                 ValidMessages++;
-                                #region heartbeatmessage
+                               
                                 if (!Bootloader.BootReady)
 
                                 {
@@ -606,7 +544,7 @@ namespace Booyco_HMI_Utility
                                     catch
                                     {
                                         Debug.WriteLine("Heartbeat not parsed!");
-                                        #region failed heartbeat
+                         
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Name = "UNKNOWN DEVICE";
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).VID = 0;
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).FirmRev = 0;
@@ -619,7 +557,7 @@ namespace Booyco_HMI_Utility
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).BootloaderrevString = "-.-";
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).HeartCount++;
                                         TCPclients.ElementAt(clients.IndexOf(clientR[0])).Licensed = false;
-                                        #endregion
+                                       
                                     }
 
                                     stream.Write(HeartbeatMessage, 0, HeartbeatMessage.Length); //Send the data to the client  
@@ -627,7 +565,7 @@ namespace Booyco_HMI_Utility
                                     Heartbeat = true;
                                     DataExtractorView.Heartbeat = true;                                                            //Console.WriteLine("====================heartbeat recieved ======================:" + ValidMessages.ToString());
                                 }
-                                #endregion
+                           
                             }
                             else if (Buffer[2] == 'B')
                             {
@@ -650,8 +588,7 @@ namespace Booyco_HMI_Utility
                             {
                                 DataExtractorView.DataExtractorParser(Buffer, clientnumr);
                             }
-                            #endregion
-
+                        
                             Hearted = " message recieved:" + ValidMessages.ToString() + " of " + messagecount.ToString();
 
                         }
@@ -714,7 +651,9 @@ namespace Booyco_HMI_Utility
 
         private void ClientSendBytes(EndPoint clientnumr, int remover)
         {
-            List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList(); ;
+            List<TcpClient> clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
+
+       
         
             try
             { 
@@ -727,79 +666,54 @@ namespace Booyco_HMI_Utility
                 int counter = 0;
                 while (clientR[0].Connected && !endAll /*&& !clientR[0].Client.Poll(20, SelectMode.SelectRead)*/)
                 {
-                    try
-                    {
-                        if ((SelectedIP == clientnumr.ToString() || GlobalSharedData.BroadCast == true) && GlobalSharedData.ServerMessageSend != null && GlobalSharedData.ServerMessageSend != null)
+                        try
                         {
-                            data = new byte[GlobalSharedData.ServerMessageSend.Length];
-                            data = GlobalSharedData.ServerMessageSend;
-                            try
+                      
+                            if ((SelectedIP == clientnumr.ToString() || GlobalSharedData.BroadCast == true) && GlobalSharedData.ServerMessageSend != null && GlobalSharedData.ServerMessageSend != null)
                             {
-                                stream.Write(data, 0, data.Length); //Send the data to the client
-                            }
-                            catch
-                            {
+                                data = new byte[GlobalSharedData.ServerMessageSend.Length];
+                                data = GlobalSharedData.ServerMessageSend;
                                 try
                                 {
-                                    clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
                                     stream.Write(data, 0, data.Length); //Send the data to the client
                                 }
                                 catch
                                 {
-                                    Debug.WriteLine("client not found in list!");
-                                    break;
+                                    try
+                                    {
+                                        clientR = clients.Where(t => t.Client.RemoteEndPoint == clientnumr).ToList();
+                                        stream.Write(data, 0, data.Length); //Send the data to the client
+                                    }
+                                    catch
+                                    {
+                                        Debug.WriteLine("client not found in list!");
+                                        break;
+                                    }
                                 }
-                            }
 
-                            //ServerStatus = "Sent: " + ServerMessageSend + " to " + clientR[0].RemoteEndPoint;
-                            //GlobalSharedData.ServerStatus = "Message sent";
-                            GlobalSharedData.CommunicationSent = true;
-                            //Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
-                            Debug.WriteLine("Sent: " + Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend, 0, 5) + "       Time: " + DateTime.Now.ToLongTimeString());
-                            GlobalSharedData.ServerMessageSend = null;
+                                //ServerStatus = "Sent: " + ServerMessageSend + " to " + clientR[0].RemoteEndPoint;
+                                //GlobalSharedData.ServerStatus = "Message sent";
+                                GlobalSharedData.CommunicationSent = true;
+                                //Console.WriteLine("Sent: {0}", Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend));
+                                Debug.WriteLine("Sent: " + Encoding.UTF8.GetString(GlobalSharedData.ServerMessageSend, 0, 5) + "       Time: " + DateTime.Now.ToLongTimeString());
+                                GlobalSharedData.ServerMessageSend = null;
+                            }                        
+                      
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("-------------- The sending failed");
-                        //break;
-                    }
-                }
-                //try
-                //{
-
-                //    IPEndPoint clientel = (IPEndPoint)clientR[0].Client.RemoteEndPoint;
-                //    if (clients.Where(t => t.Client.RemoteEndPoint.ToString().Contains(clientel.Address.ToString())).ToList().Count() != 0)
-                //    {
-                //        clientR[0].Close();
-                //        ClientLsitChanged(TCPclients);
-                //        clients.Remove(clientR[0]);
-                //        clientnum--;
-                //        Console.WriteLine("-------------- {0} Client Removed", clientnumr);
-                //    }
-                //}
-                //catch
-                //{
-                //    Console.WriteLine("-------------- {0} Client Removed failed", clientnumr);
-                //}
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine("-------------- The sending failed");
+                            //break;
+                        }                    
+                }       
             }
             catch
             {
-
                 Debug.WriteLine("-------------- {0} closed send due to error", clientnumr);
-                //clientR[0].Close();
-                //ClientLsitChanged(TCPclients);
                 return;
             }
 
-
             Debug.WriteLine("-------------- {0} closed send", clientnumr);
-            //clientR[0].Close();
-            //ClientLsitChanged(TCPclients);
-            //
-            //clients.Remove(clientR[0]);
-            //
-            //clientnum--;
         }
 
         public List<TCPclientR> ClientLsitChanged(List<TCPclientR> tCPclientR)
@@ -887,55 +801,13 @@ namespace Booyco_HMI_Utility
             catch(Exception ex)
             {
                 Debug.WriteLine("Server close error=========");
-            }
-            //try
-            //{
-            //  // var prc = new ProcManager();
-            //  //  prc.KillByPort(13000);
-            //}
-            //catch
-            //{
-            //    Console.WriteLine("port failed to close;");
-
-            //}
-            
+            }                    
         }
 
-        private double get_loss(String host, int pingAmount)
-        {
-            Ping pingSender = new Ping();
-            PingOptions options = new PingOptions();
-
-            // Use the default Ttl value which is 128,
-            // but change the fragmentation behavior.
-            options.DontFragment = true;
-
-            // Create a buffer of 32 bytes of data to be transmitted.
-            string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-            byte[] buffer = Encoding.ASCII.GetBytes(data);
-            int timeout = 120;
-            int failed = 0;
-
-            // Loop the amount of times to ping
-            for (int i = 0; i < pingAmount; i++)
-            {
-                PingReply reply = pingSender.Send(host, timeout, buffer, options);
-                if (reply.Status != IPStatus.Success)
-                {
-                    failed += 1;
-                }
-
-            } // End For
-
-            // Return the percentage
-            double percent = (failed / pingAmount) * 100;
-            return percent;
-        }
-
-        #endregion
+     
     }
 
-    #region Open port management
+    
     public class PRC
     {
         public int PID { get; set; }
@@ -1009,12 +881,12 @@ namespace Booyco_HMI_Utility
             return result;
         }
     }
-    #endregion
+  
 
-    #region Class properties
+ 
     public class NetworkDevice : INotifyPropertyChanged
     {
-        #region OnProperty Changed
+       
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -1022,7 +894,7 @@ namespace Booyco_HMI_Utility
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         /////////////////////////////////////////////////////////////
-        #endregion
+      
 
         private string _deviceName = "NO NAME";
 
@@ -1074,7 +946,7 @@ namespace Booyco_HMI_Utility
     public class TCPclientR : INotifyPropertyChanged
     {
         GeneralFunctions generalFunctions = new GeneralFunctions();
-        #region OnProperty Changed
+    
         /////////////////////////////////////////////////////////////
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -1082,7 +954,7 @@ namespace Booyco_HMI_Utility
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         /////////////////////////////////////////////////////////////
-        #endregion
+   
 
         private string _IP ;
         public string IP
@@ -1331,8 +1203,4 @@ namespace Booyco_HMI_Utility
 
 }
 
-
-
-    
-    #endregion
 }
