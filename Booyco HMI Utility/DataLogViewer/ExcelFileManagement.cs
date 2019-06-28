@@ -221,6 +221,8 @@ namespace Booyco_HMI_Utility
                                 AccessLevel = Convert.ToInt16(_row.ItemArray[12]),
                                 VersionControl = Convert.ToInt16(_row.ItemArray[13]),
                                 Order = _order,
+                                GroupOrder = _groupOrder,
+                                SubGroupOrder = _subGroupOrder
 
                             });
 
