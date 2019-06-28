@@ -230,7 +230,7 @@
     <Compile Include="Configure\AudioFiles\AudioFilesView.xaml.cs">
       <DependentUpon>AudioFilesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Configure\Parameters\ConfigureMenuView.xaml.cs">
+    <Compile Include="Configure\ConfigureMenuView.xaml.cs">
       <DependentUpon>ConfigureMenuView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Configure\ImageFiles\ImageEntry.cs" />
@@ -327,9 +327,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Configure\Parameters\ConfigureMenuView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Configure\ConfigureMenuView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Configure\ImageFiles\ImageFilesView.xaml">
       <SubType>Designer</SubType>
@@ -623,52 +623,52 @@
   <ItemGroup>
     <PublishFile Include="Resources\Documents\BHUParametersFile.xlsx">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Resources\Documents\LPD.xlsx">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Resources\Documents\MernokAssetList.xml">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Resources\Documents\MernokClientList.xml">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Resources\Documents\MernokProductList.xml">
       <Visible>False</Visible>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
