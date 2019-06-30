@@ -382,13 +382,16 @@ namespace Booyco_HMI_Utility
                     }                    
                     else
                     {
-                        // === Add to the list ===
-                        _LogEntry.EventName = ExcelFilemanager.LPDInfoList.ElementAt(_LogEntry.EventID - 1).EventName;
-                        _LogEntry.RawData = _logData;
-                        _LogEntry.DataListString = _tempDataListString;
-                        _LogEntry.DataList = _tempDataList;
-                        _LogEntry.EventInfoList = _tempEventInfoList;
-                        TempList.Add(_LogEntry);
+                        if (_LogEntry.EventID <= ExcelFilemanager.LPDInfoList.Count())
+                        {
+                            // === Add to the list ===
+                            _LogEntry.EventName = ExcelFilemanager.LPDInfoList.ElementAt(_LogEntry.EventID - 1).EventName;
+                            _LogEntry.RawData = _logData;
+                            _LogEntry.DataListString = _tempDataListString;
+                            _LogEntry.DataList = _tempDataList;
+                            _LogEntry.EventInfoList = _tempEventInfoList;
+                            TempList.Add(_LogEntry);
+                        }
                     }
 
                 }

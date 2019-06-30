@@ -63,8 +63,6 @@ namespace Booyco_HMI_Utility
                 dispatcherTimer.Start();
                 GlobalSharedData.ActiveDevice = false;
 
-
-
         }
         /// <summary>
         /// Function that check's if current user is in Aministrator role

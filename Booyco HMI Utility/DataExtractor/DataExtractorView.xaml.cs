@@ -165,7 +165,14 @@ namespace Booyco_HMI_Utility
 
                                 if (_heartBeatDelay > 5)
                                 {
-                                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LR00]");
+                                    if (DatalogMode == (byte)DatalogModeEnum.Analog)
+                                    {
+                                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&OR00]");
+                                    }
+                                    else
+                                    {
+                                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LR00]");
+                                    }
                                     // === clear heartbeat information and start over ===
                                     Heartbeat = false;
                                     _heartBeatDelay = 0;
@@ -182,7 +189,14 @@ namespace Booyco_HMI_Utility
                                 {
                                     Heartbeat = false;
                                     _heartBeatDelay = 0;
-                                    GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LL00]");
+                                    if (DatalogMode == (byte)DatalogModeEnum.Analog)
+                                    {
+                                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&OL00]");
+                                    }
+                                    else
+                                    {
+                                        GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&LL00]");
+                                    }
                                 }
                             }
 

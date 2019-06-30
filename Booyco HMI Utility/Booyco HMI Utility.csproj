@@ -500,7 +500,7 @@
     <Content Include="Saved Files\Audio\006_GPS signal lost.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Saved Files\Audio\007_Vehicle Warning.wav">
+    <Content Include="Saved Files\Audio\007_Vehicle Alert.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Saved Files\Audio\008_Pedestrian warning.wav">
