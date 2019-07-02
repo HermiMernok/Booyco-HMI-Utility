@@ -28,12 +28,12 @@ namespace Booyco_HMI_Utility
         public LoginView()
         {
             InitializeComponent();
-            int CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month* 999999*3).ToString(), "Booyco");
-            int CalculatedHash_NextMonth = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month+1 * 999999*3).ToString(), "Booyco");
+            int CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month* 999999).ToString(), "Booyco");
+            int CalculatedHash_NextMonth = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month+1 * 999999).ToString(), "Booyco");
             PasswordBooycoAccess += (CalculatedHash.ToString("X6").Substring(0,6));
             PasswordBooycoAccess_NextMonth += (CalculatedHash_NextMonth.ToString("X6").Substring(0, 6));
-            CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month * 888888*3).ToString(), "Mernok");
-            CalculatedHash_NextMonth = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month+1 * 888888*3).ToString(), "Mernok");
+            CalculatedHash = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month * 888888).ToString(), "Mernok");
+            CalculatedHash_NextMonth = KeyGen(DateTime.Now.Year.ToString(), (DateTime.Now.Month+1 * 888888).ToString(), "Mernok");
             PasswordMernokAccess += (CalculatedHash.ToString("X6").Substring(0, 6));
             PasswordMernokAccess_NextMonth += (CalculatedHash_NextMonth.ToString("X6").Substring(0, 6));
         }
