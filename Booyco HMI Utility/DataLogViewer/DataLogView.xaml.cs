@@ -582,14 +582,6 @@ namespace Booyco_HMI_Utility
                     PDSMarker1.Heading = EventItem.ThreatHeading;
                     PDSMarker1.Accuracy = EventItem.UnitHorizontalAccuracy;
                 }
-                else if (EventItem.ThreatTechnology == (int)Tech_Kind.GPS)
-                {
-                    PDSMarker1.title = PDS_Event_Information;
-                    PDSMarker1.Width = EventItem.ThreatDisplayWidth;
-                    PDSMarker1.Height = EventItem.ThreatDisplayWidth;
-
-                    PDSMarker1.Type = (int)MarkerType.Ellipse;
-                }
                 else
                 {
                     PDSMarker1.title = PDS_Event_Information;
@@ -597,6 +589,16 @@ namespace Booyco_HMI_Utility
                     PDSMarker1.Height = EventItem.ThreatDisplayWidth;
                     PDSMarker1.Type = (int)MarkerType.Ellipse;
                 }
+
+                if (EventItem.ThreatScenario == 8)
+                {
+                    PDSMarker1.title = PDS_Event_Information;
+                    PDSMarker1.Width = EventItem.ThreatDisplayWidth;
+                    PDSMarker1.Height = EventItem.ThreatDisplayWidth;
+
+                    PDSMarker1.Type = (int)MarkerType.Ellipse;
+                }
+              
 
                 LastGeofenceIndex = GlobalSharedData.PDSMapMarkers.FindLastIndex(x => x.MapMarker.Position.Lat == EventItem.ThreatLatitude && x.MapMarker.Position.Lng == EventItem.ThreatLongitude && x.Type == (int)MarkerType.Ellipse);
 
@@ -630,7 +632,7 @@ namespace Booyco_HMI_Utility
                 PDSMarker2.Longitude = EventItem.UnitLongitude;
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarker2);
                 GlobalSharedData.PDSMapMarkers.Add(PDSMarkerPOI);
-                if (EventItem.ThreatScenario == 5 || EventItem.ThreatScenario == 4)
+                if (EventItem.ThreatScenario == 4 || EventItem.ThreatScenario == 5)
                 { 
                     GlobalSharedData.PDSMapMarkers.Add(PDSMarkerPOC);
                 }

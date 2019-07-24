@@ -38,11 +38,13 @@ namespace Booyco_HMI_Utility
             {
                 Button_Parameters.IsEnabled = true;
                 Button_AudioFiles.IsEnabled = true;
+                Button_ImagesFiles.IsEnabled = true;
             }
             else
             {
                 Button_Parameters.IsEnabled = false;
                 Button_AudioFiles.IsEnabled = false;
+                Button_ImagesFiles.IsEnabled = false;
             }
         }
 
@@ -77,11 +79,13 @@ namespace Booyco_HMI_Utility
                 {
                     Button_Parameters.IsEnabled = true;
                     Button_AudioFiles.IsEnabled = true;
+                    Button_ImagesFiles.IsEnabled = true;
                 }
                 else
                 {
                     Button_Parameters.IsEnabled = false;
                     Button_AudioFiles.IsEnabled = false;
+                    Button_ImagesFiles.IsEnabled = false;
                 }
             }
             else

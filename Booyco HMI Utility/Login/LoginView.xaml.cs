@@ -73,32 +73,36 @@ namespace Booyco_HMI_Utility
         /// <param name="e"></param>
         private void ButtonLogin_Click(object sender, RoutedEventArgs e)
         {
-          
-            if (GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Full)
+
+            if (GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Full || GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Basic )
             {
-                GlobalSharedData.AccessLevel = (int)AccessLevelEnum.Basic;
+                GlobalSharedData.AccessLevel = (int)AccessLevelEnum.Limited;
                 ButtonLogin.Content = "Log In";
-                Label_Error.Content =  "";
-                ButtonLogin.IsEnabled =false;
+                Label_Error.Content = "";
+                ButtonLogin.IsEnabled = false;
                 PasswordBox_Login.IsEnabled = true;
                 Label_AccessLevel.Content = "Access Level: None";
             }
-            else if (PasswordBox_Login.Password == PasswordBooycoAccess || PasswordBox_Login.Password == PasswordMernokAccess)
+            else if (PasswordBox_Login.Password == PasswordBooycoAccess)
             {
+                GlobalSharedData.AccessLevel = (int)AccessLevelEnum.Basic;
+                ButtonLogin.Content = "Log Out";
+                Label_Error.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 150, 0));
+               
+                Label_Error.Content = "Successfully logged in as Booyco technician.";
+                Label_AccessLevel.Content = "Access Level: Booyco Technician";                
+
+                PasswordBox_Login.IsEnabled = false;
+            }
+            else if (PasswordBox_Login.Password == PasswordMernokAccess)
+            {
+            
                 GlobalSharedData.AccessLevel = (int)AccessLevelEnum.Full;
                 ButtonLogin.Content = "Log Out";
                 Label_Error.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 150, 0));
 
-                if(PasswordBox_Login.Password == PasswordBooycoAccess)
-                {
-                    Label_Error.Content = "Successfully logged in as Booyco technician.";
-                    Label_AccessLevel.Content = "Access Level: Booyco Technician";
-                }
-                else
-                {
-                    Label_Error.Content = "Successfully logged in as Mernok technician.";
-                    Label_AccessLevel.Content = "Access Level: Mernok Technician";
-                }
+                Label_Error.Content = "Successfully logged in as Mernok technician.";
+                Label_AccessLevel.Content = "Access Level: Mernok Technician";               
                
                 PasswordBox_Login.IsEnabled = false;
             }
@@ -163,7 +167,7 @@ namespace Booyco_HMI_Utility
         private void TextBox_Password_PasswordChanged(object sender, RoutedEventArgs e)
         {
             PasswordBox _passwordbox = (PasswordBox)sender;
-            if (_passwordbox.Password.Count() > 0 || GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Basic)
+            if (_passwordbox.Password.Count() > 0 || GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Basic || GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
             {
                 ButtonLogin.IsEnabled = true;
             }

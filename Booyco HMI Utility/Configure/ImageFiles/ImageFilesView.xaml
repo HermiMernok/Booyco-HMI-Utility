@@ -25,7 +25,7 @@
             <ColumnDefinition Width="5"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid x:Name="DataGridImageFiles" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="10" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A">
+        <DataGrid x:Name="DataGridImageFiles" RowHeaderWidth="0" CanUserAddRows="False" SelectionMode="Extended" CanUserReorderColumns="False"  IsReadOnly="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" RowDetailsVisibilityMode="Collapsed" FontSize="16" Grid.ColumnSpan="1" Grid.Column="1" Grid.Row="2" Grid.RowSpan="5" Margin="10,20,10,0" AutoGenerateColumns="False" Background="SlateGray" AlternatingRowBackground="#FFA86464"  RowBackground="#FFD89A9A" RowHeight="50">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
                    Color="#8c0909"/>
@@ -42,8 +42,16 @@
             </DataGrid.ColumnHeaderStyle>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Width="1*" Header="No." Binding="{Binding ID}" MinWidth="60" MaxWidth="60"/>
-                <DataGridTextColumn Width="8*" Binding="{Binding Name}" Header="Name"/>
+                <DataGridTextColumn Width="1*" Header="No." Binding="{Binding ID}" MinWidth="60" MaxWidth="60"/>                
+                <DataGridTextColumn Width="8*" Binding="{Binding FileName}" Header="Name"/>
+                <DataGridTextColumn Width="100" Binding="{Binding FirmwareNumber}" Header="Firmware"/>
+                <DataGridTemplateColumn Width="100"  Header="Image" >                    
+                    <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate >
+                            <Image Source="{Binding ImageSource}"></Image>
+                    </DataTemplate >
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Width="3*"   Header="Progress">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate >

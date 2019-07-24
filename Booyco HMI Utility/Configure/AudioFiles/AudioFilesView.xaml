@@ -44,7 +44,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Width="1*" Header="No." Binding="{Binding ID}" MinWidth="60" MaxWidth="60"/>
                 <DataGridTextColumn Width="8*" Binding="{Binding FileName}" Header="Name"/>
-                <DataGridTemplateColumn Width="3*"   Header="Progress">
+                <DataGridTemplateColumn Width="3*" Header="Progress">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate >
                             <Grid>
@@ -72,7 +72,7 @@
             </Grid>
         </Button>
 
-        <Button x:Name= "ButtonPrevious" Visibility="Collapsed" IsEnabled="False" ToolTip="Image files" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,21,831,21" BorderThickness="0" Background="Transparent" MouseEnter="ButtonPrevious_MouseEnter" MouseLeave="ButtonPrevious_MouseLeave">
+        <Button x:Name= "ButtonPrevious" ToolTip="Image files" Click="ButtonPrevious_Click" Grid.Column="1" Grid.Row="1" Margin="10,21,831,21" BorderThickness="0" Background="Transparent" MouseEnter="ButtonPrevious_MouseEnter" MouseLeave="ButtonPrevious_MouseLeave">
             <Grid>
                 <Image x:Name="ImagePicture" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="52" Opacity="0.7" Source="/Images/ButtonImages/Images.png" Margin="22.667,18.166,-22.667,0"/>
                 <Rectangle x:Name="RectangleArrowLeft"  HorizontalAlignment="Left" Fill="#8c0909" Height="84.5"  VerticalAlignment="Top" Width="45.667" Clip="M13.333999,3.3330003 L6.5000008,12.833006 L26.166998,42.500026 L7.5003334,71.166712 L13.500334,81.332998 L39.667002,42.333334 z" RenderTransformOrigin="0.5,0.5" Margin="-31,0,0,0">

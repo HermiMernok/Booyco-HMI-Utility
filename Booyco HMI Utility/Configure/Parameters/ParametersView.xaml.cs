@@ -456,7 +456,7 @@ namespace Booyco_HMI_Utility
 
                     }
 
-                    if (parameters[i].AccessLevel == (int)AccessLevelEnum.Full && GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full || parameters[i].AccessLevel == (int)AccessLevelEnum.Unaccessable)
+                    if ((parameters[i].AccessLevel == (int)AccessLevelEnum.Full && GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full) || (parameters[i].AccessLevel == (int)AccessLevelEnum.Basic && GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Limited))
                     {
                         EditLbl = true;
                         btnvisibility = Visibility.Collapsed;
@@ -1222,9 +1222,28 @@ namespace Booyco_HMI_Utility
                 //valuebytes = BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue),4));
 
                 //Array.Copy(BitConverter.GetBytes(BitConverter.ToInt32(BitConverter.GetBytes(parameters[i].CurrentValue), 4)), 0, paraMeterBytes, i * 4, 4);
-                if (GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
+                if (GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Limited)
                 {
-                    if (parameters[i].AccessLevel == 2)
+                    if ( parameters[i].AccessLevel == (int)AccessLevelEnum.Basic || parameters[i].AccessLevel == (int)AccessLevelEnum.Full)
+                    {
+                        byte[] _unchanged =
+                        {
+                            0xFF,
+                            0xFF,
+                            0xFF,
+                            0xFF
+                        };
+                        Array.Copy(_unchanged, 0, paraMeterBytes, i * 4, 4);
+                    }
+                    else
+                    {
+                        Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
+                    }
+
+                }
+                else if (GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Basic)
+                {
+                    if (parameters[i].AccessLevel == (int)AccessLevelEnum.Full )
                     {
                         byte[] _unchanged =
                         {
@@ -1259,7 +1278,7 @@ namespace Booyco_HMI_Utility
             int ConfigfileSize = 0;
             bytesleft = ConfigfileSize = paraMeterBytes.Length;
             ConfigSendList.Clear();
-            Configchunks = (int)Math.Round(ConfigfileSize / (double)fileChunck);
+            Configchunks = (int)Math.Ceiling(ConfigfileSize / (double)fileChunck);
             int shifter = 0;
             for (int i = 0; i < Configchunks; i++)
             {
@@ -1400,9 +1419,28 @@ namespace Booyco_HMI_Utility
                     Thread.Sleep(1);
                 }
 
-                if (GlobalSharedData.AccessLevel != (int)AccessLevelEnum.Full)
+                if (GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Limited)
                 {
-                    if (parameters[i].AccessLevel == 2)
+                    if (parameters[i].AccessLevel == (int)AccessLevelEnum.Basic || parameters[i].AccessLevel == (int)AccessLevelEnum.Full)
+                    {
+                        byte[] _unchanged =
+                        {
+                            0xFF,
+                            0xFF,
+                            0xFF,
+                            0xFF
+                        };
+                        Array.Copy(_unchanged, 0, paraMeterBytes, i * 4, 4);
+                    }
+                    else
+                    {
+                        Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
+                    }
+
+                }
+                else if (GlobalSharedData.AccessLevel == (int)AccessLevelEnum.Basic)
+                {
+                    if (parameters[i].AccessLevel == (int)AccessLevelEnum.Full)
                     {
                         byte[] _unchanged =
                         {
@@ -1421,8 +1459,9 @@ namespace Booyco_HMI_Utility
                 }
                 else
                 {
+
                     Array.Copy(BitConverter.GetBytes(parameters[i].CurrentValue), 0, paraMeterBytes, i * 4, 4);
-                }           
+                }
             }
 
             string hex = BitConverter.ToString(paraMeterBytes).Replace("-", string.Empty);

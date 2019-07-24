@@ -54,7 +54,7 @@ namespace Booyco_HMI_Utility
 
     public static class GlobalSharedData
     { 
-        public static int AccessLevel = (int)AccessLevelEnum.Basic;
+        public static int AccessLevel = (int)AccessLevelEnum.Limited;
         public static int ConnectedDeviceApplicationState = (int)ApplicationEnum.None;
         public static bool CommunicationSent = false;
         public static string ServerStatus { get; set; }
