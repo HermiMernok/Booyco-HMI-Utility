@@ -37,6 +37,14 @@ namespace Booyco_HMI_Utility
         private static UInt16 CurrentAudioFileNumber = 1;
         private static UInt16 PreviousAudioFileNumber = 1;
         static private UInt16 TotalCount = 0;
+        DispatcherTimer updateDispatcherTimer;
+        private static int TotalSize = 522;
+        private static int DataSize = TotalSize - 14;
+        private uint _heartBeatDelay = 0;
+        private static UInt16 TotalFilesCount = 0;
+        private static UInt16 DataIndex = 0;
+        private static bool errorFlag = false;
+
         private enum TransferStatusEnum
         {
             None,
@@ -48,12 +56,7 @@ namespace Booyco_HMI_Utility
 
         private static int TransferStatus = (int)TransferStatusEnum.None;
       
-        static int TotalSize = 522;
-        static int DataSize = TotalSize - 14;
-        private uint _heartBeatDelay = 0;
-     
-
-        DispatcherTimer updateDispatcherTimer;
+        
         public AudioFilesView()
         {
             InitializeComponent();
@@ -92,9 +95,10 @@ namespace Booyco_HMI_Utility
                     if (TotalCount > 0)
                     {
                         ProgressBar_AudioFiles.Value = (int)((DataIndex * 100) / TotalCount) + (CurrentAudioFileNumber - 1) * 100;
+                        Label_StatusView.Content = "Audio File " + CurrentAudioFileNumber.ToString() + " of " + TotalAudioFiles.ToString();
+                        Label_ProgressStatusPercentage.Content = (Convert.ToInt32(ProgressBar_AudioFiles.Value / TotalAudioFiles)).ToString() + "%";
                     }
-                    Label_StatusView.Content = "Audio File " + CurrentAudioFileNumber.ToString() + " of " + TotalAudioFiles.ToString();
-                    Label_ProgressStatusPercentage.Content = (Convert.ToInt32(ProgressBar_AudioFiles.Value / TotalAudioFiles)).ToString() + "%";
+                   
 
                     // === check if heartbeat received ===
                     if (WiFiconfig.Heartbeat && TransferStatus == (int)TransferStatusEnum.Initialize)
@@ -180,10 +184,8 @@ namespace Booyco_HMI_Utility
             }
             return false;
         }
-        static UInt16 TotalFilesCount = 0;
-        static UInt16 DataIndex = 0;
- 
-        static bool AudioFileRequestStarted = false;
+   
+
         public static void AudioFileSendParse(byte[] message, EndPoint endPoint)
         {
             if (TransferStatus != (int)TransferStatusEnum.None)
@@ -209,7 +211,7 @@ namespace Booyco_HMI_Utility
                     // === Check if it is Ready packet. The device is ready ===             
                     if ((message[3] == 'a') && (message[521] == ']'))
                     {
-                        AudioFileRequestStarted = true;
+                       
                         TotalFilesCount = BitConverter.ToUInt16(message, 4);
 
                         RangeObservableCollection<AudioEntry> DeviceAudioFileList = new RangeObservableCollection<AudioEntry>();
@@ -247,8 +249,10 @@ namespace Booyco_HMI_Utility
                         DataIndex++;
                         ReceivedAudioFileNumber = BitConverter.ToUInt16(message, 6);
                         Debug.WriteLine("Debug1");
+           
                         SendAudioFile(ReceivedAudioFileNumber);
                         Debug.WriteLine("Debug5");
+                   
 
                     }
 
@@ -296,6 +300,10 @@ namespace Booyco_HMI_Utility
                 DataIndex = 0;
                 TotalCount = 0;
             }
+            
+
+          
+
             Debug.WriteLine("Debug3");
             if (TransferStatus == (int)TransferStatusEnum.Busy)
             {
@@ -509,6 +517,7 @@ namespace Booyco_HMI_Utility
             }
             else
             {
+                updateDispatcherTimer.Stop();
                 SelectVID = 0;
             }
         }

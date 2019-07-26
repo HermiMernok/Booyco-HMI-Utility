@@ -584,6 +584,10 @@ namespace Booyco_HMI_Utility
                             {
                                 AudioFilesView.AudioFileSendParse(Buffer, clientnumr);
                             }
+                            else if (Buffer[2] == 'I')
+                            {
+                                ImageFilesView.ImageFileSendParse(Buffer, clientnumr);
+                            }
                             else if (Buffer[2] == 'L' || Buffer[2] == 'O')
                             {
                                 DataExtractorView.DataExtractorParser(Buffer, clientnumr);

@@ -16,7 +16,7 @@ namespace Booyco_BHU_Utility
     {
        
      
-        string _RevisionTrackerPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/FirmwareRevisionTracker.xlsx";
+        string _RevisionTrackerPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Resources/Documents/FirmwareRevision.xlsx";
 
        public enum EnumRevisionType
         {

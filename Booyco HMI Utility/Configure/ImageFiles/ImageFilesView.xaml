@@ -55,7 +55,10 @@
                 <DataGridTemplateColumn Width="3*"   Header="Progress">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate >
-                            <ProgressBar Value="{Binding Progress}"></ProgressBar>
+                            <Grid>
+                                <ProgressBar Value="{Binding Progress}" Foreground="#8c0909" Background="SlateGray"></ProgressBar>
+                            <Label Content="{Binding ProgressString}" FontSize="10" HorizontalContentAlignment="Center"></Label>
+                                </Grid>
                         </DataTemplate >
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -67,7 +70,7 @@
             <Label Content="Image Upload" Foreground="Black" VerticalAlignment="Top" FontSize="12" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Viewbox>
 
-        <Button x:Name= "ButtonNew" Content="New" Click="ButtonNew_Click" Grid.Column="2" Grid.Row="3" Margin="10"/>
+        <Button x:Name= "ButtonNew" Content="Upload All" Click="ButtonNew_Click" Grid.Column="2" Grid.Row="3" Margin="10"/>
         <Button x:Name="ButtonAppend" Content="Append" Grid.Column="2" Grid.Row="4" Margin="10" Click="ButtonAppend_Click" />
         <Button x:Name="ButtonBack" Content="Back" Click="ButtonBack_Click" Grid.Column="2" Grid.Row="6" Margin="10"/>
         <Button x:Name= "ButtonNext"  ToolTip="Audio Files" Click="ButtonNext_Click" Grid.Column="2" Grid.Row="1" Margin="133,19,10,21" Background="Transparent" BorderThickness="0" MouseEnter="ButtonNext_MouseEnter" MouseLeave="ButtonNext_MouseLeave">
@@ -105,7 +108,44 @@
             <Label x:Name="Label_Index" Content="{Binding DataIndex, FallbackValue=0 }" HorizontalAlignment="Left" Margin="496,-695,0,0" VerticalAlignment="Top" Width="386" Height="70"/>
 
         </Grid>
+        
+        <Grid x:Name="Grid_Message" Grid.Row="1"  Grid.RowSpan="8" Grid.ColumnSpan="3" Grid.Column="1" Visibility="Collapsed"  Margin="0,5,-5,-5" >
 
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.2"/>
+            </Grid.Background>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="White" Grid.Column="1" Grid.Row="1" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Upload Images" Foreground="White" Background="DarkRed" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" Grid.Row="0" FontSize="50"/>
+                <TextBlock x:Name="RequestMessageLabel" Text="Are you sure you want to upload all the images?" Foreground="Black" Grid.Column="0"  Grid.Row="2" Grid.ColumnSpan="4" FontSize="30" TextWrapping="Wrap" Margin="5" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                <Button x:Name="ButtonContinue" Content="Yes" Grid.Column="1" Grid.Row="3" Margin="15" Click="ButtonContinue_Click" />
+                <Button x:Name="ButtonNo" Content="No" Grid.Column="2" Grid.Row="3" Margin="15" Click="ButtonClose_Click" />
+                <Button x:Name="ButtonClose" Content="X" Grid.Column="4" Grid.Row="0" Margin="100,0,0,30" Click="ButtonClose_Click" />
+            </Grid>
+        </Grid>
 
     </Grid>
 </UserControl>
