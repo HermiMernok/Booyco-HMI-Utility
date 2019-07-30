@@ -2,6 +2,13 @@
 <MernokAssetFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <mernokAssetList>
     <MernokAsset>
+      <Type>0</Type>
+      <Group>0</Group>
+      <GroupName>None</GroupName>
+      <TypeName>None</TypeName>
+      <IsLicensable>false</IsLicensable>
+    </MernokAsset>
+    <MernokAsset>
       <Type>1</Type>
       <Group>9</Group>
       <GroupName>System Specific</GroupName>

@@ -45,6 +45,7 @@ namespace Booyco_HMI_Utility
         private uint _heartBeatDelay = 0;
         private static UInt16 TotalFilesCount = 0;
         private static UInt16 DataIndex = 0;
+        private static UInt16 ProgressDataIndex = 0;
         private static bool errorFlag = false;
         private enum TransferStatusEnum
         {
@@ -94,10 +95,10 @@ namespace Booyco_HMI_Utility
                     ProgressBar_ImageFiles.Maximum = TotalImageFiles * 100;
                     if (TotalCount > 0)
                     {
-                        ProgressBar_ImageFiles.Value = (int)((DataIndex * 100) / TotalCount) + (CurrentImageFileNumber - 1) * 100;
+                        ProgressBar_ImageFiles.Value = (int)((ProgressDataIndex * 100) / TotalCount) + (CurrentImageFileNumber - 1) * 100;
                     }
                     Label_StatusView.Content = "Image File " + CurrentImageFileNumber.ToString() + " of " + TotalImageFiles.ToString();
-                    Label_ProgressStatusPercentage.Content = (Convert.ToInt32(ProgressBar_ImageFiles.Value / TotalImageFiles)).ToString() + "%";
+                    Label_ProgressStatusPercentage.Content = (Convert.ToInt32( Math.Floor(ProgressBar_ImageFiles.Value / TotalImageFiles))).ToString() + "%";
 
                     // === check if heartbeat received ===
                     if (WiFiconfig.Heartbeat && TransferStatus == (int)TransferStatusEnum.Initialize)
@@ -198,14 +199,19 @@ namespace Booyco_HMI_Utility
                 {
                     if (PreviousImageFileNumber < CurrentImageFileNumber)
                     {
+                        ProgressDataIndex = DataIndex;
                         ImageFileList.ElementAt(PreviousImageFileNumber - 1).Progress = 100;
                         ImageFileList.ElementAt(PreviousImageFileNumber - 1).ProgressString = "100%";
                         PreviousImageFileNumber = CurrentImageFileNumber;
                     }
                     else
                     {
-                        ImageFileList.ElementAt(CurrentImageFileNumber - 1).Progress = (int)((DataIndex * 100) / TotalCount);
-                        ImageFileList.ElementAt(CurrentImageFileNumber - 1).ProgressString = ImageFileList.ElementAt(CurrentImageFileNumber - 1).Progress.ToString() + "%";
+                        if (ImageFileList.ElementAt(CurrentImageFileNumber - 1).Progress < (int)((DataIndex * 100) / TotalCount))
+                        {
+                            ProgressDataIndex = DataIndex;
+                            ImageFileList.ElementAt(CurrentImageFileNumber - 1).Progress = (int)((DataIndex * 100) / TotalCount);
+                            ImageFileList.ElementAt(CurrentImageFileNumber - 1).ProgressString = ImageFileList.ElementAt(CurrentImageFileNumber - 1).Progress.ToString() + "%";
+                        }
                     }
 
                 }
@@ -400,9 +406,9 @@ namespace Booyco_HMI_Utility
 
         private void ButtonAppend_Click(object sender, RoutedEventArgs e)
         {
-
+           
             GlobalSharedData.ServerMessageSend = Encoding.ASCII.GetBytes("[&IU00]");
-          
+            ProgressDataIndex = 0;
             DataIndex = 0;
             foreach (ImageEntry item in ImageFileList)
             {
@@ -410,7 +416,7 @@ namespace Booyco_HMI_Utility
                 item.ProgressString = "0%";
             }
 
-            for (int i = 0; i< 38; i++)
+            for (int i = 0; i< 37; i++)
             { 
                 ImageFileList.ElementAt(i).Progress = 100;
                 ImageFileList.ElementAt(i).ProgressString = "100%";             
