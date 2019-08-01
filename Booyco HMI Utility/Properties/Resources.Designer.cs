@@ -140,7 +140,8 @@ namespace Booyco_BHU_Utility.Properties {
         ///    &lt;MernokProduct&gt;
         ///      &lt;Product&gt;2&lt;/Product&gt;
         ///      &lt;ProductName&gt;Maxus&lt;/ProductName&gt;
-        ///    &lt;/MernokProduct&gt;        /// [rest of string was truncated]&quot;;.
+        ///    &lt;/MernokProduct&gt;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MernokProductList {
             get {

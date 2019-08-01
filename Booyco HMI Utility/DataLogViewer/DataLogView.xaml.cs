@@ -921,26 +921,45 @@ namespace Booyco_HMI_Utility
                 {
                     HMIDisplayEntry _tempHMIDisplayEntry = new HMIDisplayEntry();
                     PDSThreatEvent _tempPDSThreatEvent = new PDSThreatEvent();
-                 
-                    if (item.EventID == 150)
+
+                    try
                     {
-                        _tempPDSThreatEvent.ThreatBIDHex = item.DataListString.ElementAt(0);
-                        _tempPDSThreatEvent.ThreatBID = uint.Parse(item.DataListString.ElementAt(0).Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
-                        _tempPDSThreatEvent.ThreatGroup = item.DataListString.ElementAt(2);
-                        _tempPDSThreatEvent.ThreatType = item.DataListString.ElementAt(3);
-                        _tempPDSThreatEvent.ThreatWidth = item.DataListString.ElementAt(4);
-                        _tempPDSThreatEvent.ThreatSector = item.DataListString.ElementAt(5);
-                        _tempPDSThreatEvent.ThreatZone = Convert.ToInt16(item.DataList.ElementAt(6));
-                        _tempPDSThreatEvent.ThreatDistance = item.DataListString.ElementAt(8);
-                        _tempPDSThreatEvent.ThreatHeading = item.DataListString.ElementAt(9);
-                        _tempPDSThreatEvent.DateTime = item.DateTime;
-
-                        HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
-
-
-                        if (_foundItem != null)
+                        if (item.EventID == 150)
                         {
-                            if (_foundItem.EndDateTime != _clearTime)
+                            _tempPDSThreatEvent.ThreatBIDHex = item.DataListString.ElementAt(0);
+                            _tempPDSThreatEvent.ThreatBID = uint.Parse(item.DataListString.ElementAt(0).Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
+                            _tempPDSThreatEvent.ThreatGroup = item.DataListString.ElementAt(2);
+                            _tempPDSThreatEvent.ThreatType = item.DataListString.ElementAt(3);
+                            _tempPDSThreatEvent.ThreatWidth = item.DataListString.ElementAt(4);
+                            _tempPDSThreatEvent.ThreatSector = item.DataListString.ElementAt(5);
+                            _tempPDSThreatEvent.ThreatZone = Convert.ToInt16(item.DataList.ElementAt(6));
+                            _tempPDSThreatEvent.ThreatDistance = item.DataListString.ElementAt(8);
+                            _tempPDSThreatEvent.ThreatHeading = item.DataListString.ElementAt(9);
+                            _tempPDSThreatEvent.DateTime = item.DateTime;
+
+                            HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
+
+
+                            if (_foundItem != null)
+                            {
+                                if (_foundItem.EndDateTime != _clearTime)
+                                {
+                                    _tempHMIDisplayEntry.StartDateTime = item.DateTime;
+                                    _tempHMIDisplayEntry.ThreatBID = uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
+                                    _tempHMIDisplayEntry.ThreatPriority = item.DataListString.ElementAt(15);
+                                    _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
+                                    _tempHMIDisplayEntry.EndDateTime = new DateTime(2100, 01, 01);
+                                    GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+
+                                }
+                                else
+                                {
+                                    _foundItem.ThreatPriority = item.DataListString.ElementAt(15);
+                                    _foundItem.PDSThreat.Add(_tempPDSThreatEvent);
+
+                                }
+                            }
+                            else
                             {
                                 _tempHMIDisplayEntry.StartDateTime = item.DateTime;
                                 _tempHMIDisplayEntry.ThreatBID = uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
@@ -948,89 +967,78 @@ namespace Booyco_HMI_Utility
                                 _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
                                 _tempHMIDisplayEntry.EndDateTime = new DateTime(2100, 01, 01);
                                 GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
+                            }
+                        }
+
+
+
+                        if (item.EventID == 159)
+                        {
+
+                            if (uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber) == 0)
+                            {
+
+                                HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == item.DataListString.ElementAt(15));
+
+                                if (_foundItem1 != null && _foundItem1.EndDateTime > item.DateTime)
+                                {
+                                    _foundItem1.EndDateTime = item.DateTime;
+                                }
 
                             }
                             else
                             {
-                                _foundItem.ThreatPriority = item.DataListString.ElementAt(15);
-                                _foundItem.PDSThreat.Add(_tempPDSThreatEvent);
-
+                                HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
+                                if (_foundItem != null)
+                                {
+                                    _foundItem.EndDateTime = item.DateTime;
+                                }
                             }
                         }
-                        else
-                        {
-                            _tempHMIDisplayEntry.StartDateTime = item.DateTime;
-                            _tempHMIDisplayEntry.ThreatBID = uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString();
-                            _tempHMIDisplayEntry.ThreatPriority = item.DataListString.ElementAt(15);
-                            _tempHMIDisplayEntry.PDSThreat.Add(_tempPDSThreatEvent);
-                            _tempHMIDisplayEntry.EndDateTime = new DateTime(2100, 01, 01);
-                            GlobalSharedData.HMIDisplayList.Add(_tempHMIDisplayEntry);
-                        }
 
-
-                    }
-                    if (item.EventID == 159)
-                    {
-
-                        if (uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber) == 0)
+                        if (item.EventID == 2)
                         {
 
-                            HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == item.DataListString.ElementAt(15));
+
+                            HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "1");
 
                             if (_foundItem1 != null && _foundItem1.EndDateTime > item.DateTime)
                             {
                                 _foundItem1.EndDateTime = item.DateTime;
                             }
 
-                        }
-                        else
-                        {
-                            HMIDisplayEntry _foundItem = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatBID == uint.Parse(item.DataListString.First().Remove(0, 2), System.Globalization.NumberStyles.HexNumber).ToString());
-                            if (_foundItem != null)
+                            HMIDisplayEntry _foundItem2 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "2");
+
+                            if (_foundItem2 != null && _foundItem1.EndDateTime > item.DateTime)
                             {
-                                _foundItem.EndDateTime = item.DateTime;
+                                _foundItem2.EndDateTime = item.DateTime;
+                            }
+
+                            HMIDisplayEntry _foundItem3 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "3");
+
+                            if (_foundItem3 != null && _foundItem1.EndDateTime > item.DateTime)
+                            {
+                                _foundItem3.EndDateTime = item.DateTime;
+                            }
+
+                            HMIDisplayEntry _foundItem4 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "4");
+
+                            if (_foundItem4 != null && _foundItem1.EndDateTime > item.DateTime)
+                            {
+                                _foundItem4.EndDateTime = item.DateTime;
+                            }
+
+                            HMIDisplayEntry _foundItem5 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "5");
+
+                            if (_foundItem5 != null && _foundItem1.EndDateTime > item.DateTime)
+                            {
+                                _foundItem5.EndDateTime = item.DateTime;
                             }
                         }
                     }
-
-                    if (item.EventID == 2)
+                    catch
                     {
 
-
-                        HMIDisplayEntry _foundItem1 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "1");
-
-                        if (_foundItem1 != null && _foundItem1.EndDateTime > item.DateTime)
-                        {
-                            _foundItem1.EndDateTime = item.DateTime;
-                        }
-
-                        HMIDisplayEntry _foundItem2 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "2");
-
-                        if (_foundItem2 != null && _foundItem1.EndDateTime > item.DateTime)
-                        {
-                            _foundItem2.EndDateTime = item.DateTime;
-                        }
-
-                        HMIDisplayEntry _foundItem3 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "3");
-
-                        if (_foundItem3 != null && _foundItem1.EndDateTime > item.DateTime)
-                        {
-                            _foundItem3.EndDateTime = item.DateTime;
-                        }
-
-                        HMIDisplayEntry _foundItem4 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "4");
-
-                        if (_foundItem4 != null && _foundItem1.EndDateTime > item.DateTime)
-                        {
-                            _foundItem4.EndDateTime = item.DateTime;
-                        }
-
-                        HMIDisplayEntry _foundItem5 = GlobalSharedData.HMIDisplayList.FindLast(p => p.ThreatPriority == "5");
-
-                        if (_foundItem5 != null && _foundItem1.EndDateTime > item.DateTime)
-                        {
-                            _foundItem5.EndDateTime = item.DateTime;
-                        }
                     }
                 }
             }
